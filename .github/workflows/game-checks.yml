@@ -1,0 +1,48 @@
+name: Aetheria RPG - game checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check game integrity
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Check inline JavaScript syntax
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          class Scripts(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.parts=[]
+                  self.active=False
+              def handle_starttag(self, tag, attrs):
+                  if tag == "script" and not dict(attrs).get("src"):
+                      self.active=True
+              def handle_endtag(self, tag):
+                  if tag == "script":
+                      self.active=False
+              def handle_data(self, data):
+                  if self.active:
+                      self.parts.append(data)
+          p=Scripts()
+          p.feed(Path("index.html").read_text(encoding="utf-8"))
+          Path("/tmp/aetheria-inline.js").write_text("\n".join(p.parts), encoding="utf-8")
+          PY
+          node --check /tmp/aetheria-inline.js
