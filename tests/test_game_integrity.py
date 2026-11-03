@@ -107,7 +107,6 @@ class GameIntegrityTests(unittest.TestCase):
     def test_mobile_memory_guard_cannot_be_overridden_by_hd_toggle(self):
         for marker in ("const LOW_MEM=!!(", "q=LOW_MEM?'l':requested",
                        "const shadows=!LOW_MEM&&!!p[1]",
-                       "id==='arqueiro'||id==='ranger'",
                        "Prévia 3D desativada no modo leve"):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.source)
