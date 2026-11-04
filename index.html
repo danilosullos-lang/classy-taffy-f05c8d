@@ -8303,7 +8303,57 @@ function fldPoiBuild(p){
       const mesh=new T.Mesh(fldMerge(batches[id]),mat);mesh.position.set(p.x,p.h,p.z);S.add(mesh);rec.meshes.push(mesh);
     });
   }else{const m=new T.Mesh(fldMerge(parts),FM);m.position.set(p.x,p.h,p.z);S.add(m);rec.meshes.push(m)}
-  FLD.pb[p.key]=rec}
+
+/* ---- Biblioteca 3D CC0 KayKit: decoração medieval leve para vilas e ruínas ---- */
+const RPG_KAYKIT_BASE='https://cdn.jsdelivr.net/gh/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0@main/addons/kaykit_dungeon_remastered/Assets/gltf/';
+const RPG_KAYKIT_PROPS={
+  barrel:'barrel_large.gltf.glb',
+  crates:'crates_stacked.gltf.glb',
+  chest:'chest.glb',
+  torch:'torch_lit.gltf.glb',
+  banner:'banner_blue.gltf.glb',
+  chair:'chair.gltf.glb',
+  box:'box_large.gltf.glb'
+};
+const RPG_KAYKIT_CACHE=window.__aetheriaKaykitCache||(window.__aetheriaKaykitCache={});
+let RPG_KAYKIT_LOADER=null;
+function rpgKaykitProp(name,x,y,z,scale,rec){
+  const file=RPG_KAYKIT_PROPS[name];if(!file||!T.GLTFLoader)return;
+  const url=RPG_KAYKIT_BASE+file;
+  const attach=gltf=>{
+    if(!rec||FLD.pb[rec.p.key]!==rec)return;
+    const model=T.SkeletonUtils&&T.SkeletonUtils.clone?T.SkeletonUtils.clone(gltf.scene):gltf.scene.clone(true);
+    model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.userData.decorativeNoCollision=true}});
+    const bounds=new T.Box3().setFromObject(model),size=bounds.getSize(new T.Vector3());
+    const h=Math.max(.01,size.y),factor=scale/h;
+    model.scale.multiplyScalar(factor);
+    model.position.y-=bounds.min.y*factor;
+    const root=new T.Group();root.name='kaykit-'+name;root.position.set(x,y,z);root.add(model);
+    root.userData.decorativeNoCollision=true;S.add(root);rec.meshes.push(root);
+  };
+  if(RPG_KAYKIT_CACHE[url]){attach(RPG_KAYKIT_CACHE[url]);return}
+  if(!RPG_KAYKIT_LOADER)RPG_KAYKIT_LOADER=new T.GLTFLoader();
+  RPG_KAYKIT_CACHE[url]=null;
+  RPG_KAYKIT_LOADER.load(url,gltf=>{RPG_KAYKIT_CACHE[url]=gltf;attach(gltf)},undefined,err=>{
+    delete RPG_KAYKIT_CACHE[url];console.warn('[Aetheria] Modelo KayKit indisponível:',name,err);
+  });
+}
+function rpgDecorateKaykitPoi(p,rec){
+  if(!T.GLTFLoader)return;
+  const rand=mul((Math.floor(p.x)*7919)^(Math.floor(p.z)*104729)^8181);
+  const count=p.type==='village'?4:3;
+  const pool=p.type==='village'?['barrel','crates','chair','banner','box']:['chest','torch','banner','crates'];
+  for(let i=0;i<count;i++){
+    const a=rand()*Math.PI*2,r=p.type==='village'?5+rand()*12:3+rand()*7;
+    const x=p.x+Math.cos(a)*r,z=p.z+Math.sin(a)*r;
+    const y=Math.max(fieldH(x,z),FWL)+.03;
+    const name=pool[Math.floor(rand()*pool.length)];
+    const target=name==='banner'?2.8:(name==='torch'?1.65:(name==='chest'?1.05:1.25));
+    rpgKaykitProp(name,x,y,z,target,rec);
+  }
+}
+
+  FLD.pb[p.key]=rec;rpgDecorateKaykitPoi(p,rec)}
 function fldPoiRemove(k){
   const rec=FLD.pb[k];if(!rec)return;
   rec.meshes.forEach(m=>{S.remove(m);if(m.geometry)m.geometry.dispose()});
