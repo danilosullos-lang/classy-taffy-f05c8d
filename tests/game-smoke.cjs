@@ -8,8 +8,9 @@ if (gameSource.includes('Math.atan2(-dd,-dz)')) {
   throw new Error('Ainda existe cálculo invertido da direção dos monstros.');
 }
 if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/assets/28840/v1/model.glb',0)") ||
-    !gameSource.includes("if(useStarterRealm)rpgWorldPlace(group,'starterRealm',0,0,1,0,0)")) {
-  throw new Error('A região inicial Medieval MMO Starter Realm não está integrada ao mundo.');
+    !gameSource.includes("index===Math.floor(20000/90)&&!!RPG_WORLD.models.starterRealm") ||
+    !gameSource.includes("if(useStarterRealm)rpgWorldPlace(group,'starterRealm',0,20000,1,0,0)")) {
+  throw new Error('A região inicial Medieval MMO Starter Realm não está posicionada no ponto de spawn.');
 }
 
 (async () => {
@@ -192,12 +193,15 @@ if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/
       throw new Error('Mapa Medieval MMO Starter Realm não carregou: '+JSON.stringify(diagnostic)+' · '+error.message);
     }
     const starterRealmAudit=await page.evaluate(()=>{
-      const root=RPG_WORLD.models.starterRealm;let meshes=0,vertices=0;
+      const root=RPG_WORLD.models.starterRealm,chunkIndex=Math.floor(20000/90),chunk=RPG_WORLD.chunks.get(chunkIndex);
+      let meshes=0,vertices=0,attachedToSpawnChunk=false,realmPosition=null;
       if(root)root.traverse(o=>{if(o.isMesh){meshes++;vertices+=o.geometry&&o.geometry.attributes.position?o.geometry.attributes.position.count:0;}});
-      return {loaded:!!root,meshes,vertices,source:RPG_WORLD.requested.starterRealm};
+      if(chunk)chunk.traverse(o=>{if(o.userData&&o.userData.rpgWorldAsset==='starterRealm'){attachedToSpawnChunk=true;realmPosition=o.position.toArray();}});
+      return {loaded:!!root,meshes,vertices,source:RPG_WORLD.requested.starterRealm,chunkIndex,attachedToSpawnChunk,realmPosition};
     });
-    if(!starterRealmAudit.loaded||starterRealmAudit.meshes<100||starterRealmAudit.vertices<10000){
-      throw new Error('Mapa inicial carregado incompleto: '+JSON.stringify(starterRealmAudit));
+    if(!starterRealmAudit.loaded||starterRealmAudit.meshes<100||starterRealmAudit.vertices<10000||
+       !starterRealmAudit.attachedToSpawnChunk||!starterRealmAudit.realmPosition||Math.abs(starterRealmAudit.realmPosition[2]-20000)>1){
+      throw new Error('Mapa inicial não carregou no chunk do ponto de nascimento: '+JSON.stringify(starterRealmAudit));
     }
 
     // The imported CC0 town kit must load into the live world, not just exist in the repository.
