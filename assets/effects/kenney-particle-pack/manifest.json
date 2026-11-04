@@ -1,0 +1,66 @@
+{
+  "name": "Kenney Particle Pack — selected VFX sprites",
+  "creator": "Kenney",
+  "source": "https://kenney.nl/assets/particle-pack",
+  "repositoryMirror": "https://github.com/Calinou/kenney-particle-pack",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "importedAt": "2026-11-04",
+  "count": 9,
+  "assets": [
+    {
+      "file": "assets/effects/kenney-particle-pack/flame_04.png",
+      "role": "fire",
+      "bytes": 67316,
+      "sha256": "4ca5e6a8693849ed25291c4b8ad3dbbee41641f8b953761eff06ffcfd331fcd4"
+    },
+    {
+      "file": "assets/effects/kenney-particle-pack/fire_01.png",
+      "role": "fireball",
+      "bytes": 95429,
+      "sha256": "258f4fcbf20b20afe137fc4688ef24d6467a3e71b412c3dc9b400cd2c0ed3ce3"
+    },
+    {
+      "file": "assets/effects/kenney-particle-pack/magic_04.png",
+      "role": "magic",
+      "bytes": 46627,
+      "sha256": "5eb4cb258f1d3ba88588221dbe8d34b39ce94e8c45268ced0cf1a1653c1a71be"
+    },
+    {
+      "file": "assets/effects/kenney-particle-pack/spark_07.png",
+      "role": "spark",
+      "bytes": 36199,
+      "sha256": "773ccfb10e62b46eaddc64af4fa200e9f78e436b3817ee49d188d0a0d4b9450f"
+    },
+    {
+      "file": "assets/effects/kenney-particle-pack/slash_02.png",
+      "role": "slash",
+      "bytes": 35485,
+      "sha256": "37a55c91023d5130ea816d2bd1f5083fe5230842e8308823fd957d38ad15145f"
+    },
+    {
+      "file": "assets/effects/kenney-particle-pack/smoke_03.png",
+      "role": "smoke",
+      "bytes": 38182,
+      "sha256": "03c219c4384206174c44ff6997ffdabd1bd4354709b9569f957bf9aa75e7dafd"
+    },
+    {
+      "file": "assets/effects/kenney-particle-pack/light_03.png",
+      "role": "holy",
+      "bytes": 94243,
+      "sha256": "4e5ebf85c0b9b76336037330f6f6003aec0bfba4c266aba4e24f5876c0bd1d96"
+    },
+    {
+      "file": "assets/effects/kenney-particle-pack/circle_03.png",
+      "role": "impact",
+      "bytes": 69716,
+      "sha256": "5c0d9704ed222df863a6a8602dca952ffcd04421136ea439a0be2f257ebb8c73"
+    },
+    {
+      "file": "assets/effects/kenney-particle-pack/trace_06.png",
+      "role": "trail",
+      "bytes": 34070,
+      "sha256": "7f9fde6077987e13760cdfc82cce5ab75c798999c53276abdfa807f4ef6e057d"
+    }
+  ]
+}
