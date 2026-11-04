@@ -290,6 +290,51 @@ const { chromium } = require('playwright');
     if(monsterAppearance.some(x=>!x.meshes||!x.textured||!x.clips)){
       throw new Error('Monstro CC0 sem geometria, textura ou animação carregada no Chromium: '+JSON.stringify(monsterAppearance));
     }
+
+    // Exhaustive visual-asset audit: load every catalogued creature in Chromium,
+    // not only the handful of representative models above. Dispose each model
+    // before continuing so the 220-model sweep remains safe for CI memory.
+    const allMonsterAppearance=await page.evaluate(async()=>{
+      const response=await fetch('/assets/monsters/catalog.json');
+      if(!response.ok)throw new Error('Catálogo de monstros indisponível para auditoria completa');
+      const catalog=await response.json(),loader=new THREE.GLTFLoader(),results=[];
+      for(const item of catalog.monsters||[]){
+        const url='/'+String(item.path||'').replace(/^[/]+/,'');
+        try{
+          const gltf=await new Promise((resolve,reject)=>loader.load(url,resolve,undefined,reject));
+          let meshes=0,materials=0,textured=0,bones=0;
+          const textures=new Set(),mats=new Set();
+          gltf.scene.traverse(node=>{
+            if(node.isBone)bones++;
+            if(!node.isMesh)return;
+            meshes++;
+            const list=Array.isArray(node.material)?node.material:(node.material?[node.material]:[]);
+            list.forEach(material=>{
+              if(!material)return;
+              mats.add(material);materials++;
+              if(material.map&&material.map.image){textured++;textures.add(material.map);}
+              ['normalMap','roughnessMap','metalnessMap','emissiveMap','aoMap'].forEach(k=>{
+                if(material[k])textures.add(material[k]);
+              });
+            });
+          });
+          results.push({name:item.name,path:item.path,meshes,materials,textured,bones,clips:gltf.animations.length,expectedRig:!!item.rigged});
+          gltf.scene.traverse(node=>{if(node.geometry)node.geometry.dispose();});
+          mats.forEach(material=>material.dispose());
+          textures.forEach(texture=>texture.dispose());
+        }catch(error){
+          results.push({name:item.name,path:item.path,error:String(error&&error.message||error)});
+        }
+      }
+      const failures=results.filter(x=>x.error||!x.meshes||!x.materials||!x.textured||!x.clips||(x.expectedRig&&x.bones<1));
+      return {total:results.length,passed:results.length-failures.length,failures,results};
+    });
+    if(allMonsterAppearance.total!==monsterCatalogIntegration.count||allMonsterAppearance.failures.length){
+      throw new Error('Auditoria completa dos monstros encontrou modelos sem skin/textura/animação/rig válido: '+JSON.stringify({
+        total:allMonsterAppearance.total,passed:allMonsterAppearance.passed,
+        failures:allMonsterAppearance.failures.slice(0,40)
+      }));
+    }
     await page.evaluate(()=>spawnEn('mp'));
     await page.waitForFunction(()=>window.__rpgMonsterAssetDebug&&Object.keys(window.__rpgMonsterAssetDebug.loaded).length>=1,{timeout:45000});
     const monsterRuntimeAssets=await page.evaluate(()=>({
