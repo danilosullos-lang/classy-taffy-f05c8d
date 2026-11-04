@@ -12,6 +12,10 @@ if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/
     !gameSource.includes("if(useStarterRealm)rpgWorldPlace(group,'starterRealm',0,20000,1,0,0)")) {
   throw new Error('A região inicial Medieval MMO Starter Realm não está posicionada no ponto de spawn.');
 }
+if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
+    !gameSource.includes("if(key==='starterRealm')rpgStarterRealmBuildCollisions(model,Math.floor(z/90))")) {
+  throw new Error('O mapa inicial não gera colisões estáticas a partir das malhas do GLB.');
+}
 
 (async () => {
   const browser = await chromium.launch({
@@ -207,8 +211,9 @@ if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/
     // The spawn chunk now uses the imported Medieval MMO scene instead of the
     // legacy procedural village. Validate the actual scene attachment above;
     // legacy village NPC and collision coordinates are not valid for this asset.
+    await page.waitForFunction(()=>window.__rpgWorldDebug&&window.__rpgWorldDebug.townCollisionSolids>0,{timeout:15000});
     const townWorldState=await page.evaluate(()=>({...window.__rpgWorldDebug}));
-    if(townWorldState.waterVisible||!townWorldState.groundLoaded)throw new Error('O mundo aberto ainda está usando o antigo canal de água: '+JSON.stringify(townWorldState));
+    if(townWorldState.waterVisible||!townWorldState.groundLoaded||townWorldState.townCollisionSolids<1)throw new Error('O mundo aberto não carregou terreno e colisões do mapa: '+JSON.stringify(townWorldState));
     await page.waitForFunction(()=>window.__rpgWorldDebug&&window.__rpgWorldDebug.treeAssetsLoaded>=5,{timeout:30000});
     const treeAppearance=await page.evaluate(()=>{
       const keys=['tree1','tree2','tree3','bush','palm'];
