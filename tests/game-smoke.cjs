@@ -674,13 +674,17 @@ const { chromium } = require('playwright');
       const meteors=window.__rpgMageFireVfxDebug.meteors;
       fxFireProjectile(new THREE.Vector3(frog.position.x+2,frog.position.y+.8,frog.position.z-4),{duration:.28,scale:1});
       fxMeteorShower([new THREE.Vector3(frog.position.x-2,.2,frog.position.z-5)]);
+      for(const role of ['fighter','tank','archer','dagger','mage','healer','support','crafter']){
+        fxClassSkillVfx(role,role==='mage'?'e':'q',[],false);
+      }
       await new Promise(resolve=>setTimeout(resolve,750));
-      return {castClip,debug:{...window.__rpgMageFireVfxDebug},fireballOrigin:window.__rpgMageFireVfxDebug.lastFireballOrigin,
+      return {castClip,classVfx:{...window.__rpgClassVfxDebug.casts},debug:{...window.__rpgMageFireVfxDebug},fireballOrigin:window.__rpgMageFireVfxDebug.lastFireballOrigin,
         fireballDelta:window.__rpgMageFireVfxDebug.fireballs-start,meteorDelta:window.__rpgMageFireVfxDebug.meteors-meteors};
     });
     if(!mageFireVfx.castClip||!/(spell|cast|magic|heal|staff)/i.test(mageFireVfx.castClip)||
       mageFireVfx.fireballDelta<1||mageFireVfx.meteorDelta<1||mageFireVfx.debug.impacts<2||
-      !mageFireVfx.fireballOrigin||mageFireVfx.fireballOrigin.position[1]-mageFireVfx.fireballOrigin.playerY<1.25){
+      !mageFireVfx.fireballOrigin||mageFireVfx.fireballOrigin.position[1]-mageFireVfx.fireballOrigin.playerY<1.25||
+      !['fighter','tank','archer','dagger','mage','healer','support','crafter'].every(role=>(mageFireVfx.classVfx[role]||0)>=1)){
       throw new Error('Animação ou efeitos de fogo do mago não foram executados: '+JSON.stringify(mageFireVfx));
     }
     if (pageErrors.length) throw new Error('Erros JavaScript durante a execução:\n' + pageErrors.join('\n'));
