@@ -392,7 +392,7 @@ const { chromium } = require('playwright');
       knight: playableClassSkin('cavaleiro'), paladin: playableClassSkin('paladino'),
       archmage: playableClassSkin('arquimago'), assassin: playableClassSkin('assassino'), ranger: playableClassSkin('ranger')
     }));
-    if (classSkinMap.warrior !== '/skins/classes/Barbarian.glb' || classSkinMap.mage !== '/skins/classes/Mage.glb' ||
+    if (classSkinMap.warrior !== '/skins/classes/Knight.glb' || classSkinMap.mage !== '/skins/classes/Mage.glb' ||
         classSkinMap.archer !== '/skins/classes/Rogue_Hooded.glb' || classSkinMap.rogue !== '/skins/classes/Rogue_Hooded.glb' ||
         classSkinMap.priest !== '/skins/classes/Mage.glb' || classSkinMap.knight !== '/skins/classes/Knight.glb' ||
         classSkinMap.paladin !== '/skins/classes/Knight.glb' || classSkinMap.archmage !== '/skins/classes/Mage.glb' ||
