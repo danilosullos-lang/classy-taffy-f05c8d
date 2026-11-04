@@ -248,6 +248,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 @keyframes shine{0%,60%{left:-60%}100%{left:130%}}
   /* Ajustes de HUD para telas pequenas: controles compactos e áreas de toque separadas. */
   @media(max-width:600px){
+    #combo{font-size:22px;right:12%;top:28%;max-width:30vw;}
     #ctl{gap:8px;padding-left:8px;padding-right:8px;align-items:flex-end}
     #joy{flex:0 0 140px;transform:scale(.78);transform-origin:bottom left}
     /* O joystick visual é posicionado pelo JavaScript; não fixar left/top com !important. */
@@ -3905,7 +3906,7 @@ function ui(){
     }
   });
   const ce=$('combo');
-  if(ce){if(combo>=3){ce.textContent='x'+combo;ce.style.opacity=1;ce.style.transform='scale('+(1+combo*0.03)+')'}else ce.style.opacity=0;}
+  if(ce){if(combo>=3){ce.textContent='x'+combo;ce.style.opacity=1;ce.style.transform='scale('+(1+Math.min(combo,12)*0.025)+')'}else ce.style.opacity=0;}
 }
 
 (()=>{
