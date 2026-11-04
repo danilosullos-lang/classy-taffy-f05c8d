@@ -1590,7 +1590,7 @@ function rpgWorldPrepare(gltf,height,key){
   model.updateMatrixWorld(true);
   const box=new T.Box3().setFromObject(model),size=box.getSize(new T.Vector3());
   const h=Math.max(.01,size.y||Math.max(size.x,size.z));
-  model.scale.setScalar(height/h);
+  if(Number(height)>0)model.scale.setScalar(height/h);
   model.updateMatrixWorld(true);
   const normalized=new T.Box3().setFromObject(model);
   model.userData.rpgGroundOffset=-normalized.min.y;
@@ -1679,6 +1679,7 @@ rpgWorldLoad('tree2','/assets/world/trees/tree2.glb',8);
 rpgWorldLoad('tree3','/assets/world/trees/tree3.glb',10);
 rpgWorldLoad('bush','/assets/world/trees/bush.glb',1.7);
 rpgWorldLoad('castle','/assets/world/castle-construction/castle-starter.glb',24);
+rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/assets/28840/v1/model.glb',0);
 rpgWorldLoad('palm','/assets/world/desert/PalmTree_Art.glb',11);
 rpgWorldLoad('dune','/assets/world/desert/Dune_Sand.glb',4);
 rpgWorldLoad('temple','/assets/world/desert/TempleArch01_Art.glb',8);
@@ -1857,8 +1858,10 @@ function rpgWorldBuildTown(group,index){
 function rpgWorldChunk(index){
   const group=new T.Group();group.name='RPGWorldChunk_'+index;
   const base=index*90;
-  if(index===0||index===Math.floor(20000/90)||Math.abs(index)%28===14)rpgWorldBuildTown(group,index);
-  for(let i=0;i<(LOW_MEM?8:14);i++){
+  const useStarterRealm=index===0&&!!RPG_WORLD.models.starterRealm;
+  if((index===0&&!useStarterRealm)||index===Math.floor(20000/90)||Math.abs(index)%28===14)rpgWorldBuildTown(group,index);
+  if(useStarterRealm)rpgWorldPlace(group,'starterRealm',0,0,1,0,0);
+  if(!useStarterRealm)for(let i=0;i<(LOW_MEM?8:14);i++){
     const seed=index*37+i*13,side=i%2===0?-1:1;
     const rz=base+rpgWorldSeed(seed+1)*90;
     const offset=side*(20+rpgWorldSeed(seed+2)*48);
@@ -1920,7 +1923,7 @@ function updateRpgWorld(){
     }
   }
   window.__rpgWorldDebug={
-    freeRoam:true,waterVisible:!!(typeof water!=='undefined'&&water.visible),
+    freeRoam:true,starterRealmLoaded:!!RPG_WORLD.models.starterRealm,starterRealmSource:'3DAssets.dev Medieval MMO Starter Realm (CC0-1.0)',waterVisible:!!(typeof water!=='undefined'&&water.visible),
     groundLoaded:!!openWorldGround,playerX:Number(st.d||0),playerZ:Number(z||0),
     biome:typeof zi!=='undefined'?ZN[zi].n:'unknown',
     villageAssetsLoaded:Object.keys(RPG_WORLD.models).filter(k=>k.startsWith('village')).length,
