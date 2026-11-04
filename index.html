@@ -1930,7 +1930,9 @@ function updateRpgWorld(){
   window.__rpgCollisionDebug={
     blocked:(d,z)=>rpgTownBlocked(Number(d)||0,Number(z)||0),
     solidCount:Array.from(RPG_TOWN_SOLIDS.values()).reduce((n,list)=>n+list.length,0),
-    chunkCount:RPG_TOWN_SOLIDS.size
+    chunkCount:RPG_TOWN_SOLIDS.size,
+    chunks:Array.from(RPG_TOWN_SOLIDS.entries()).map(([index,solids])=>({index,count:solids.length})),
+    solidRecords:Array.from(RPG_TOWN_SOLIDS.entries()).flatMap(([index,solids])=>solids.map(r=>({index,...r})))
   };
 }
 function clearRpgDungeonRewards(){
