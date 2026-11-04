@@ -508,8 +508,9 @@ const { chromium } = require('playwright');
       archerRuntime.projectile.origin[1]-archerRuntime.projectile.playerY<.65||
       archerRuntime.warriorArrowBlocked.blocked!==true||
       archerRuntime.clipMap.attack!==archerRuntime.clipMap.shoot||
-      !/(shoot|attack|archery|ranged|fire)/i.test(archerRuntime.clipMap.attack||'')||
-      /(running|walking|holding)/i.test(archerRuntime.clipMap.attack||'')||
+      !/(shoot|release|fire)/i.test(archerRuntime.clipMap.attack||'')||
+      /(running|walking|holding|aiming|reload|draw)/i.test(archerRuntime.clipMap.attack||'')||
+      !/(jump|land)/i.test(archerRuntime.clipMap.jump||'')||
       /(attack|slash|melee|sword|shoot|cast)/i.test(archerRuntime.clipMap.jump||'')){
       throw new Error('Skin, animação, arco ou origem do projétil do Arqueiro incorretos: '+JSON.stringify(archerRuntime));
     }
