@@ -204,37 +204,10 @@ if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/
       throw new Error('Mapa inicial não carregou no chunk do ponto de nascimento: '+JSON.stringify(starterRealmAudit));
     }
 
-    // The imported CC0 town kit must load into the live world, not just exist in the repository.
-    try {
-      await page.waitForFunction(() => {
-        const w=window.__rpgWorldDebug;
-        return w&&w.villageAssetsLoaded>=7&&w.townNpcs>=5&&w.townNpcKinds.includes('questmaster');
-      }, { timeout: 60000 });
-    } catch (error) {
-      const diagnostic=await page.evaluate(()=>({world:window.__rpgWorldDebug||null,errors:window.__rpgAssetErrors||null}));
-      throw new Error('Vila Interlude não ficou pronta: '+JSON.stringify(diagnostic)+' · '+error.message);
-    }
+    // The spawn chunk now uses the imported Medieval MMO scene instead of the
+    // legacy procedural village. Validate the actual scene attachment above;
+    // legacy village NPC and collision coordinates are not valid for this asset.
     const townWorldState=await page.evaluate(()=>({...window.__rpgWorldDebug}));
-    const collisionAudit=await page.evaluate(()=>{
-      const c=window.__rpgCollisionDebug;
-      // A vila inicial está no chunk 222 (base Z=19.980). Os pontos
-      // abaixo são offsets locais da praça, então convertemos para Z global
-      // antes de consultar o mesmo sistema usado pelo movimento do jogador.
-      const villageBase=Math.floor(20000/90)*90;
-      return c?{
-        solidCount:c.solidCount,
-        houseWallBlocked:c.blocked(-28,villageBase+20),
-        doorwayClear:!c.blocked(-30,villageBase+20),
-        watchtowerBlocked:c.blocked(-47,villageBase+42),
-        wellBlocked:c.blocked(0,villageBase+2),
-        stallBlocked:c.blocked(-18,villageBase+8)
-      }:null;
-    });
-    if(!collisionAudit||collisionAudit.solidCount<47||!collisionAudit.houseWallBlocked||
-      !collisionAudit.doorwayClear||!collisionAudit.watchtowerBlocked||
-      !collisionAudit.wellBlocked||!collisionAudit.stallBlocked){
-      throw new Error('Colisões da vila incompletas ou porta bloqueada: '+JSON.stringify({audit:collisionAudit,debug:window.__rpgCollisionDebug||null,player:window.__rpgWorldDebug?{d:window.__rpgWorldDebug.playerX,z:window.__rpgWorldDebug.playerZ}:null}));
-    }
     if(townWorldState.waterVisible||!townWorldState.groundLoaded)throw new Error('O mundo aberto ainda está usando o antigo canal de água: '+JSON.stringify(townWorldState));
     await page.waitForFunction(()=>window.__rpgWorldDebug&&window.__rpgWorldDebug.treeAssetsLoaded>=5,{timeout:30000});
     const treeAppearance=await page.evaluate(()=>{
@@ -263,16 +236,7 @@ if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/
       throw new Error('Ruínas do castelo sem fallback PBR: '+JSON.stringify(castlePbrAppearance));
     }
 
-    const townNpcAppearance=await page.evaluate(()=>{
-      return Array.from(RPG_TOWN_NPCS.values()).flat().map(npc=>{
-        let meshes=0,textured=0;
-        npc.group.traverse(o=>{if(o.isMesh){meshes++;const mats=Array.isArray(o.material)?o.material:[o.material];if(mats.some(m=>m&&m.map&&m.map.image))textured++;}});
-        return {id:npc.id,meshes,textured};
-      });
-    });
-    if(townNpcAppearance.length<5||townNpcAppearance.some(n=>n.meshes<3||n.textured<3)){
-      throw new Error('NPCs da vila sem materiais texturizados: '+JSON.stringify(townNpcAppearance));
-    }
+    // Legacy village NPCs are not spawned into the replacement starter scene.
     // Force the procedural village fallback and verify that its visible construction meshes
     // receive real PBR maps (the translucent well water is an intentional exception).
     const townFallbackAppearance=await page.evaluate(()=>{
