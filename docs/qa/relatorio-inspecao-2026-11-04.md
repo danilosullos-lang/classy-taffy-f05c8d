@@ -59,3 +59,9 @@ URL: https://classy-taffy-f05c8d.onrender.com
 
 ## Conclusão
 A inspeção confirma três pontos que merecem investigação/correção, mas não encontrou prova de ausência generalizada de texturas. O escopo foi limitado a Talking Island / Campos de Valdora. Não declarar o jogo “100% pronto” até percorrer as demais regiões e validar cada classe/monstro/skill.
+
+## Correção aplicada após a inspeção
+- Commit: `1db0b11f04995aa1f46728048de9d369770b0c9f`.
+- O Guerreiro J1 deixou de usar `Barbarian.glb` (personagem com capacete de urso) e passou a usar `Knight.glb`, visual humanoide de cavaleiro, mais coerente com a identidade visual medieval solicitada.
+- A mudança é apenas no mapeamento da skin. A validação visual em produção ainda está pendente.
+- No momento do registro, o GitHub não retornou checks nem workflow runs para esse commit; não há confirmação de deploy do Render.
