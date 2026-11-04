@@ -7957,7 +7957,7 @@ function fldMerge(parts){
 function fldGrassGeo(seed){
   const rg=mul(seed),B=60,pos=new Float32Array(B*9),col=new Float32Array(B*9),base=[.08,.46,.12],tip=[.34,.84,.18];
   for(let b=0;b<B;b++){
-    const a=rg()*6.283,r=Math.sqrt(rg())*4.5,bx=Math.cos(a)*r,bz=Math.sin(a)*r,h=.9+rg()*1.0,w=.17,an=rg()*3.14,dx=Math.cos(an)*w,dz=Math.sin(an)*w,l1=(rg()-.5)*1.0,l2=(rg()-.5)*1.0,f=.85+rg()*.3;
+    const a=rg()*6.283,r=Math.sqrt(rg())*3.2,bx=Math.cos(a)*r,bz=Math.sin(a)*r,h=.22+rg()*.22,w=.11,an=rg()*3.14,dx=Math.cos(an)*w,dz=Math.sin(an)*w,l1=(rg()-.5)*.55,l2=(rg()-.5)*.55,f=.85+rg()*.3;
     const v=[bx-dx,0,bz-dz,bx+dx,0,bz+dz,bx+l1,h,bz+l2],c=[...base,...base,...tip];
     for(let i=0;i<9;i++){pos[b*9+i]=v[i];col[b*9+i]=c[i]*f}}
   const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(pos,3));g.setAttribute('color',new T.BufferAttribute(col,3));g.computeVertexNormals();return g}
@@ -8032,7 +8032,7 @@ function fldMakeCell(i,j){
     else if(b===2)add(r<.8?'snowpine':r<.92?'icerock':'crystal',x,z,.9+r2*1.1,-.1);
     else if(b===3)add(r<.55?'cactus':r<.7?'deadtree':r<.95?'sandrock':'rock',x,z,.8+r2*1.0,-.05);
     else add(r<.45?'obsidian':r<.7?'deadtree':'lavarock',x,z,.8+r2*1.0,-.05)}
-  for(let k=0;k<nq(7);k++){const x=x0+rg()*CELL,z=z0+rg()*CELL,b=fldBiome(x,z);if((b>1&&b!==3)||b===4)continue;if(b===3&&rg()>.3)continue;const h=fieldH(x,z);if(h<FWL+.5||h>12||slope(x,z,h)>.5)continue;add('grass',x,z,1+rg()*.8,-.05)}
+  for(let k=0;k<nq(7);k++){const x=x0+rg()*CELL,z=z0+rg()*CELL,b=fldBiome(x,z);if((b>1&&b!==3)||b===4)continue;if(b===3&&rg()>.3)continue;const h=fieldH(x,z);if(h<FWL+.5||h>12||slope(x,z,h)>.5)continue;add('grass',x,z,.75+rg()*.45,-.05)}
   for(let k=0;k<nq(3);k++){const x=x0+rg()*CELL,z=z0+rg()*CELL,h=fieldH(x,z),sl=slope(x,z,h);if(h>10&&h<30&&sl>.4&&sl<1.6&&rg()<.7)add('boulder',x,z,1+rg()*1.4,-.2)}
   for(let k=0;k<nq(7);k++){const x=x0+rg()*CELL,z=z0+rg()*CELL,b=fldBiome(x,z);if(b>1)continue;const h=fieldH(x,z);if(h<FWL+.6||h>11||slope(x,z,h)>.45)continue;add('flower',x,z,.9+rg()*.6,-.03)}
   for(let k=0;k<nq(7);k++){const x=x0+rg()*CELL,z=z0+rg()*CELL,h=fieldH(x,z),b=fldBiome(x,z);
