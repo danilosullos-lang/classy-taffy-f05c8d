@@ -43,6 +43,7 @@ export function issueToken(userId) {
 }
 export function verifyToken(token) {
   if (typeof token !== 'string' || token.length > 4096) return null;
+  const key = secret();
   const parts = token.split('.');
   if (parts.length !== 3) return null;
   try {
@@ -50,7 +51,7 @@ export function verifyToken(token) {
     const parsedHeader = JSON.parse(Buffer.from(header, 'base64url').toString('utf8'));
     const claims = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
     if (parsedHeader.alg !== 'HS256' || parsedHeader.typ !== 'JWT') return null;
-    const expected = createHmac('sha256', secret()).update(header + '.' + payload).digest('base64url');
+    const expected = createHmac('sha256', key).update(header + '.' + payload).digest('base64url');
     const now = Math.floor(Date.now() / 1000);
     if (!equal(signature, expected) || claims.iss !== 'aetheria-rpg' ||
         typeof claims.sub !== 'string' || !claims.sub ||
