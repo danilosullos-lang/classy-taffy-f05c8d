@@ -4151,11 +4151,21 @@ const CLASS_SKIN_PREVIEWS={
  sumo:{name:'Sumo Sacerdote — KayKit',desc:'Aparência de túnica e cajado para a especialização de suporte.',url:'/skins/classes/Mage.glb'}
 };
 let _cpPreview={renderer:null,scene:null,camera:null,model:null,mixer:null,clock:null,raf:0,loading:''},_cpPreviewRequest=0;
+// Personagens humanoides fantasy CC0 (Gobkit Free Character Pack Vol.3).
+// Os arquivos incluem rig humanoide e clipes Idle/Walk/Run/Attack/Hit/Death/Special.
 const PLAYABLE_CLASS_SKINS={
- guerreiro:'/skins/classes/Barbarian.glb',cavaleiro:'/skins/classes/Knight.glb',paladino:'/skins/classes/Knight.glb',templario:'/skins/classes/Knight.glb',
- mago:'/skins/classes/Mage.glb',arquimago:'/skins/classes/Mage.glb',sacerdote:'/skins/classes/Mage.glb',sumo:'/skins/classes/Mage.glb',
- ladino:'/skins/classes/Rogue_Hooded.glb',assassino:'/skins/classes/Rogue_Hooded.glb',
- arqueiro:'/skins/lyra-archer-animated.glb',ranger:'/skins/lyra-archer-animated.glb'
+ guerreiro:'https://gobkit.com/freebies/human003/HeavyWarrior.glb',
+ cavaleiro:'https://gobkit.com/freebies/human003/KnightCaptain.glb',
+ paladino:'https://gobkit.com/freebies/human003/KnightCaptain.glb',
+ templario:'https://gobkit.com/freebies/human003/KnightCaptain.glb',
+ mago:'https://gobkit.com/freebies/human006/OrcWarShaman.glb',
+ arquimago:'https://gobkit.com/freebies/human006/OrcWarShaman.glb',
+ sacerdote:'https://gobkit.com/freebies/human003/Priestess.glb',
+ sumo:'https://gobkit.com/freebies/human003/Priestess.glb',
+ ladino:'https://gobkit.com/freebies/human003/Scout.glb',
+ assassino:'https://gobkit.com/freebies/human003/Scout.glb',
+ arqueiro:'https://gobkit.com/freebies/human003/Archer.glb',
+ ranger:'https://gobkit.com/freebies/human003/Archer.glb'
 };
 function playableClassSkin(id){
   // A classe escolhida nunca deve mudar silenciosamente por causa do perfil gráfico.
@@ -5879,7 +5889,7 @@ function loadExternalFrogSkin(url,statusEl){
       });
       // KayKit exports face +Z; the RPG forward direction is -Z.
       // Rotate the imported rig once so the face and forward locomotion agree.
-      if(raw.indexOf('/skins/classes/')===0)model.rotation.y=Math.PI;
+      if(raw.indexOf('/skins/classes/')===0||raw.indexOf('gobkit.com/freebies/')>=0)model.rotation.y=Math.PI;
       model.updateMatrixWorld(true);
       const normalizedBox=new T.Box3().setFromObject(model);
       const normalizedSize=normalizedBox.getSize(new T.Vector3());
