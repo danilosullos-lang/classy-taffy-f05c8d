@@ -51,6 +51,8 @@ jobs:
           fi
       - name: Check game integrity
         run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Install account API dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
       - name: Check inline JavaScript syntax
         run: |
           python - <<'PY'
@@ -78,6 +80,8 @@ jobs:
           node --check assets/combat/nj-mmo-combat-core.js
           node --check assets/engine/aetheria-engine.js
           node tests/engine-foundation.cjs
+          node tests/account-client.cjs
+          node tests/auth-core.mjs
       - name: Test imported combat engine
         run: node tests/combat-core.cjs
       - name: Test monster progression
