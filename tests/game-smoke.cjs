@@ -383,6 +383,18 @@ const { chromium } = require('playwright');
     if (idleState.state !== 'idle') {
       throw new Error('A personagem não voltou à animação idle ao soltar os controles: '+JSON.stringify(idleState));
     }
+    const playerVisibility=await page.evaluate(()=>{
+      let meshes=0,visibleMeshes=0;
+      if(_externalFrogSkin)_externalFrogSkin.traverse(o=>{if(o.isMesh&&o.geometry){meshes++;if(o.visible)visibleMeshes++}});
+      return {playerRootVisible:!!(frog&&frog.visible),externalSkinVisible:!!(_externalFrogSkin&&_externalFrogSkin.visible),
+        meshes,visibleMeshes,skinStatus:window.__rpgSkinLoadDebug?.status||null};
+    });
+    if(!playerVisibility.playerRootVisible||!playerVisibility.externalSkinVisible||
+      playerVisibility.meshes<1||playerVisibility.visibleMeshes<1){
+      throw new Error('O personagem ficou invisível após andar/correr: '+JSON.stringify(playerVisibility));
+    }
+    const hudNaN=await page.evaluate(()=>/\\bNaN\\b/.test(document.body.innerText));
+    if(hudNaN)throw new Error('O HUD exibiu um valor NaN após a movimentação.');
 
     // Exercise camera drag on a phone-sized viewport and verify the low-memory
     // renderer keeps its reduced GPU pixel budget without losing WebGL context.
@@ -551,6 +563,7 @@ const { chromium } = require('playwright');
       walkingState,
       runningState,
       idleState,
+      playerVisibility,
       playerAnimationCheck,
       treeAppearance,
       townNpcAppearance,
