@@ -536,9 +536,15 @@ const { chromium } = require('playwright');
         const projectile={...(window.__rpgCombatVisualDebug||{})};
         updateBowArrows(1);
         const clipMap={...(window.__rpgPlayerAnimationDebug.clipMap||{})};
+        const roleAttackMap={};
+        for(const role of ['fighter','tank','dagger','mage','healer','support','archer']){
+          _mapKayKitPlayerClips(_externalFrogAvailableClips,role);
+          roleAttackMap[role]=_externalFrogClips.attack&&_externalFrogClips.attack.name||null;
+        }
+        _mapKayKitPlayerClips(_externalFrogAvailableClips,'archer');
         playLineageCombatAnimation('archer','q');
         const attackClip=frog.userData._animOverride?.clip?.name||null;
-        return {ok:skinReady&&weaponReady,role:window.__rpgPlayerAnimationDebug.role,
+        return {ok:skinReady&&weaponReady,role:window.__rpgPlayerAnimationDebug.role,roleAttackMap,
           skin:window.__rpgPlayerAnimationDebug.skin,clips:window.__rpgAnimationAssetDebug.clips,
           clipMap,attackClip,allClipNames:_externalFrogAvailableClips.map(c=>c.name),weapon,projectile,warriorArrowBlocked};
       }finally{
@@ -556,6 +562,13 @@ const { chromium } = require('playwright');
       archerRuntime.clipMap.attack!==archerRuntime.clipMap.shoot||
       archerRuntime.attackClip!==archerRuntime.clipMap.shoot||
       !/(shoot|release|fire)/i.test(archerRuntime.clipMap.attack||'')||
+      !/(slash|melee|sword|chop)/i.test(archerRuntime.roleAttackMap.fighter||'')||
+      !/(slash|melee|sword|chop)/i.test(archerRuntime.roleAttackMap.tank||'')||
+      !/(slash|melee|sword|chop)/i.test(archerRuntime.roleAttackMap.dagger||'')||
+      !/(spell|cast)/i.test(archerRuntime.roleAttackMap.mage||'')||
+      !/(spell|cast)/i.test(archerRuntime.roleAttackMap.healer||'')||
+      !/(spell|cast)/i.test(archerRuntime.roleAttackMap.support||'')||
+      !/(shoot|release|fire)/i.test(archerRuntime.roleAttackMap.archer||'')||
       /(running|walking|holding|aiming|reload|draw)/i.test(archerRuntime.clipMap.attack||'')||
       !/(jump|land)/i.test(archerRuntime.clipMap.jump||'')||
       /(attack|slash|melee|sword|shoot|cast)/i.test(archerRuntime.clipMap.jump||'')){
