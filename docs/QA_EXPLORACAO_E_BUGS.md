@@ -100,3 +100,13 @@ Status: pendente de teste visual por classe e de VFX específicos por habilidade
 - Modo leve do navegador móvel desativa a prévia 3D para todas as classes, mantendo a criação disponível.
 - Nenhum texto literal “NaN” apareceu na tela inicial/termos/seletor. O cenário específico de save antigo com coordenada inválida ainda requer teste de retomada; a correção no código já valida o número e usa “posição salva” como fallback.
 - Deploy dos documentos de QA também ficou LIVE; último registro no Render confirma atualização automática a cada commit.
+
+
+## QA-011 — Áudio dos monstros (04/11/2026)
+
+- Catálogo já presente no repositório: 234 arquivos de áudio CC0 em 6 pacotes; 100 arquivos pertencem a pacotes de criaturas/monstros.
+- Mapa de áudio existente: 220 perfis por caminho de modelo, cada um com pools de ataque, aggro, dano, morte e ocioso.
+- Causa encontrada no código: um caminho de ataque chamava o som sem passar a referência do monstro, fazendo cair no pool genérico; além disso, sons próximos usavam até 82% do volume do controle e havia limitação global por tipo de som.
+- Correção publicada: passar a referência do monstro em todos os ataques; aguardar o mapa individual antes de usar fallback; manter fallback se o mapa falhar; volume dos sons de criaturas reduzido por evento (ocioso 13%, alerta 24%, ataque 28%, dano 22%, morte 30%, multiplicados pelo controle geral e distância); variação leve de pitch e cooldown por criatura/evento.
+- Deploy Render: commit `1833cab6b30c673e1e9ea233a63b366e63ed05fc`, status LIVE.
+- Regressão automatizada: `catalog.json` e `audio-map.json` responderam HTTP 200. Não havia monstro visível na área de teste, portanto não foi possível confirmar auditivamente a diferença de timbre nem o volume real durante combate. Marcar como correção de código publicada, validação auditiva pendente.
