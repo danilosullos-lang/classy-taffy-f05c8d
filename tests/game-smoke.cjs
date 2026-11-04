@@ -666,6 +666,21 @@ const { chromium } = require('playwright');
       if (!result.reaction || !result.death) throw new Error('Faltam reações de dano ou morte.');
       return result;
     });
+    const mageFireVfx=await page.evaluate(async()=>{
+      _mapKayKitPlayerClips(_externalFrogAvailableClips,'mage');
+      playLineageCombatAnimation('mage','q');
+      const castClip=frog.userData._animOverride?.clip?.name||null;
+      const start=window.__rpgMageFireVfxDebug.fireballs;
+      const meteors=window.__rpgMageFireVfxDebug.meteors;
+      fxFireProjectile(new THREE.Vector3(frog.position.x+2,frog.position.y+.8,frog.position.z-4),{duration:.28,scale:1});
+      fxMeteorShower([new THREE.Vector3(frog.position.x-2,.2,frog.position.z-5)]);
+      await new Promise(resolve=>setTimeout(resolve,750));
+      return {castClip,debug:{...window.__rpgMageFireVfxDebug},fireballDelta:window.__rpgMageFireVfxDebug.fireballs-start,meteorDelta:window.__rpgMageFireVfxDebug.meteors-meteors};
+    });
+    if(!mageFireVfx.castClip||!/(spell|cast|magic|heal|staff)/i.test(mageFireVfx.castClip)||
+      mageFireVfx.fireballDelta<1||mageFireVfx.meteorDelta<1||mageFireVfx.debug.impacts<2){
+      throw new Error('Animação ou efeitos de fogo do mago não foram executados: '+JSON.stringify(mageFireVfx));
+    }
     if (pageErrors.length) throw new Error('Erros JavaScript durante a execução:\n' + pageErrors.join('\n'));
 
     console.log(JSON.stringify({
