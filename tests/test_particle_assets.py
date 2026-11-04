@@ -10,6 +10,6 @@ class ParticleAssetsTest(unittest.TestCase):
             path=ROOT/item["file"]
             data=path.read_bytes()
             self.assertGreater(len(data),1024,item["file"])
-            self.assertEqual(data[:8],b"\\x89PNG\\r\\n\\x1a\\n",item["file"])
+            self.assertEqual(data[:8],bytes([137,80,78,71,13,10,26,10]),item["file"])
         self.assertTrue((root/"LICENSE.txt").is_file())
 if __name__=="__main__": unittest.main()
