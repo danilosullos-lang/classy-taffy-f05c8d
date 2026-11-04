@@ -494,7 +494,7 @@ const { chromium } = require('playwright');
         const clipMap={...(window.__rpgPlayerAnimationDebug.clipMap||{})};
         return {ok:skinReady&&weaponReady,role:window.__rpgPlayerAnimationDebug.role,
           skin:window.__rpgPlayerAnimationDebug.skin,clips:window.__rpgAnimationAssetDebug.clips,
-          clipMap,weapon,projectile,warriorArrowBlocked};
+          clipMap,allClipNames:_externalFrogAvailableClips.map(c=>c.name),weapon,projectile,warriorArrowBlocked};
       }finally{
         Object.keys(sv).forEach(k=>delete sv[k]);Object.assign(sv,snapshot);
         inv.splice(0,inv.length,...inventorySnapshot);uid=uidSnapshot;save(true);
