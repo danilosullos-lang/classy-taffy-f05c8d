@@ -1651,7 +1651,9 @@ function rpgWorldPumpLoads(){
     const finish=()=>{RPG_WORLD_LOAD_ACTIVE=Math.max(0,RPG_WORLD_LOAD_ACTIVE-1);rpgWorldPumpLoads()};
     RPG_WORLD.loader.load(task.path,gltf=>{
       try{
-        RPG_WORLD.models[task.key]=rpgWorldPrepare(gltf,task.height,task.key);RPG_WORLD.ready++;RPG_WORLD.lastZ=Infinity;
+        RPG_WORLD.models[task.key]=rpgWorldPrepare(gltf,task.height,task.key);
+        if(task.key==='starterRealm'){const oldChunk=RPG_WORLD.chunks.get(0);if(oldChunk){rpgWorldDisposeChunk(oldChunk,0);RPG_WORLD.chunks.delete(0)}}
+        RPG_WORLD.ready++;RPG_WORLD.lastZ=Infinity;
         if(task.key.startsWith('npc'))RPG_TOWN_NPC_CLIPS[task.key]=gltf.animations||[];
         delete RPG_WORLD.errors[task.key];
         const villageReady=!!(RPG_WORLD.models.villageWall&&RPG_WORLD.models.villageDoorWall&&RPG_WORLD.models.villageRoof);
@@ -1674,12 +1676,12 @@ function rpgWorldLoad(key,path,height){
   if(!RPG_WORLD.loader){RPG_WORLD.errors[key]={path,message:'GLTFLoader indisponível'};return;}
   RPG_WORLD.requested[key]=path;RPG_WORLD_LOAD_QUEUE.push({key,path,height});rpgWorldPumpLoads();
 }
+rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/assets/28840/v1/model.glb',0);
 rpgWorldLoad('tree1','/assets/world/trees/tree1.glb',9);
 rpgWorldLoad('tree2','/assets/world/trees/tree2.glb',8);
 rpgWorldLoad('tree3','/assets/world/trees/tree3.glb',10);
 rpgWorldLoad('bush','/assets/world/trees/bush.glb',1.7);
 rpgWorldLoad('castle','/assets/world/castle-construction/castle-starter.glb',24);
-rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/assets/28840/v1/model.glb',0);
 rpgWorldLoad('palm','/assets/world/desert/PalmTree_Art.glb',11);
 rpgWorldLoad('dune','/assets/world/desert/Dune_Sand.glb',4);
 rpgWorldLoad('temple','/assets/world/desert/TempleArch01_Art.glb',8);
