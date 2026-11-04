@@ -1652,7 +1652,7 @@ function rpgWorldPumpLoads(){
     RPG_WORLD.loader.load(task.path,gltf=>{
       try{
         RPG_WORLD.models[task.key]=rpgWorldPrepare(gltf,task.height,task.key);
-        if(task.key==='starterRealm'){const oldChunk=RPG_WORLD.chunks.get(0);if(oldChunk){rpgWorldDisposeChunk(oldChunk,0);RPG_WORLD.chunks.delete(0)}}
+        if(task.key==='starterRealm'){const realmChunk=Math.floor(20000/90),oldChunk=RPG_WORLD.chunks.get(realmChunk);if(oldChunk){rpgWorldDisposeChunk(oldChunk,realmChunk);RPG_WORLD.chunks.delete(realmChunk)}}
         RPG_WORLD.ready++;RPG_WORLD.lastZ=Infinity;
         if(task.key.startsWith('npc'))RPG_TOWN_NPC_CLIPS[task.key]=gltf.animations||[];
         delete RPG_WORLD.errors[task.key];
@@ -1718,7 +1718,7 @@ function rpgWorldGround(offset,x,z){try{return FLDON?fieldH(x,z):gnd(offset,z)}c
 function rpgWorldPlace(group,key,offset,z,scale=1,rotation=0,yOffset=0){
   const source=RPG_WORLD.models[key];if(!source)return;
   const x=FLDON?(FLD.x+offset):(cx(z)+offset),y=rpgWorldGround(offset,x,z);
-  const model=source.clone(true);model.scale.multiplyScalar(scale);
+  const model=source.clone(true);model.userData.rpgWorldAsset=key;model.scale.multiplyScalar(scale);
   model.traverse(o=>{if(o.isMesh)o.userData.rpgSharedGeometry=true});
   if(key.startsWith('village')){
     const tintHex={human:0xffffff,elf:0xdcebd4,dark_elf:0xe1d4ee,orc:0xecd9bc,dwarf:0xd6dee8}[sv&&sv.race||'human']||0xffffff,tint=new T.Color(tintHex);
@@ -1860,9 +1860,9 @@ function rpgWorldBuildTown(group,index){
 function rpgWorldChunk(index){
   const group=new T.Group();group.name='RPGWorldChunk_'+index;
   const base=index*90;
-  const useStarterRealm=index===0&&!!RPG_WORLD.models.starterRealm;
-  if((index===0&&!useStarterRealm)||index===Math.floor(20000/90)||Math.abs(index)%28===14)rpgWorldBuildTown(group,index);
-  if(useStarterRealm)rpgWorldPlace(group,'starterRealm',0,0,1,0,0);
+  const useStarterRealm=index===Math.floor(20000/90)&&!!RPG_WORLD.models.starterRealm;
+  if(!useStarterRealm&&(index===0||index===Math.floor(20000/90)||Math.abs(index)%28===14))rpgWorldBuildTown(group,index);
+  if(useStarterRealm)rpgWorldPlace(group,'starterRealm',0,20000,1,0,0);
   if(!useStarterRealm)for(let i=0;i<(LOW_MEM?8:14);i++){
     const seed=index*37+i*13,side=i%2===0?-1:1;
     const rz=base+rpgWorldSeed(seed+1)*90;
@@ -4490,6 +4490,7 @@ function rpgSpellCastOrigin(){
    const p=new T.Vector3();hand.getWorldPosition(p);
    const forward=new T.Vector3(0,0,-.18).applyQuaternion(frog.quaternion);
    p.add(forward).y+=.12;
+   p.y=Math.max(p.y,frog.position.y+1.42);
    return {position:p,source:'right-hand'};
  }
  const forward=new T.Vector3(0,0,-.2).applyQuaternion(frog.quaternion);
