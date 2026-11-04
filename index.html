@@ -3033,6 +3033,10 @@ function rpgLoadAudioCatalog(){
 function rpgAssetSound(kind,distance,enemy){
   if(RPG_AUDIO.state==='idle')rpgLoadAudioCatalog();
   if(RPG_AUDIO.state!=='ready')return false;
+  if(enemy&&['monsterAttack','monsterAggro','enemyHit','enemyDown','monsterIdle'].includes(kind)&&RPG_MONSTER_AUDIO.state!=='ready'){
+    if(RPG_MONSTER_AUDIO.state==='idle')rpgLoadMonsterAudioMap();
+    return true;
+  }
   const priorities={
     enemyHit:[['creature_hurt'],['hurt_'],['grunt_'],['creature_misc']],
     enemyDown:[['creature_die'],['die_'],['scream_'],['hurt_']],
@@ -3069,14 +3073,21 @@ function rpgAssetSound(kind,distance,enemy){
     pool=files.filter(a=>terms.some(t=>a.file.toLowerCase().split('/').pop().includes(t)));
   }
   if(!pool.length)return false;
-  const now=performance.now(),throttle=kind==='monsterIdle'?9000:140;if(now-(RPG_AUDIO.last[kind]||0)<throttle)return true;
-  RPG_AUDIO.last[kind]=now;
+  const monsterKind=['monsterAttack','monsterAggro','enemyHit','enemyDown','monsterIdle'].includes(kind);
+  const now=performance.now(),throttle=kind==='monsterIdle'?9000:monsterKind?260:140;
+  const soundKey=monsterKind&&enemy?(String(enemy.assetUrl||enemy.t||enemy.n||'monster')+':'+kind):kind;
+  if(now-(RPG_AUDIO.last[soundKey]||0)<throttle)return true;
+  RPG_AUDIO.last[soundKey]=now;
   const item=pool[Math.floor(Math.random()*pool.length)];
   try{
     const audio=new Audio('/'+item.file);audio.preload='none';
-    const master=Math.max(0,Math.min(1,(sv.opt.sfxv==null?1:sv.opt.sfxv)*.82));
-    const attenuation=Number.isFinite(distance)?Math.max(.12,1-Math.max(0,distance-2)/38):1;
-    audio.volume=master*attenuation;audio.play().catch(()=>{});return true;
+    const master=Math.max(0,Math.min(1,(sv.opt.sfxv==null?1:sv.opt.sfxv)*.72));
+    const attenuation=Number.isFinite(distance)?Math.max(.08,1-Math.max(0,distance-2)/38):1;
+    const creatureLevel={monsterIdle:.13,monsterAggro:.24,monsterAttack:.28,enemyHit:.22,enemyDown:.3};
+    const creatureGain=monsterKind?(creatureLevel[kind]||.24):1;
+    audio.volume=Math.max(0,Math.min(1,master*attenuation*creatureGain));
+    if(monsterKind)audio.playbackRate=.96+Math.random()*.08;
+    audio.play().catch(()=>{});return true;
   }catch(_){return false}
 }
 const RPG_MUSIC={audio:null,mode:'',path:'',unlocked:false};
@@ -6799,7 +6810,7 @@ function enemies(dt,now){
         rg.material.opacity=.45+.4*Math.sin(now/60);
         if(e.tm<=0){e.ph=0;e.tm=rnd(3,5);rg.visible=false;rip.userData.t=1;if(dist<8.5){if(st.y<.5){sfx('monsterAttack',dist,e);hit(e.dm)}else say('Esquivou! ✨')}}
       }
-    }else if(dist<e.r&&e.cd<=0&&st.y<.6){e._attackAnimUntil=now+650;if(e.m.userData.monsterActions)setMonsterAnimation(e,'attack');sfx('monsterAttack',dist);hit(e.dm);const th=abSum('thorns');if(th)dmgEn(e,e.dm*th/100,true);e.cd=1.3}
+    }else if(dist<e.r&&e.cd<=0&&st.y<.6){e._attackAnimUntil=now+650;if(e.m.userData.monsterActions)setMonsterAnimation(e,'attack');sfx('monsterAttack',dist,e);hit(e.dm);const th=abSum('thorns');if(th)dmgEn(e,e.dm*th/100,true);e.cd=1.3}
     const gy=e.land?gnd(e.d,e.z)+.1:0;
     e.m.position.set(cx(e.z)+e.d,gy+(e.fly?2.2:0)+Math.sin(now/300+i)*.08,e.z);
     if(!(e.slam&&e.ph===1))e.m.rotation.y=Math.atan2(-dd,-dz);
