@@ -49,6 +49,9 @@ jobs:
           Path("/tmp/aetheria-inline.js").write_text("\n".join(p.parts), encoding="utf-8")
           PY
           node --check /tmp/aetheria-inline.js
+          node --check assets/combat/nj-mmo-combat-core.js
+      - name: Test imported combat engine
+        run: node tests/combat-core.cjs
 
   browser-smoke:
     needs: integrity
