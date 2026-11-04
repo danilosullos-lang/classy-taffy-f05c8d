@@ -115,6 +115,18 @@ class GameIntegrityTests(unittest.TestCase):
         self.assertIn("window.aetheriaCheckSkinAssets", self.source)
         self.assertIn("window.__rpgSkinLoadDebug", self.source)
 
+    def test_cc0_kaykit_medieval_props_are_integrated_on_demand(self):
+        for marker in ("RPG_KAYKIT_BASE", "barrel_large.gltf.glb",
+                       "crates_stacked.gltf.glb", "chest.glb",
+                       "torch_lit.gltf.glb", "banner_blue.gltf.glb",
+                       "function rpgKaykitProp", "function rpgDecorateKaykitPoi",
+                       "rpgDecorateKaykitPoi(p,rec)"):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.source)
+        credits = ROOT / "docs" / "THIRD_PARTY_ASSETS.md"
+        self.assertTrue(credits.is_file())
+        self.assertIn("CC0 1.0", credits.read_text(encoding="utf-8"))
+
     def test_mobile_memory_guard_cannot_be_overridden_by_hd_toggle(self):
         for marker in ("const LOW_MEM=!!(", "q=LOW_MEM?'l':requested",
                        "const shadows=!LOW_MEM&&!!p[1]",
