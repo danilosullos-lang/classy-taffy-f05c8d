@@ -91,3 +91,12 @@ Status: confirmado por inspeção de arquivos/código; precisa de modelos distin
 Severidade: média (polimento visual; mecânica de classe já tem roteamento próprio).
 Evidência por inspeção do código: lineageSkill() seleciona conjuntos de habilidades por papel (fighter, tank, archer, dagger, mage, healer, support, crafter), porém grande parte usa o mesmo helper genérico de anel + explosão (fxRing/fxBurst). Isso não prova ausência de partículas, mas indica pouca diferenciação visual entre fogo, flechas, veneno, cura, escudo, gelo/raio e ultimates.
 Status: pendente de teste visual por classe e de VFX específicos por habilidade.
+
+
+## Regressão após correções — 04/11/2026
+- Deploy do commit 7ed0e8996d2cdf109bb80476358ed33310223d46 ficou LIVE no Render.
+- Teste visual não destrutivo no site publicado confirmou o rótulo da prévia do Guerreiro como “Guerreiro — KayKit” e a descrição corrigida.
+- Prévia do Mago também foi lida como “Mago — KayKit”. Arqueiro, Ladino e Sacerdote apareceram na grade, mas não foram selecionados individualmente nesta rodada; não marcar como testados.
+- Modo leve do navegador móvel desativa a prévia 3D para todas as classes, mantendo a criação disponível.
+- Nenhum texto literal “NaN” apareceu na tela inicial/termos/seletor. O cenário específico de save antigo com coordenada inválida ainda requer teste de retomada; a correção no código já valida o número e usa “posição salva” como fallback.
+- Deploy dos documentos de QA também ficou LIVE; último registro no Render confirma atualização automática a cada commit.
