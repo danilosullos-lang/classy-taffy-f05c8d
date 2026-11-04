@@ -110,3 +110,23 @@ Status: pendente de teste visual por classe e de VFX específicos por habilidade
 - Correção publicada: passar a referência do monstro em todos os ataques; aguardar o mapa individual antes de usar fallback; manter fallback se o mapa falhar; volume dos sons de criaturas reduzido por evento (ocioso 13%, alerta 24%, ataque 28%, dano 22%, morte 30%, multiplicados pelo controle geral e distância); variação leve de pitch e cooldown por criatura/evento.
 - Deploy Render: commit `1833cab6b30c673e1e9ea233a63b366e63ed05fc`, status LIVE.
 - Regressão automatizada: `catalog.json` e `audio-map.json` responderam HTTP 200. Não havia monstro visível na área de teste, portanto não foi possível confirmar auditivamente a diferença de timbre nem o volume real durante combate. Marcar como correção de código publicada, validação auditiva pendente.
+
+
+## QA-012 — PvP e arena (04/11/2026)
+
+### Sistemas encontrados
+- PvP de mundo aberto é ativado quando o personagem está em execução, nível 20 ou superior e `abs(st.d) >= 110`; a zona mostra o painel de alvos próximos (até 40 unidades) e usa CP antes de HP.
+- Dano PvP é transmitido por mensagens P2P via Trystero/WebRTC; o cliente receptor aplica limite por pacote e reduz dano recebido. Isso não é um servidor autoritativo: clientes modificados ainda podem tentar falsificar mensagens.
+- A arena atual é um minijogo de turnos Pedra-Papel-Tesoura (Ataque/Magia/Defesa), não combate 3D em tempo real. Exige dois jogadores online na mesma sala e itens para apostar; o perdedor transfere o item.
+- A tela de título não expõe a Arena. O acesso fica na aba Arena do inventário/menu após entrar no mundo. O teste visual automatizado ficou na tela de título e contou somente um jogador; não foi possível realizar duelo real nem validar painel em combate.
+
+### Problemas corrigidos no código
+- QA-012a: o resultado do abate não enviava o estado completo da vítima; um jogador que estava violeta podia ser contado como PK e receber karma indevido. Agora o estado de flag no instante da morte é enviado e só vítima pacífica gera karma.
+- QA-012b: o receptor de dano não verificava distância nem elegibilidade completa do atacante. Agora exige presença no mundo aberto, flag PvP ativo, nível mínimo e distância de até 40 unidades antes de aplicar dano.
+
+### Pendências de validação
+- Teste real com duas sessões/dispositivos e personagens nível 20+ em zona PvP.
+- Verificar CP absorvendo dano antes de HP, flags pacífico/violeta/vermelho, mortes, karma, cooldown de drop e transferência de itens.
+- Arena: testar convite, aceitar/recusar, rodadas, empate, vitória/derrota e consistência de inventário dos dois lados.
+- Recomenda-se backend autoritativo para combate e inventário antes de abrir PvP competitivo com recompensas valiosas; a implementação P2P atual não impede adulteração do cliente.
+- Nenhum pacote de áudio/modelo foi baixado nesta etapa: o problema identificado é de regra/validação de rede, não falta de assets.
