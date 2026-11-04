@@ -2844,7 +2844,8 @@ function makeMonsterNameTag(e){
   const label=(e.elite?'ELITE · ':'')+String(e.n||'Monstro')+'  Nv. '+e.level;
   ctx.fillStyle='rgba(8,12,20,.78)';ctx.beginPath();ctx.roundRect(8,8,496,64,14);ctx.fill();
   ctx.font='bold 30px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillStyle=e.elite?'#ffd45e':'#f2f5ff';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(label,256,41,476);
+  const gap=(Number(sv&&sv.lv)||1)-e.level;
+  ctx.fillStyle=e.elite?'#ffd45e':gap<=-6?'#ff7777':gap<=-3?'#ffb35c':gap>=6?'#a9a9a9':'#f2f5ff';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(label,256,41,476);
   const texture=new T.CanvasTexture(canvas);if('colorSpace' in texture&&T.SRGBColorSpace)texture.colorSpace=T.SRGBColorSpace;
   const sprite=new T.Sprite(new T.SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:false,fog:false}));
   sprite.scale.set(Math.max(2.6,Math.min(5.2,2.3+label.length*.045)),.42,1);sprite.renderOrder=20;sprite.frustumCulled=false;
@@ -2868,7 +2869,7 @@ function dmgEn0(e,d,q){
   e.hp-=d;e.m.scale.setScalar(1.18);sfx('enemyHit',0,e);fxBurst(e.m.position.x,e.m.position.y+(e.hh||1)*.55,e.m.position.z,0xffd18a,8,3,.28,true);
   if(e.hp<=0){sfx('enemyDown',0,e);fxBurst(e.m.position.x,e.m.position.y+.8,e.m.position.z,0xff9d46,22,5,.62,true);fxRing(e.m.position.x,.12,e.m.position.z,0xffa64d,2.8,.42);
 
-    e.dead=1;e.deadAt=performance.now();if(e.bar)e.bar.visible=false;if(e.nameTag)e.nameTag.visible=false;if(e.m.userData.monsterActions)setMonsterAnimation(e,'death');sv.tk=(sv.tk||0)+1;if(sv.pk&&sv.pk.karma>0){sv.pk.mobClean=(sv.pk.mobClean||0)+1;if(sv.pk.mobClean>=10){sv.pk.mobClean=0;sv.pk.karma=Math.max(0,sv.pk.karma-1);say('🕊️ Karma reduzido ao derrotar monstros');save()}}say('💥 '+e.n+' derrotado!');gain(e.xp);
+    e.dead=1;e.deadAt=performance.now();if(e.bar)e.bar.visible=false;if(e.nameTag)e.nameTag.visible=false;if(e.m.userData.monsterActions)setMonsterAnimation(e,'death');sv.tk=(sv.tk||0)+1;if(sv.pk&&sv.pk.karma>0){sv.pk.mobClean=(sv.pk.mobClean||0)+1;if(sv.pk.mobClean>=10){sv.pk.mobClean=0;sv.pk.karma=Math.max(0,sv.pk.karma-1);say('🕊️ Karma reduzido ao derrotar monstros');save()}}say('💥 '+e.n+' derrotado!');gain(AetheriaMonsterProgression.expReward(e.xp,e.level,sv.lv));
     if(e.rpgDungeonGuardian&&!e.rpgDungeonCounted){
       e.rpgDungeonCounted=true;
       if(RPG_DUNGEON.active&&RPG_DUNGEON.active.index===e.rpgDungeonIndex){
