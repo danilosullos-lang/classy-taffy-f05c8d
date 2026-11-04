@@ -1495,6 +1495,24 @@ function rpgStarterRealmBlockedAt(x,z,radius=.55){
   }
   return false;
 }
+function rpgStarterRealmCanEscape(fromX,fromZ,toX,toZ,radius=.55){
+  let overlapping=false;
+  for(const solids of RPG_STARTER_REALM_SOLIDS.values())for(const b of solids){
+    const overlaps=(x,z)=>{
+      const px=Math.max(b.minX,Math.min(x,b.maxX)),pz=Math.max(b.minZ,Math.min(z,b.maxZ));
+      const dx=x-px,dz=z-pz;return dx*dx+dz*dz<radius*radius;
+    };
+    const wasInside=overlaps(fromX,fromZ),willBeInside=overlaps(toX,toZ);
+    if(!wasInside&&willBeInside)return false;
+    if(wasInside&&willBeInside){
+      overlapping=true;
+      const mx=(b.minX+b.maxX)*.5,mz=(b.minZ+b.maxZ)*.5;
+      const before=(fromX-mx)**2+(fromZ-mz)**2,after=(toX-mx)**2+(toZ-mz)**2;
+      if(after<=before+1e-6)return false;
+    }
+  }
+  return overlapping;
+}
 function rpgTownBlocked(d,z){
   const radius=.78;
   for(const solids of RPG_TOWN_SOLIDS.values())for(const r of solids){
@@ -8520,9 +8538,9 @@ function fieldFrame(now){
         if(!okx){nx=FLD.x;FLD.vx*=.2}if(!okz){nz=FLD.z;FLD.vz*=.2}}}
     {const q=fldColAt(nx,nz,.55,st.y);if(q[0]!==nx||q[1]!==nz){const ex=q[0]-nx,ez=q[1]-nz,el=Math.hypot(ex,ez)||1,vn=(FLD.vx*ex+FLD.vz*ez)/el;if(vn<0){FLD.vx-=vn*ex/el;FLD.vz-=vn*ez/el}nx=q[0];nz=q[1]}}
     // O modo Campo Aberto usa outro controlador; sem esta etapa o personagem atravessa o GLB.
-    if(rpgStarterRealmBlockedAt(nx,nz,.55)){
-      const blockX=rpgStarterRealmBlockedAt(nx,FLD.z,.55);
-      const blockZ=rpgStarterRealmBlockedAt(FLD.x,nz,.55);
+    if(rpgStarterRealmBlockedAt(nx,nz,.55)&&!rpgStarterRealmCanEscape(FLD.x,FLD.z,nx,nz,.55)){
+      const blockX=rpgStarterRealmBlockedAt(nx,FLD.z,.55)&&!rpgStarterRealmCanEscape(FLD.x,FLD.z,nx,FLD.z,.55);
+      const blockZ=rpgStarterRealmBlockedAt(FLD.x,nz,.55)&&!rpgStarterRealmCanEscape(FLD.x,FLD.z,FLD.x,nz,.55);
       if(blockX){nx=FLD.x;FLD.vx=0}
       if(blockZ){nz=FLD.z;FLD.vz=0}
       if(!blockX&&!blockZ){nx=FLD.x;nz=FLD.z;FLD.vx=0;FLD.vz=0}
