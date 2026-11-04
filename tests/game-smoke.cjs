@@ -677,7 +677,9 @@ const { chromium } = require('playwright');
       for(const role of ['fighter','tank','archer','dagger','mage','healer','support','crafter']){
         fxClassSkillVfx(role,role==='mage'?'e':'q',[],false);
       }
-      await new Promise(resolve=>setTimeout(resolve,750));
+      // Avança o relógio de efeitos explicitamente: o smoke pode rodar com RAF reduzido/pausado.
+      for(let tick=0;tick<16;tick++)fxTick(.05);
+      await new Promise(resolve=>setTimeout(resolve,50));
       return {castClip,classVfx:{...window.__rpgClassVfxDebug.casts},debug:{...window.__rpgMageFireVfxDebug},fireballOrigin:window.__rpgMageFireVfxDebug.lastFireballOrigin,
         fireballDelta:window.__rpgMageFireVfxDebug.fireballs-start,meteorDelta:window.__rpgMageFireVfxDebug.meteors-meteors};
     });
