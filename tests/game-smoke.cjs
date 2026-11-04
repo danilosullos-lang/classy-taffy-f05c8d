@@ -427,25 +427,24 @@ const { chromium } = require('playwright');
     // The initial two cards are intentional Lineage-style base archetypes.
     // An Elf Fighter unlocks Elven Scout (archer) at level 20 after the first trial.
     const elfArcherTransfer=await page.evaluate(()=>{
-      const snapshot=JSON.parse(JSON.stringify(sv));
+      const snapshot=JSON.parse(JSON.stringify(sv)),originalSkinLoader=loadExternalFrogSkin;
       try{
+        // Exercise the class-transfer state machine without starting an asynchronous
+        // GLB request that could race with restoration of the isolated smoke profile.
+        loadExternalFrogSkin=()=>{};
         sv.race='elf';sv.lineageRace='elf';sv.lineageBaseClass='fighter';sv.lineageStage=0;
         sv.lineageMarks={first:true};sv.lv=20;sv.job='guerreiro';sv.lineageClass='Elven Fighter';
         sv.lineageRole='fighter';sv.lineageFirstClass=null;sv.frog=sv.frog||{};
-        const options=lineageOptions();
-        const scout=options.find(x=>x.id==='elven_scout');
+        const options=lineageOptions(),scout=options.find(x=>x.id==='elven_scout');
         if(!scout||scout.role!=='archer'||scout.job!=='arqueiro')return {ok:false,options};
         const selected=selectLineageClass('elven_scout');
-        const result={ok:selected===true,job:sv.job,role:sv.lineageRole,classId:sv.lineageClassId,
+        return {ok:selected===true,job:sv.job,role:sv.lineageRole,classId:sv.lineageClassId,
           skin:sv.frog.externalSkin,options:options.map(x=>x.id)};
-        return result;
       }finally{
+        loadExternalFrogSkin=originalSkinLoader;
         Object.keys(sv).forEach(k=>delete sv[k]);
         Object.assign(sv,snapshot);
         save(true);
-        if(snapshot.frog&&snapshot.frog.externalSkin&&typeof loadExternalFrogSkin==='function'){
-          loadExternalFrogSkin(snapshot.frog.externalSkin,null);
-        }
       }
     });
     if(!elfArcherTransfer.ok||elfArcherTransfer.job!=='arqueiro'||elfArcherTransfer.role!=='archer'||
