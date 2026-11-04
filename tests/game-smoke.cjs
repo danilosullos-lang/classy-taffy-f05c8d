@@ -383,6 +383,13 @@ const { chromium } = require('playwright');
     if (idleState.state !== 'idle') {
       throw new Error('A personagem não voltou à animação idle ao soltar os controles: '+JSON.stringify(idleState));
     }
+    await page.keyboard.down('Space');
+    await page.waitForTimeout(260);
+    const jumpingState=await page.evaluate(()=>({...window.__rpgPlayerAnimationDebug}));
+    await page.keyboard.up('Space');
+    if(jumpingState.state!=='jump'||!/(jump|land)/i.test(jumpingState.clip||'')){
+      throw new Error('O salto não acionou um clip de pulo/aterrissagem válido: '+JSON.stringify(jumpingState));
+    }
     const playerVisibility=await page.evaluate(()=>{
       let meshes=0,visibleMeshes=0;
       if(_externalFrogSkin)_externalFrogSkin.traverse(o=>{if(o.isMesh&&o.geometry){meshes++;if(o.visible)visibleMeshes++}});
@@ -504,9 +511,11 @@ const { chromium } = require('playwright');
         const projectile={...(window.__rpgCombatVisualDebug||{})};
         updateBowArrows(1);
         const clipMap={...(window.__rpgPlayerAnimationDebug.clipMap||{})};
+        playLineageCombatAnimation('archer','q');
+        const attackClip=frog.userData._animOverride?.clip?.name||null;
         return {ok:skinReady&&weaponReady,role:window.__rpgPlayerAnimationDebug.role,
           skin:window.__rpgPlayerAnimationDebug.skin,clips:window.__rpgAnimationAssetDebug.clips,
-          clipMap,allClipNames:_externalFrogAvailableClips.map(c=>c.name),weapon,projectile,warriorArrowBlocked};
+          clipMap,attackClip,allClipNames:_externalFrogAvailableClips.map(c=>c.name),weapon,projectile,warriorArrowBlocked};
       }finally{
         Object.keys(sv).forEach(k=>delete sv[k]);Object.assign(sv,snapshot);
         inv.splice(0,inv.length,...inventorySnapshot);uid=uidSnapshot;save(true);
@@ -520,6 +529,7 @@ const { chromium } = require('playwright');
       archerRuntime.projectile.origin[1]-archerRuntime.projectile.playerY<.65||
       archerRuntime.warriorArrowBlocked.blocked!==true||
       archerRuntime.clipMap.attack!==archerRuntime.clipMap.shoot||
+      archerRuntime.attackClip!==archerRuntime.clipMap.shoot||
       !/(shoot|release|fire)/i.test(archerRuntime.clipMap.attack||'')||
       /(running|walking|holding|aiming|reload|draw)/i.test(archerRuntime.clipMap.attack||'')||
       !/(jump|land)/i.test(archerRuntime.clipMap.jump||'')||
@@ -563,6 +573,7 @@ const { chromium } = require('playwright');
       walkingState,
       runningState,
       idleState,
+      jumpingState,
       playerVisibility,
       playerAnimationCheck,
       treeAppearance,
