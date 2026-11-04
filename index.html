@@ -6896,7 +6896,17 @@ const chatHtml=(a,btn)=>a.map(m=>'<div><span style="opacity:.6;font-size:10px">'
 function chatList(){const e=$('cl');if(e){e.innerHTML=chatHtml(MU.chat.filter(m=>m.ch===(MU.ch||'g')).slice(-30),true);e.scrollTop=1e6}}
 function feed(){$('cf').innerHTML=chatHtml(MU.chat.filter(m=>Date.now()-m.ts<10000).slice(-3))}
 setInterval(feed,1500);
-function sendChat(t){t=String(t||'').trim().slice(0,120);if(!t||Date.now()-MU.last<1500||t===MU.lastT)return;MU.last=Date.now();MU.lastT=t;sv.chatN=(sv.chatN||0)+1;const ch=MU.ch||'g';addChat(myName,t,ch,sv.lv,true);if(room)room.emit('chat',{n:myName,t,ch,lv:sv.lv,z:st.z,d:st.d}).catch(()=>{})}
+function sendChat(t){
+ t=String(t||'').trim().slice(0,120);if(!t||Date.now()-MU.last<1500||t===MU.lastT)return;
+ const bug=t.match(/^\/bug\s+(.+)/i),pos=/^\/pos$/i.test(t);
+ if(bug||pos){
+  const z=Number(st&&st.z),d=Number(st&&st.d),where=[z,d].every(Number.isFinite)?' · posição '+z.toFixed(1)+', '+d.toFixed(1):'';
+  const report=bug?{id:'bug-'+Date.now(),text:bug[1],player:myName,level:sv.lv,z:Number.isFinite(z)?z:null,d:Number.isFinite(d)?d:null,createdAt:new Date().toISOString()}:null;
+  if(report){try{const key='aetheria_bug_reports_v1',items=JSON.parse(localStorage.getItem(key)||'[]');items.push(report);localStorage.setItem(key,JSON.stringify(items.slice(-100)))}catch(e){console.warn('Não foi possível salvar o relatório local',e)}}
+  t=bug?'🐞 BUG REPORTADO: '+bug[1]+where:'📍 POSIÇÃO: '+(Number.isFinite(z)&&Number.isFinite(d)?z.toFixed(1)+', '+d.toFixed(1):'indisponível');
+ }
+ MU.last=Date.now();MU.lastT=t;sv.chatN=(sv.chatN||0)+1;const ch=MU.ch||'g';addChat(myName,t,ch,sv.lv,true);if(room)room.emit('chat',{n:myName,t,ch,lv:sv.lv,z:st.z,d:st.d}).catch(()=>{})
+}
 const rw=setInterval(()=>{if(room){clearInterval(rw);room.on('chat',m=>{if(m.isMe)return;const d=m.data||{},ch=d.ch==='p'?'p':'g';if(ch==='p'&&Math.hypot((+d.z||0)-st.z,(+d.d||0)-st.d)>60)return;addChat(String(d.n||'?').slice(0,16),String(d.t||'').slice(0,120),ch,pn(d.lv))})}},500);
 function openMenu(p){if(!st)return;MU.page=p||'main';MU.conf=0;if(st.run)st.pause=true;mode='bag';$('mu').style.display='flex';renderMenu()}
 function closeMenu(){$('mu').style.display='none';if(st.run)st.pause=false;mode='river'}
@@ -6950,7 +6960,7 @@ function extraPage(B,back){
   if(['cfg','ach','about','map'].includes(MU.page))return extraPage2(B,back);
   if(MU.page==='players'){const ps=PEERS.filter(p=>!p.isMe&&p.presence&&p.presence.name);return '<h2>👥 Jogadores</h2>'+(ps.map(p=>{const n=String(p.presence.name).slice(0,16),m=(sv.muted||[]).includes(n),pz=Number(p.presence.z),pd=Number(p.presence.d),sz=Number(st&&st.z),sd=Number(st&&st.d),valid=[pz,pd,sz,sd].every(Number.isFinite),dist=valid?Math.round(Math.hypot(pz-sz,pd-sd)):null;return '<div class="it"><span>'+esc(n)+' · Nv'+pn(p.presence.lv)+' · '+(valid?dist+' m':'distância indisponível')+'</span><button data-a="goto" data-i="'+esc(p.peer)+'">📍 Ir até</button><button data-a="trade" data-i="'+esc(p.peer)+'">🤝 Trocar</button><button data-a="rep" data-i="'+esc(p.peer)+'" data-n="'+esc(n)+'">🚩 Denunciar</button><button data-a="block" data-n="'+esc(n)+'">🚫 Bloquear</button><button data-a="mute" data-n="'+esc(n)+'">'+(m?'🔇 Silenciado':'🔊 Silenciar')+'</button></div>'}).join('')||'<small style="opacity:.7">Ninguém online agora.</small>')+back}
   if(MU.page==='voice')return '<h2>🎙️ Voz</h2><div style="font-size:13px;opacity:.85;margin-bottom:6px">Conversa por voz com jogadores <b>perto de você</b> (até '+VR+' m).</div>'+B('vtoggle',V.on?'🟢 Voz ligada — tocar para desligar':'⚪ Ligar voz')+B('vmode','🎚️ Modo: '+(V.open?'microfone aberto':'push-to-talk'))+back;
-  return '<h2>💬 Chat</h2><div class="tabs"><button class="tab'+(MU.ch!=='p'?' on':'')+'" data-a="chn" data-c="g">🌐 Geral</button><button class="tab'+(MU.ch==='p'?' on':'')+'" data-a="chn" data-c="p">📍 Perto</button></div><div id="cl" style="max-height:34vh;overflow:auto;font-size:13px;text-align:left;min-height:60px"></div><div style="display:flex;gap:6px;margin:8px 0"><input id="ci" maxlength="120" placeholder="Mensagem…" style="flex:1;padding:10px;border-radius:10px;border:1px solid #fff4;background:#0006;color:#fff"><button class="big" data-a="send" style="margin:0">Enviar</button></div>'+B('pf','🧼 Filtro: '+(sv.opt.pf===false?'desligado':'ligado'))+back;
+  return '<h2>💬 Chat</h2><div class="tabs"><button class="tab'+(MU.ch!=='p'?' on':'')+'" data-a="chn" data-c="g">🌐 Geral</button><button class="tab'+(MU.ch==='p'?' on':'')+'" data-a="chn" data-c="p">📍 Perto</button></div><div id="cl" style="max-height:34vh;overflow:auto;font-size:13px;text-align:left;min-height:60px"></div><div style="display:flex;gap:6px;margin:8px 0"><input id="ci" maxlength="120" placeholder="Mensagem… (/bug descreva o erro ou /pos)" style="flex:1;padding:10px;border-radius:10px;border:1px solid #fff4;background:#0006;color:#fff"><button class="big" data-a="send" style="margin:0">Enviar</button></div>'+B('pf','🧼 Filtro: '+(sv.opt.pf===false?'desligado':'ligado'))+back;
 }
 $('mu').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
   if(a==='chn'){MU.ch=b.dataset.c;renderMenu()}
