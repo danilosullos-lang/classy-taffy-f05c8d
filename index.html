@@ -23,6 +23,8 @@
     font-family:'Segoe UI',system-ui,-apple-system,sans-serif;touch-action:none;user-select:none;
     padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
   canvas{display:block;position:absolute;inset:0}
+  /* HUD: minimapa e bússola ficam no fluxo normal (a regra global acima os jogava por cima do texto) */
+  #rt #mmap,#cmpw #cmp{position:static;inset:auto}
   #vg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(8,10,16,.4) 100%)}
   .p{position:absolute;background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
     border-radius:14px;padding:8px 12px;font-size:12px;border:1px solid var(--stroke);box-shadow:var(--shadow)}
@@ -1860,7 +1862,7 @@ function rpgWorldBuildTown(group,index){
   const villageName={human:'Talking Island Village',elf:'Elven Village',dark_elf:'Dark Elven Village',orc:'Orc Village',dwarf:'Dwarven Village'}[race]||'Aldeia Inicial';
   const titleCanvas=document.createElement('canvas');titleCanvas.width=768;titleCanvas.height=112;
   const titleCtx=titleCanvas.getContext('2d');titleCtx.fillStyle='rgba(12,12,18,.82)';titleCtx.fillRect(8,8,752,96);titleCtx.strokeStyle='#e6c879';titleCtx.lineWidth=5;titleCtx.strokeRect(8,8,752,96);titleCtx.fillStyle='#fff0bd';titleCtx.font='bold 48px Georgia';titleCtx.textAlign='center';titleCtx.fillText(villageName,384,72);
-  const titleTexture=new T.CanvasTexture(titleCanvas);titleTexture.userData=titleTexture.userData||{};titleTexture.userData.rpgChunkOwnedTexture=true;const titleMaterial=new T.SpriteMaterial({map:titleTexture,transparent:true,depthWrite:false});titleMaterial.userData=titleMaterial.userData||{};titleMaterial.userData.rpgChunkOwnedMaterial=true;const titleSprite=new T.Sprite(titleMaterial);titleSprite.position.set(cx(base+2),14,base-18);titleSprite.scale.set(13,1.9,1);group.add(titleSprite);
+  const titleTexture=new T.CanvasTexture(titleCanvas);titleTexture.userData=titleTexture.userData||{};titleTexture.userData.rpgChunkOwnedTexture=true;const titleMaterial=new T.SpriteMaterial({map:titleTexture,transparent:true,depthWrite:false});titleMaterial.userData=titleMaterial.userData||{};titleMaterial.userData.rpgChunkOwnedMaterial=true;const titleSprite=new T.Sprite(titleMaterial);titleSprite.position.set(cx(base+2),14,base-18);titleSprite.scale.set(9,1.3,1);rpgFadeSpriteNear(titleSprite,12,22);group.add(titleSprite);
   const wellX=cx(base+2),wellY=rpgWorldGround(0,wellX,base+2);
   const well=new T.Mesh(new T.CylinderGeometry(2.2,2.6,1.4,12),stone);add(well,wellX,wellY+.7,base+2);addSolid(0,base+2,2.8,2.8);
   const waterBowlMat=new T.MeshStandardMaterial({color:0x4e9bb7,metalness:.2,roughness:.25,transparent:true,opacity:.88});waterBowlMat.userData.rpgChunkOwnedMaterial=true;const waterBowl=new T.Mesh(new T.CylinderGeometry(1.7,1.7,.12,16),waterBowlMat);add(waterBowl,wellX,wellY+1.43,base+2);
@@ -1921,11 +1923,16 @@ function rpgWorldBuildTown(group,index){
     rpgNpcAddRoleProp(npc,def);
     const labelCanvas=document.createElement('canvas');labelCanvas.width=512;labelCanvas.height=96;
     const ctx=labelCanvas.getContext('2d');ctx.fillStyle='rgba(15,12,20,.78)';ctx.fillRect(8,8,496,80);ctx.strokeStyle='#e5c26d';ctx.lineWidth=5;ctx.strokeRect(8,8,496,80);ctx.fillStyle='#fff2c8';ctx.font='bold 38px sans-serif';ctx.textAlign='center';ctx.fillText(def.name,256,61);
-    const labelTexture=new T.CanvasTexture(labelCanvas);labelTexture.userData=labelTexture.userData||{};labelTexture.userData.rpgChunkOwnedTexture=true;const labelMaterial=new T.SpriteMaterial({map:labelTexture,transparent:true,depthWrite:false});labelMaterial.userData=labelMaterial.userData||{};labelMaterial.userData.rpgChunkOwnedMaterial=true;const label=new T.Sprite(labelMaterial);label.position.y=2.85;label.scale.set(4.4,.83,1);npc.add(label);
+    const labelTexture=new T.CanvasTexture(labelCanvas);labelTexture.userData=labelTexture.userData||{};labelTexture.userData.rpgChunkOwnedTexture=true;const labelMaterial=new T.SpriteMaterial({map:labelTexture,transparent:true,depthWrite:false});labelMaterial.userData=labelMaterial.userData||{};labelMaterial.userData.rpgChunkOwnedMaterial=true;const label=new T.Sprite(labelMaterial);label.position.y=2.85;label.scale.set(2.6,.49,1);rpgFadeSpriteNear(label,5,9);npc.add(label);
     npc.position.set(x,y,def.z);group.add(npc);
     npcs.push(npcRecord);
   });
   RPG_TOWN_NPCS.set(index,npcs);RPG_TOWN_SOLIDS.set(index,solids);
+}
+/* plaquinhas em espaço de mundo: somem suavemente quando a câmera chega perto (antes tampavam a tela inteira) */
+const _rpgFadeV=new T.Vector3();
+function rpgFadeSpriteNear(sprite,near,far){
+  sprite.onBeforeRender=function(r,sc,cam){const d=cam.position.distanceTo(this.getWorldPosition(_rpgFadeV));this.material.opacity=Math.max(0,Math.min(1,(d-near)/(far-near)))};
 }
 function rpgWorldChunk(index){
   const group=new T.Group();group.name='RPGWorldChunk_'+index;
@@ -8617,7 +8624,12 @@ function fieldFrame(now){
     g.position.y+=(t[2]-g.position.y)*.35}
   /* ---- câmera atrás do sapo (suavizada; ignora o balanço do passo/pulo) ---- */
   const cy2=FLD.cy,fx2=Math.sin(cy2),fz2=-Math.cos(cy2),dist=9.5,hgt=5.5+CAMV.pitch*.5,by=gy+st.y*.6;
-  const tx=FLD.x-fx2*dist,tz=FLD.z-fz2*dist,ty=Math.max(gy+hgt,Math.max(fieldH(tx,tz),FWL)+3.2)+st.y*.3;
+  let tx=FLD.x-fx2*dist,tz=FLD.z-fz2*dist,ty=Math.max(gy+hgt,Math.max(fieldH(tx,tz),FWL)+3.2)+st.y*.3;
+  /* câmera não atravessa encostas/montanhas: se o terreno cortar a linha entre o herói e a câmera, aproxima a câmera */
+  {const ex=FLD.x,ey=gy+1.8,ez=FLD.z;let okf=1;
+    for(let k=1;k<=12;k++){const f=k/12,px=ex+(tx-ex)*f,pz=ez+(tz-ez)*f,py=ey+(ty-ey)*f;
+      if(Math.max(fieldH(px,pz),fieldH(px+2.5,pz),fieldH(px-2.5,pz),fieldH(px,pz+2.5),fieldH(px,pz-2.5),FWL)+1.8>py){okf=Math.max(.38,(k-1)/12);break}}
+    if(okf<1){tx=ex+(tx-ex)*okf;tz=ez+(tz-ez)*okf;ty=Math.max(gy+hgt*(.55+.45*okf),Math.max(fieldH(tx,tz),fieldH(tx+2.5,tz),fieldH(tx-2.5,tz),fieldH(tx,tz+2.5),fieldH(tx,tz-2.5),FWL)+3.2)+st.y*.3}}
   if(!C._init||!FLD.lk){C.position.set(tx,ty,tz);FLD.lk=[FLD.x+fx2*3.5,by+1.4,FLD.z+fz2*3.5];C._init=true}
   const ck=1-Math.exp(-dt*7);C.position.x+=(tx-C.position.x)*ck;C.position.y+=(ty-C.position.y)*(1-Math.exp(-dt*5));C.position.z+=(tz-C.position.z)*ck;
   const hmin=Math.max(fieldH(C.position.x,C.position.z),FWL)+2.6;if(C.position.y<hmin)C.position.y=hmin;
