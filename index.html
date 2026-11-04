@@ -537,6 +537,8 @@ BOSS.push(...BOSS_V28);
 const need=()=>Math.round(8*Math.pow(sv.lv,1.42)+sv.lv*12);
 const BX=[['Titã do Pântano',0x6a9a4a],['Hidra Anciã',0x4aa89a],['Rei Kraken',0x5a6ac8],['Fênix Sombria',0xd8602a],['Colosso de Gelo',0x8ac8f0],['Leviatã',0x7a5ac8]];
 function bossAt(i){i=Number.isFinite(+i)?Math.max(0,Math.floor(+i)):0;if(i<BOSS.length)return BOSS[i];const k=i-BOSS.length+1,x=BX[(k-1)%BX.length]||BX[0];return{n:x[0]+(k>BX.length?' '+(Math.floor((k-1)/BX.length)+1):''),m:2000*k,hp:Math.round(3000*(1+.7*(k-1))),c:x[1],sc:Math.min(4,2.4+k*.12),w:1}}
+// Limite visual global: evita que chefes de níveis avançados sejam gigantes na entrada/retorno de área.
+function bossVisualScale(B){return clamp(Number(B&&B.sc)||1,1,1.85)}
 const RK=[[0,'Novato'],[30,'Aprendiz'],[80,'Herói'],[160,'Super-Herói'],[300,'Guardião'],[600,'Lendário']];
 const RAR=[['Comum','#bbbbbb',1],['Incomum','#5fd35f',1.8],['Raro','#4aa3ff',3],['Épico','#b36bff',6],['Lendário','#ffb300',12],['Mítico','#ff4d6d',24]];
 const SL=[['🗡️','Arma'],['🎩','Chapéu'],['👢','Botas'],['📿','Amuleto']];
@@ -3873,7 +3875,7 @@ $('missions').onclick=()=>{openAr('missions')};
 function reset(){
   things.forEach(t=>S.remove(t.m));things.length=0;
   EN.forEach(e=>(S.remove(e.m,e.bar),disp(e.m)));EN.length=0;
-  LD={};boss=null;heron.visible=false;hRock.visible=false;HR.mode=0;HR.perch=0;
+  LD={};boss=null;heron.visible=false;heron.scale.setScalar(1);heron.rotation.set(0,0,0);hRock.visible=false;HR.mode=0;HR.perch=0;
   $('alert').style.display=$('boss').style.display='none';
   st={hp:hpMax(),z:0,d:0,y:0,vy:0,bub:0,run:true,pause:false,
     hT:8,hPh:0,hTm:0,hd:0,nb:0,lock:false,vz:0,dash:0,zl:0,eT:3,gy:0,lT:0,stam:100,sprinting:false,
@@ -5864,6 +5866,8 @@ function loadExternalFrogSkin(url,statusEl){
   if(!window.THREE || !THREE.GLTFLoader){window.__rpgSkinLoadDebug={status:'loader_missing',requested:String(url||'')};_skinStatus(statusEl,'O carregador 3D não foi carregado. Confira a conexão com a CDN.',true);return;}
   const raw=String(url||'').trim();
   if(!raw || !/\.glb(?:[?#].*)?$/i.test(raw)){_skinStatus(statusEl,'Use um caminho ou URL que termine em .glb.',true);return;}
+  // Os GLBs de classe têm cerca de 20 MB cada; em aparelhos com pouca memória, manter o rig local evita falha de GPU/memória e personagem invisível.
+  if(LOW_MEM){resetExternalFrogSkin();frog.visible=true;window.__rpgSkinLoadDebug={status:'mobile_safe_rig',requested:raw,reason:'GLB pesado ignorado no perfil de pouca memória'};_skinStatus(statusEl,'Modo leve: usando personagem local para manter o herói visível.');return;}
   if(_externalFrogSkin&&_externalFrogSkin.userData.sourceUrl===raw){_skinStatus(statusEl,'Skin já está aplicada.');return;}
   const request=++_externalSkinRequest;
   _skinStatus(statusEl,'Carregando modelo 3D…');
@@ -6392,7 +6396,7 @@ function tick(now){
         HR.z=st.z-14;HR.x=cx(HR.z);hRock.position.set(HR.x,0,HR.z);HR.perch=0;st.hy=1.25;st.hPh=0;
       }
       hb.material.color.set(nb.c);nk.material.color.set(nb.c);
-      heron.scale.setScalar(nb.sc);
+      heron.scale.setScalar(bossVisualScale(nb));
       $('boss').style.display='block';
       $('bn').textContent=(nb.w?'🌍 CHEFE MUNDIAL: ':'')+nb.n+' · derrote para passar';
       sfx('bossHit');fxRing(heron.position.x,.12,heron.position.z,0xffd36a,5,.9);fxBurst(heron.position.x,2,heron.position.z,0xffa34d,34,6,.85,true);say('⚠️ '+nb.n);
@@ -6485,7 +6489,7 @@ function tick(now){
       st.hy=(st.hy||0)+((getBossKind(boss.i)==='heron'&&HR.mode===2&&boss.ph===0?1.25:0)-(st.hy||0))*Math.min(1,dt*6);
       heron.position.set(cx(zz)+(boss.ph?st.hd:0),st.hy,zz);
       heron.rotation.x=boss.ph===2?.5:0;
-      heron.scale.lerp(new T.Vector3().setScalar(B.sc),.2);
+      heron.scale.lerp(new T.Vector3().setScalar(bossVisualScale(B)),.2);
     }else if(!st.lock){
       if(st.hPh===0){
         st.hT-=dt;
@@ -8050,7 +8054,7 @@ const fldBossIdx=()=>Math.max(st.nb||0,Math.floor(sv.lv/4));
 function fldBossSpawn(){rgTip('boss','💀 Chefe!','Pule (botão PULAR) para desviar dos golpes e ataque de perto');
   const i=fldBossIdx(),nb=bossAt(i),a=rgA({x:FLD.x,z:FLD.z},24,0);
   boss={i,hp:nb.hp,ph:0,t:3};st.lock=true;FLD.bx=a.x;FLD.bz=a.z;FLD.hadBoss=true;
-  heron.visible=true;hb.material.color.set(nb.c);nk.material.color.set(nb.c);heron.scale.setScalar(nb.sc);
+  heron.visible=true;hb.material.color.set(nb.c);nk.material.color.set(nb.c);heron.scale.setScalar(bossVisualScale(nb));
   $('boss').style.display='block';$('bn').textContent=(nb.w?'🌍 CHEFE MUNDIAL: ':'')+nb.n+' · derrote para continuar';
   rgBanner('⚠️ '+nb.n,'Um chefe apareceu à frente!','#ff6b6b')}
 function fldBossClear(){
@@ -8070,8 +8074,8 @@ function fldBoss(dt){
   if(boss.ph!==1){const want=dist>17?1:dist<10?-.6:0,sp=3.2*(boss.enr?1.4:1);FLD.bx+=dx/dist*want*sp*dt;FLD.bz+=dz/dist*want*sp*dt}
   const lunge=boss.ph===2?5*Math.min(1,(.9-boss.t)/.25):0,bx=FLD.bx+dx/dist*lunge,bz=FLD.bz+dz/dist*lunge;
   st.hy=(st.hy||0)+((getBossKind(boss.i)==='heron'&&boss.ph===0?1.25:0)-(st.hy||0))*Math.min(1,dt*6);
-  heron.position.set(bx,Math.max(fieldH(bx,bz),FWL-.2)+st.hy,bz);{const R_=Math.min(6,1.4*B.sc+1.2)+.55,d_=Math.hypot(FLD.x-bx,FLD.z-bz);if(d_<R_&&d_>1e-4){const p_=R_-d_;FLD.x+=(FLD.x-bx)/d_*p_;FLD.z+=(FLD.z-bz)/d_*p_}}heron.rotation.y=Math.atan2(dx,dz);heron.rotation.x=boss.ph===2?.5:0;
-  heron.scale.lerp(new T.Vector3().setScalar(B.sc),.2)}
+  heron.position.set(bx,Math.max(fieldH(bx,bz),FWL-.2)+st.hy,bz);{const R_=Math.min(4.2,1.4*bossVisualScale(B)+1.2)+.55,d_=Math.hypot(FLD.x-bx,FLD.z-bz);if(d_<R_&&d_>1e-4){const p_=R_-d_;FLD.x+=(FLD.x-bx)/d_*p_;FLD.z+=(FLD.z-bz)/d_*p_}}heron.rotation.y=Math.atan2(dx,dz);heron.rotation.x=boss.ph===2?.5:0;
+  heron.scale.lerp(new T.Vector3().setScalar(bossVisualScale(B)),.2)}
 function rgDist(){const raw=FLDON?(sv&&sv.fw):(st&&st.z!==undefined?-st.z:0);return Number.isFinite(Number(raw))?Math.max(0,Math.floor(Number(raw))):0}
 
 /* ---- quadro do campo (substitui o tick do rio enquanto ativo) ---- */
