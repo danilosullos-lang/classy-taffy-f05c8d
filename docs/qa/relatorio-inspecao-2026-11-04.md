@@ -65,3 +65,10 @@ A inspeção confirma três pontos que merecem investigação/correção, mas n�
 - O Guerreiro J1 deixou de usar `Barbarian.glb` (personagem com capacete de urso) e passou a usar `Knight.glb`, visual humanoide de cavaleiro, mais coerente com a identidade visual medieval solicitada.
 - A mudança é apenas no mapeamento da skin. A validação visual em produção ainda está pendente.
 - No momento do registro, o GitHub não retornou checks nem workflow runs para esse commit; não há confirmação de deploy do Render.
+
+## Segunda passagem de exploração (mesma data)
+- Personagem observado: Herói672, Guerreiro J1, nível 2.
+- A segunda sessão voltou a carregar em Campos de Valdora; não conseguiu localizar visualmente o Capitão da Guarda nem abrir o serviço de viagem do NPC.
+- A primeira sessão desta rodada tinha encontrado o menu Mapa do mundo e destino Acampamento; a segunda não conseguiu reproduzir esse menu. Portanto, o sistema de viagem existe no código (NPC `gatekeeper`, serviço de teleporte e destinos `ZN`), mas a navegação/descoberta na interface não ficou validada de forma consistente.
+- A segunda inspeção não confirmou novos modelos sem textura nem placeholders brancos. Os gráficos low-poly/voxel vistos são consistentes com o estilo atual; a aparência simples não prova falta de textura.
+- A área efetivamente observada continua restrita a Talking Island Village / Campos de Valdora. As demais zonas não foram percorridas.
