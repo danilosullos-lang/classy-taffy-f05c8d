@@ -5998,7 +5998,7 @@ function loadExternalFrogSkin(url,statusEl){
         _externalFrogClips.slash=findClip([/sword|slash|melee|swing|thrust|combo|attack/]);
         _externalFrogClips.shoot=findClip([/bow|shoot|arrow|archery|ranged/]);
         _externalFrogClips.cast=findClip([/spell.*shoot|cast.*shoot|magic.*shoot|fireball|summon/])||findClip([/cast|spell|magic|channel|staff/]);
-        _externalFrogClips.attack=_externalFrogClips.slash||_externalFrogClips.shoot||_externalFrogClips.cast||findClip([/punch|attack|melee/]);
+        const activeRole=(()=>{try{return interludeRole()}catch(_){return 'fighter'}})();_externalFrogClips.attack=activeRole==='archer'?(_externalFrogClips.shoot||_externalFrogClips.slash):(['mage','healer','support'].includes(activeRole)?(_externalFrogClips.cast||_externalFrogClips.slash):(_externalFrogClips.slash||findClip([/punch|attack|melee/])));
         _externalFrogClips.block=findClip([/sword.*block|block(?:$| )|parry|guard/])||findClip([/block|guard|shield|parry/]);
         _externalFrogClips.hit=findClip([/hit|damage|hurt|react|stagger|shot.*fall/]);
         _externalFrogClips.roll=findClip([/roll|dodge|evade/]);
@@ -6859,7 +6859,7 @@ function updatePvPTargetPanel(){
  if(!list.length){const empty=document.createElement('div');empty.textContent='Nenhum jogador PvP próximo';empty.style.cssText='opacity:.75;padding:5px 0';_pvpTargetPanel.appendChild(empty);return}
  list.slice(0,4).forEach(p=>{const b=document.createElement('button');b.type='button';b.textContent=(PV.target===p.id?'▶ ':'')+p.name+' Nv.'+p.level+' · CP '+Math.round(p.cp)+'% · HP '+Math.round(p.hp)+'%';b.style.cssText='display:block;width:100%;margin:3px 0;padding:7px 6px;border:1px solid '+(PV.target===p.id?'#c18cff':'#ffffff30')+';border-radius:8px;background:'+(PV.target===p.id?'rgba(150,95,220,.42)':'rgba(255,255,255,.08)')+';color:#fff;text-align:left;font:700 11px system-ui';b.onclick=()=>{PV.target=p.id;updatePvPTargetPanel()};_pvpTargetPanel.appendChild(b)})
 }
-function playLineageCombatAnimation(role,k){try{if(!frog||!frog.userData)return;const clips=typeof _externalFrogClips!=='undefined'?_externalFrogClips:null;if(!clips)return;let clip=null;if(role==='archer')clip=clips.shoot||clips.attack;else if(role==='mage'||role==='healer'||role==='support')clip=clips.cast||clips.attack;else clip=clips.slash||clips.attack;if(clip)frog.userData._animOverride={clip,until:performance.now()+Math.min(1250,Math.max(320,(clip.duration||.7)*1000)),loop:false}}catch(_){}}
+function playLineageCombatAnimation(role,k){try{if(!frog||!frog.userData)return;const clips=typeof _externalFrogClips!=='undefined'?_externalFrogClips:null;if(!clips)return;let clip=null;if(role==='archer')clip=clips.shoot||null;else if(role==='mage'||role==='healer'||role==='support')clip=clips.cast||null;else{clip=clips.slash||clips.melee||null;if(!clip&&clips.attack&&!/bow|shoot|arrow|spell|cast|magic/i.test(String(clips.attack.name||'')))clip=clips.attack}if(clip)frog.userData._animOverride={clip,until:performance.now()+Math.min(1250,Math.max(320,(clip.duration||.7)*1000)),loop:false}}catch(_){}}
 function sendPvp(id,d){if(!room||!id)return;PV.hit[id]=Date.now();PK.out[id]=Date.now();room.emit('pvp',{to:id,d:Math.round(d)}).catch(()=>{})}
 function pvpAoE(r,d){if(room)room.peers().forEach(p=>{const q=p.presence;if(p.isMe||!q||q.mode!=='river'||!q.pvp)return;if(Math.hypot(q.z-st.z,q.d-st.d)<r)sendPvp(p.peer,d)})}
 const rw5=setInterval(()=>{if(room){clearInterval(rw5);try{
