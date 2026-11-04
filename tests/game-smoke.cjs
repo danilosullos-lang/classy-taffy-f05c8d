@@ -426,6 +426,16 @@ const { chromium } = require('playwright');
     if (Math.abs(cameraRuntime.yaw - startYaw) < 0.001) throw new Error('O arraste não atualizou a câmera 3D.');
     if (cameraRuntime.contextLost) throw new Error('O contexto WebGL foi perdido durante o giro da câmera: '+JSON.stringify(cameraRuntime));
     if (cameraRuntime.lowMemory && cameraRuntime.pixelRatio > 0.651) throw new Error('O perfil móvel excedeu o limite de resolução GPU: '+JSON.stringify(cameraRuntime));
+    await page.setViewportSize({ width: 844, height: 390 });
+    await page.waitForTimeout(700);
+    const rotatedViewport=await page.evaluate(()=>({
+      width:R.domElement.width,height:R.domElement.height,aspect:C.aspect,
+      contextLost:R.getContext().isContextLost(),status:window.__rpgWebGLStatus||'active'
+    }));
+    if(!rotatedViewport.width||!rotatedViewport.height||rotatedViewport.contextLost||
+      Math.abs(rotatedViewport.aspect-(844/390))>.02){
+      throw new Error('O jogo falhou ao girar para paisagem: '+JSON.stringify(rotatedViewport));
+    }
 
     // Validate the real Interlude profession transfers at levels 20, 40 and 76.
     await page.evaluate(() => { sv.lineageMarks={first:true,second:true,third:true};sv.lv=20;openBag('cls'); });
@@ -576,6 +586,8 @@ const { chromium } = require('playwright');
       jumpingState,
       playerVisibility,
       playerAnimationCheck,
+      cameraRuntime,
+      rotatedViewport,
       treeAppearance,
       townNpcAppearance,
       monsterCatalogIntegration,
