@@ -9063,7 +9063,19 @@ if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventList
     console.warn('[Aetheria] Falha ao restaurar skin da classe:',err);
   }
 })();
+
+// Runtime bridge used by the optional cloud account panel. Local save remains authoritative offline.
+window.AetheriaGameBridge={
+ getSave(){return {v:9,savedAt:Date.now(),sv,inv,uid};},
+ applySave(payload){
+  if(!payload||!payload.sv||typeof payload.sv!=='object'||Array.isArray(payload.sv))throw new Error('save_invalido');
+  sv=Object.assign({lv:1,xp:0,fl:0,best:0,missions:{},stats:{},opt:{}},payload.sv);
+  inv=Array.isArray(payload.inv)?payload.inv:[];uid=Number.isFinite(payload.uid)?payload.uid:1;
+  save(true);location.reload();
+ }
+};
 </script>
+<script src="assets/engine/account-ui.js"></script>
 <div id="assetCredit" aria-label="Texturas CC0 do Poly Haven">Materiais PBR CC0 · Powered by Poly Haven</div>
 </body>
 </html>
