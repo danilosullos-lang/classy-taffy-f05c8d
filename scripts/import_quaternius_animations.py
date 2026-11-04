@@ -42,6 +42,22 @@ def glb_info(raw):
 
 def main():
     DEST.mkdir(parents=True,exist_ok=True)
+    expected=[
+        DEST/"ual1"/"UAL1_Standard.glb",
+        DEST/"ual1"/"UAL1_Standard_RM.glb",
+        DEST/"ual2"/"Mannequin_F.glb",
+        DEST/"ual2"/"UAL2_Standard.glb",
+        DEST/"ual2"/"UAL2_Standard_RM.glb",
+    ]
+    def is_real_glb(path):
+        try:
+            raw=path.read_bytes()
+            return len(raw)>=20 and raw[:4]==b"glTF" and int.from_bytes(raw[4:8],"little")==2 and int.from_bytes(raw[8:12],"little")==len(raw)
+        except OSError:
+            return False
+    if all(is_real_glb(path) for path in expected):
+        print("Quaternius UAL assets already exist as valid GLB binaries; download skipped.")
+        return
     manifest={"source":"Quaternius","license":"CC0-1.0","licenseUrl":"https://creativecommons.org/publicdomain/zero/1.0/",
               "importedAt":time.strftime("%Y-%m-%d",time.gmtime()),"packs":[],"files":[]}
     for pack in PACKS:
