@@ -3033,7 +3033,7 @@ function rpgLoadAudioCatalog(){
 function rpgAssetSound(kind,distance,enemy){
   if(RPG_AUDIO.state==='idle')rpgLoadAudioCatalog();
   if(RPG_AUDIO.state!=='ready')return false;
-  if(enemy&&['monsterAttack','monsterAggro','enemyHit','enemyDown','monsterIdle'].includes(kind)&&RPG_MONSTER_AUDIO.state!=='ready'){
+  if(enemy&&['monsterAttack','monsterAggro','enemyHit','enemyDown','monsterIdle'].includes(kind)&&!['ready','missing'].includes(RPG_MONSTER_AUDIO.state)){
     if(RPG_MONSTER_AUDIO.state==='idle')rpgLoadMonsterAudioMap();
     return true;
   }
