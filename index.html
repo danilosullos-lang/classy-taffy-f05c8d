@@ -4268,8 +4268,9 @@ $('cpBack').onclick=()=>{$('charpick').style.display='none'};
 function startLabels(){const c=sv.cp;$('go').textContent=c?'⚰️ Continuar ('+Math.floor(-c.z)+' m)':'Jogar';$('go0').style.display=c?'':'none'}
 function launchGame(){$('ov').style.display='none';reset();daily();musicOn(true);if(!sv.seen){sv.seen=1;save();openMenu('help')}}
 function startGame(){
-  // Saves antigos que ainda estão como Aprendiz precisam escolher a primeira classe real.
-  if((!sv.charCreated&&sv.lv<=1&&!sv.cp)||(sv.job==='novice'&&(!sv.charClass||sv.charClass==='novice')&&!sv.cp)){if(showCharacterPicker())return}
+  // Só classes jogáveis podem entrar no mundo; saves antigos "Aprendiz/Fighter" recebem o seletor sem perder progresso.
+  const hasPlayableClass=!!(sv&&sv.job&&PLAYABLE_CLASS_SKINS&&Object.prototype.hasOwnProperty.call(PLAYABLE_CLASS_SKINS,sv.job));
+  if((!sv.charCreated&&sv.lv<=1)||!hasPlayableClass){if(showCharacterPicker())return}
   launchGame();
 }
 $('go').onclick=startGame;$('go0').onclick=()=>{FRESH=true;sv.cp=null;startGame()};
@@ -8690,8 +8691,10 @@ if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventList
       skinStatus:'pending'
     };
     if(!sv||!frog)return;
-    if(sv.job==='novice'&&(!sv.charClass||sv.charClass==='novice')){
+    const hasPlayableClass=!!(sv.job&&PLAYABLE_CLASS_SKINS&&Object.prototype.hasOwnProperty.call(PLAYABLE_CLASS_SKINS,sv.job));
+    if(!hasPlayableClass){
       window.__rpgRuntimeDiagnostics.skinStatus='class-selection-required';
+      window.__rpgRuntimeDiagnostics.classSelectionRequired=true;
       frog.visible=true;
       return;
     }
