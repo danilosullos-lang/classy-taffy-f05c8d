@@ -5950,7 +5950,7 @@ function loadExternalFrogSkin(url,statusEl){
   const raw=String(url||'').trim();
   if(!raw || !/\.glb(?:[?#].*)?$/i.test(raw)){_skinStatus(statusEl,'Use um caminho ou URL que termine em .glb.',true);return;}
   // Os modelos KayKit compactos têm cerca de 3,5 MB e são seguros para o perfil móvel. Skins externas arbitrárias continuam bloqueadas em aparelhos com pouca memória.
-  const bundledClassSkin=/^\\/skins\\/classes\\/(Barbarian|Knight|Mage|Rogue_Hooded)\\.glb$/i.test(raw);
+  const bundledClassSkin=raw.startsWith('/skins/classes/')&&/^(Barbarian|Knight|Mage|Rogue_Hooded)\.glb$/i.test(raw.split('/').pop());
   if(LOW_MEM&&!bundledClassSkin){resetExternalFrogSkin();frog.visible=true;window.__rpgSkinLoadDebug={status:'mobile_custom_skin_skipped',requested:raw,reason:'Skin externa personalizada bloqueada no modo leve'};_skinStatus(statusEl,'Modo leve: skin personalizada ignorada; aparência de classe local preservada.');return;}
   if(_externalFrogSkin&&_externalFrogSkin.userData.sourceUrl===raw){_skinStatus(statusEl,'Skin já está aplicada.');return;}
   const request=++_externalSkinRequest;
