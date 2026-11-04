@@ -5,7 +5,8 @@ class ParticleAssetsTest(unittest.TestCase):
         root=ROOT/"assets"/"effects"/"kenney-particle-pack"
         manifest=json.loads((root/"manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["license"],"CC0-1.0")
-        self.assertGreaterEqual(manifest["count"],8)
+        self.assertGreaterEqual(manifest["count"],80)
+        self.assertEqual(manifest["count"],len(manifest["assets"]))
         for item in manifest["assets"]:
             path=ROOT/item["file"]
             data=path.read_bytes()
