@@ -2695,7 +2695,7 @@ if(sp.slam){const r=new T.Mesh(new T.RingGeometry(.92,1,32),new T.MeshBasicMater
 const shadow=new T.Mesh(new T.PlaneGeometry(2.5,2.5),new T.MeshBasicMaterial({map:fxSoft,color:0x000000,transparent:true,opacity:0.35,depthWrite:false}));
 shadow.rotation.x=-Math.PI/2;shadow.position.y=.02;g.add(shadow);g.userData.shadow=shadow;
 return g}
-const WT=[['mp','mg','ms'],['mp','mg','ms'],['mp','mg','ms'],['mp','mp','ms'],['ms','mp','mg'],['mp','mg','ms'],['mg','ms','mp'],['ms','mp','mg'],['ms','mp','mp'],['mg','ms','mp']],LT=[['mg','mp','ms','mg','mp','ms'],['mg','mg','mp','ms','mp','ms'],['ms','mp','mg','ms','mp','mg'],['mp','mp','ms','mg','mp','ms'],['ms','mp','mg','ms','mp','ms'],['mp','mg','ms','mp','mg','ms'],['mg','ms','mp','mg','ms','mp'],['ms','mp','mp','mg','ms','mp'],['ms','mp','mg','ms','mp','ms'],['mp','ms','mg','mp','ms','mg']],pickT=a=>a[Math.floor(Math.random()*Math.random()*a.length)];
+const WT=[['mp','mg','ms'],['mp','mg','ms'],['mp','mg','ms'],['mp','mp','ms'],['ms','mp','mg'],['mp','mg','ms'],['mg','ms','mp'],['ms','mp','mg'],['ms','mp','mp'],['mg','ms','mp']],LT=[['mg','mp','ms','mg','mp','ms'],['mg','mg','mp','ms','mp','ms'],['ms','mp','mg','ms','mp','mg'],['mp','mp','ms','mg','mp','ms'],['ms','mp','mg','ms','mp','ms'],['mp','mg','ms','mp','mg','ms'],['mg','ms','mp','mg','ms','mp'],['ms','mp','mp','mg','ms','mp'],['ms','mp','mg','ms','mp','ms'],['mp','ms','mg','mp','ms','mg']],pickT=a=>a[Math.floor(Math.random()*a.length)];
 function rpgApplyMonsterFallbackPbr(group,type){
   const role=type==='g'?'@metal':(type==='a'?'@leather':(type==='j'?'@bark':(type==='c'?'@grass':'@leather')));
   const diffuse=rpgPbrTexture(role,'diffuse'),normal=rpgPbrTexture(role,'normal'),roughness=rpgPbrTexture(role,'roughness');
@@ -2826,7 +2826,7 @@ function attachMonsterAsset(enemy){
     model.position.set(-center.x,-normalized.min.y,-center.z);
     enemy.m.children.slice().forEach(child=>{if(child!==enemy.m.userData.shadow)enemy.m.remove(child)});
     enemy.m.add(model);
-    model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false}});
+    model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.frustumCulled=false}});
     if(gltf.animations&&gltf.animations.length){
       const mixer=new THREE.AnimationMixer(model), actions={};
       gltf.animations.forEach(clip=>{actions[clip.name]=mixer.clipAction(clip)});
@@ -2864,7 +2864,7 @@ function spawnEn(t,d,z,tier){
   e.hp=e.mx=scaled.hp;e.dm=scaled.dm;e.xp=scaled.xp;
   if(e.elite){e.hp=e.mx=Math.round(e.hp*5);e.dm=Math.round(e.dm*1.5);e.xp=Math.round(e.xp*6);bar.material.color.setHex(0xffd24a);m.scale.setScalar(1.12)}
   e.nameTag=makeMonsterNameTag(e);
-  m.traverse(o=>{o.castShadow=true});S.add(m,bar,e.nameTag);EN.push(e);attachMonsterAsset(e);
+  m.traverse(o=>{o.castShadow=true;if(o.isMesh)o.frustumCulled=false});m.visible=true;bar.visible=true;e.nameTag.visible=true;S.add(m,bar,e.nameTag);EN.push(e);attachMonsterAsset(e);
 }
 function dmgEn0(e,d,q){
   if(e.dead)return;if(!q)ftext(e.m.position.x,e.m.position.y+e.hh,e.m.position.z,Math.round(d),'#fff');
@@ -8300,8 +8300,17 @@ function fldEnemies(dt,now){
   if(tongue.visible){tongue.userData.t-=dt;if(tongue.userData.t<=0)tongue.visible=false}
   FLD.spT-=dt;
   if(FLD.spT<=0&&!boss&&EN.filter(e=>!e.dead).length<Math.round(Math.min(18,8+Math.floor(sv.lv/10))*(FLD.night?1.3:1))){
-    FLD.spT=rnd(.8,1.8);const ang=Math.random()*6.283,r=rnd(30,50),x=FLD.x+Math.cos(ang)*r,z=FLD.z+Math.sin(ang)*r,hq=fieldH(x,z),tab=hq>14?FSPAWN_MT:FSPAWN[fldBiome(x,z)],t=tab[(Math.random()*tab.length)|0];
-    if(hq<FWL+.4||fldSafeNear(x,z))FLD.spT=.15;else{fldMakeEnemy(t,x,z,Math.random()<.05)}}
+    FLD.spT=rnd(.8,1.8);
+    // Nasce à frente da câmera/personagem, evitando que o auto-combate mate alvos fora da visão.
+    let x=FLD.x,z=FLD.z,hq=-Infinity;
+    for(let tries=0;tries<8;tries++){
+      const ang=FLD.h+rnd(-.48,.48),dist=rnd(20,28);
+      x=FLD.x+Math.sin(ang)*dist;z=FLD.z-Math.cos(ang)*dist;
+      hq=fieldH(x,z);
+      if(hq>=FWL+.4&&!fldSafeNear(x,z))break;
+    }
+    if(hq<FWL+.4||fldSafeNear(x,z))FLD.spT=.25;
+    else{const tab=hq>14?FSPAWN_MT:FSPAWN[fldBiome(x,z)],t=tab[(Math.random()*tab.length)|0];fldMakeEnemy(t,x,z,Math.random()<.05)}}
   for(let i=EN.length-1;i>=0;i--){
     const e=EN[i];if(e.m&&e.m.userData.monsterMixer)e.m.userData.monsterMixer.update(dt);
     if(e.dead&&e.elite&&!e.lt){e.lt=1;fldEliteLoot(e)}
