@@ -31,14 +31,18 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           python scripts/import_quaternius_animations.py
-          mkdir -p /tmp/aetheria-quaternius
+          python scripts/import_kenney_particles.py
+          mkdir -p /tmp/aetheria-quaternius /tmp/aetheria-particles
           cp -a assets/animations/quaternius/. /tmp/aetheria-quaternius/
+          cp -a assets/effects/kenney-particle-pack/. /tmp/aetheria-particles/
           git fetch origin main
           git reset --hard origin/main
-          mkdir -p assets/animations/quaternius
+          mkdir -p assets/animations/quaternius assets/effects/kenney-particle-pack
           cp -a /tmp/aetheria-quaternius/. assets/animations/quaternius/
+          cp -a /tmp/aetheria-particles/. assets/effects/kenney-particle-pack/
           grep -qF 'assets/animations/quaternius/**/*.glb -filter -diff -merge -text' .gitattributes
-          git add assets/animations/quaternius
+          grep -qF 'assets/effects/**/*.png -filter -diff -merge -text' .gitattributes
+          git add assets/animations/quaternius assets/effects/kenney-particle-pack
           if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
