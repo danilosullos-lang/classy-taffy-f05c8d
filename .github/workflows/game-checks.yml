@@ -49,3 +49,32 @@ jobs:
           Path("/tmp/aetheria-inline.js").write_text("\n".join(p.parts), encoding="utf-8")
           PY
           node --check /tmp/aetheria-inline.js
+
+  browser-smoke:
+    needs: integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout validated assets
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start local game server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/aetheria-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/aetheria-http.log
+          exit 1
+      - name: Run full browser smoke tests
+        env:
+          GAME_URL: http://127.0.0.1:4173
+        run: node tests/game-smoke.cjs
