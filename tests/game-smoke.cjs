@@ -56,10 +56,25 @@ const { chromium } = require('playwright');
     const characterPicker = page.locator('#charpick');
     if(!(await characterPicker.isVisible()))throw new Error('Um save antigo de Aprendiz entrou no mundo sem abrir o seletor de classe.');
     if (await characterPicker.isVisible()) {
-      // Race selection must change the available Interlude-style class identity.
+      // The five races intentionally have only their Lineage 2 base classes at level 1.
+      const raceBaseClasses={};
+      for(const [race,expected] of Object.entries({
+        human:['guerreiro','mago'],elf:['guerreiro','mago'],
+        dark_elf:['guerreiro','mago'],orc:['guerreiro','mago'],dwarf:['guerreiro']
+      })){
+        await page.locator('[data-start-race="'+race+'"]').click();
+        raceBaseClasses[race]=await page.locator('#cpGrid [data-start-class]').evaluateAll(nodes=>
+          nodes.filter(node=>getComputedStyle(node).display!=='none').map(node=>node.dataset.startClass));
+        if(JSON.stringify(raceBaseClasses[race])!==JSON.stringify(expected)){
+          throw new Error('Classes iniciais incorretas para '+race+': '+JSON.stringify(raceBaseClasses[race]));
+        }
+      }
       await page.locator('[data-start-race="elf"]').click();
       const elfClassLabel = await page.locator('#cpGrid [data-start-class="guerreiro"] b').textContent();
       if (!/Elven Fighter/.test(elfClassLabel || '')) throw new Error('A raça élfica não atualizou a classe inicial: '+elfClassLabel);
+      if(await page.locator('#cpGrid [data-start-class="arqueiro"]').isVisible()){
+        throw new Error('Arqueiro foi exibido como classe inicial; deve ser desbloqueado por transferência.');
+      }
       await page.locator('[data-start-race="human"]').click();
       const humanClassLabel = await page.locator('#cpGrid [data-start-class="guerreiro"] b').textContent();
       if (!/^Fighter$/.test((humanClassLabel || '').trim())) throw new Error('A raça humana não atualizou a classe inicial: '+humanClassLabel);
@@ -623,6 +638,7 @@ const { chromium } = require('playwright');
       monsterAppearance,
       monsterRuntimeAssets,
       classTransferState,
+      raceBaseClasses,
       elfArcherTransfer,
       archerRuntime,
       runtimeErrors: pageErrors.length
