@@ -4269,7 +4269,7 @@ function startLabels(){const c=sv.cp;$('go').textContent=c?'⚰️ Continuar ('+
 function launchGame(){$('ov').style.display='none';reset();daily();musicOn(true);if(!sv.seen){sv.seen=1;save();openMenu('help')}}
 function startGame(){
   // Saves antigos que ainda estão como Aprendiz precisam escolher a primeira classe real.
-  if((!sv.charCreated&&sv.lv<=1&&!sv.cp)||(sv.job==='novice'&&!sv.lineageClass&&!sv.cp)){if(showCharacterPicker())return}
+  if((!sv.charCreated&&sv.lv<=1&&!sv.cp)||(sv.job==='novice'&&(!sv.charClass||sv.charClass==='novice')&&!sv.cp)){if(showCharacterPicker())return}
   launchGame();
 }
 $('go').onclick=startGame;$('go0').onclick=()=>{FRESH=true;sv.cp=null;startGame()};
@@ -8676,6 +8676,37 @@ if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventList
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){last=performance.now();vfxLast=last;queueResize()}});
   queueResize();
   setTimeout(queueResize,250);setTimeout(queueResize,900);
+})();
+// Restaura a skin salva após recarregar a página; saves antigos de Aprendiz voltam ao seletor de classe.
+(function restoreSavedPlayerClass(){
+  try{
+    window.__rpgRuntimeDiagnostics={
+      version:'kaykit-class-assets-1',
+      lowMemory:!!LOW_MEM,
+      renderer:!!(window.R&&R.isWebGLRenderer),
+      playerJob:String(sv&&sv.job||'novice'),
+      savedClass:String(sv&&sv.charClass||''),
+      savedSkin:String(sv&&sv.frog&&sv.frog.externalSkin||''),
+      skinStatus:'pending'
+    };
+    if(!sv||!frog)return;
+    if(sv.job==='novice'&&(!sv.charClass||sv.charClass==='novice')){
+      window.__rpgRuntimeDiagnostics.skinStatus='class-selection-required';
+      frog.visible=true;
+      return;
+    }
+    if(typeof playableClassSkin==='function'&&typeof loadExternalFrogSkin==='function'){
+      sv.frog=sv.frog||{};
+      const skin=sv.frog.externalSkin||playableClassSkin(sv.job);
+      sv.frog.externalSkin=skin;
+      window.__rpgRuntimeDiagnostics.savedSkin=skin;
+      window.__rpgRuntimeDiagnostics.skinStatus='loading';
+      loadExternalFrogSkin(skin,null);
+    }
+  }catch(err){
+    window.__rpgRuntimeDiagnostics={...(window.__rpgRuntimeDiagnostics||{}),skinStatus:'restore-error',error:String(err&&err.message||err)};
+    console.warn('[Aetheria] Falha ao restaurar skin da classe:',err);
+  }
 })();
 </script>
 <div id="assetCredit" aria-label="Texturas CC0 do Poly Haven">Materiais PBR CC0 · Powered by Poly Haven</div>
