@@ -4157,10 +4157,10 @@ const START_CLASS_INFO={
 const CLASS_SKIN_PREVIEWS={
  guerreiro:{name:'Bárbaro — KayKit',desc:'Visual robusto de guerreiro para a classe inicial.',url:'/skins/classes/Barbarian.glb'},
  mago:{name:'Mago — KayKit',desc:'Aparência arcana para magos e arquimagos.',url:'/skins/classes/Mage.glb'},
- arqueiro:{name:'Arqueira Lyra — ATENA',desc:'Personagem de arqueira já presente no jogo, com biblioteca de animações integrada.',url:'/skins/lyra-archer-animated.glb'},
+ arqueiro:{name:'Arqueira — KayKit',desc:'Modelo humanoide KayKit leve, com arco equipado e animações de tiro compatíveis.',url:'/skins/classes/Rogue_Hooded.glb'},
  ladino:{name:'Ladino encapuzado — KayKit',desc:'Visual furtivo para ladinos e assassinos.',url:'/skins/classes/Rogue_Hooded.glb'},
  sacerdote:{name:'Mago sagrado — KayKit',desc:'Base visual de túnica e cajado para sacerdote e arquimago de suporte.',url:'/skins/classes/Mage.glb'},
- ranger:{name:'Patrulheiro — Lyra',desc:'A aparência de arqueira existente no jogo é usada para patrulheiros.',url:'/skins/lyra-archer-animated.glb'},
+ ranger:{name:'Patrulheiro — KayKit',desc:'Modelo leve com arco equipado e animações de combate à distância.',url:'/skins/classes/Rogue_Hooded.glb'},
  cavaleiro:{name:'Cavaleiro — KayKit',desc:'Armadura de cavaleiro.',url:'/skins/classes/Knight.glb'},
  paladino:{name:'Paladino — KayKit',desc:'Armadura de cavaleiro como base visual para a especialização sagrada.',url:'/skins/classes/Knight.glb'},
  templario:{name:'Templário — KayKit',desc:'Armadura de cavaleiro como base visual para o guardião avançado.',url:'/skins/classes/Knight.glb'},
@@ -4182,13 +4182,13 @@ const PLAYABLE_CLASS_SKINS={
  sumo:'/skins/classes/Mage.glb',
  ladino:'/skins/classes/Rogue_Hooded.glb',
  assassino:'/skins/classes/Rogue_Hooded.glb',
- arqueiro:'/skins/lyra-archer-animated.glb',
- ranger:'/skins/lyra-archer-animated.glb'
+ arqueiro:'/skins/classes/Rogue_Hooded.glb',
+ ranger:'/skins/classes/Rogue_Hooded.glb'
 };
 function playableClassSkin(id){
   // A classe escolhida nunca deve mudar silenciosamente por causa do perfil gráfico.
   // Modelos e animações são validados no carregamento; o perfil leve só reduz a renderização.
-  return PLAYABLE_CLASS_SKINS[id]||'/skins/lyra-archer-animated.glb';
+  return PLAYABLE_CLASS_SKINS[id]||'/skins/classes/Barbarian.glb';
 }
 function previewClassSkin(id){
  const cfg=CLASS_SKIN_PREVIEWS[id]||CLASS_SKIN_PREVIEWS.guerreiro;
@@ -5824,7 +5824,7 @@ const BASE = {
 };
 
 /* ---------- SKINS 3D EXTERNAS (.glb) ---------- */
-let _externalFrogSkin=null, _externalFrogMixer=null, _externalFrogActions=[], _externalFrogCurrent=null, _externalFrogClips={idle:null,walk:null,run:null,jump:null,attack:null,slash:null,shoot:null,cast:null,block:null,hit:null,roll:null,land:null,death:null}, _externalFrogClock=0, _externalSkinRequest=0, _externalFrogPose=[];
+let _externalFrogSkin=null, _externalFrogMixer=null, _externalFrogActions=[], _externalFrogCurrent=null, _externalFrogClips={idle:null,walk:null,run:null,jump:null,attack:null,slash:null,shoot:null,cast:null,block:null,hit:null,roll:null,land:null,death:null}, _externalFrogClock=0, _externalSkinRequest=0, _externalFrogPose=[], _externalFrogAvailableClips=[];
 function _skinStatus(el,msg,isError=false){
   if(el){el.textContent=msg;el.style.color=isError?'#ff8a8a':'#b8ffb8';}
 }
@@ -5835,7 +5835,7 @@ function resetExternalFrogSkin(){
     _externalFrogSkin.traverse(o=>{if(o.isMesh){if(o.geometry)o.geometry.dispose();const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(m){if(m.map)m.map.dispose();m.dispose();}});}});
     _externalFrogSkin=null;
   }
-  _externalFrogActions=[];_externalFrogCurrent=null;_externalFrogPose=[];_externalFrogClips={idle:null,walk:null,run:null,jump:null,attack:null,slash:null,shoot:null,cast:null,block:null,hit:null,roll:null,land:null,death:null};_externalFrogClock=0;frog.userData._animOverride=null;frog.userData._animHp=null;frog.userData._animWasAir=false;
+  _externalFrogActions=[];_externalFrogCurrent=null;_externalFrogPose=[];_externalFrogAvailableClips=[];_externalFrogClips={idle:null,walk:null,run:null,jump:null,attack:null,slash:null,shoot:null,cast:null,block:null,hit:null,roll:null,land:null,death:null};_externalFrogClock=0;frog.userData._animOverride=null;frog.userData._animHp=null;frog.userData._animWasAir=false;
   frog.traverse(o=>{if(o.userData&&o.userData.baseSkinMesh!==undefined)o.visible=o.userData.baseSkinMesh;});
   frog.children.forEach(o=>{if(o.userData&&o.userData.externalSkinMarker)o.visible=false;});
   frog.userData.externalSkinActive=false;frog.userData.mouthL=null;
@@ -5862,12 +5862,95 @@ function loadExternalSkinCatalog(selectEl,statusEl){
       _skinStatus(statusEl,'Não achei /skins/skins.json. Confira se publicou esse arquivo no GitHub.',true);
     });
 }
+const KAYKIT_PLAYER_ANIMATIONS={
+ general:'/assets/animations/kaykit/rig-medium/general.glb',
+ movementBasic:'/assets/animations/kaykit/rig-medium/movement-basic.glb',
+ movementAdvanced:'/assets/animations/kaykit/rig-medium/movement-advanced.glb',
+ combatMelee:'/assets/animations/kaykit/rig-medium/combat-melee.glb',
+ combatRanged:'/assets/animations/kaykit/rig-medium/combat-ranged.glb',
+ simulation:'/assets/animations/kaykit/rig-medium/simulation.glb',
+ special:'/assets/animations/kaykit/rig-medium/special.glb',
+ tools:'/assets/animations/kaykit/rig-medium/tools.glb'
+};
+const _kaykitAnimationCache=Object.create(null);
+function _kaykitRole(){
+ try{return interludeRole()}catch(_){return 'fighter'}
+}
+function _loadKayKitAnimationSet(key){
+ const url=KAYKIT_PLAYER_ANIMATIONS[key];
+ if(!url)return Promise.resolve([]);
+ if(_kaykitAnimationCache[url])return _kaykitAnimationCache[url];
+ _kaykitAnimationCache[url]=new Promise(resolve=>{
+  new THREE.GLTFLoader().load(url,gltf=>{
+   const clips=(gltf.animations||[]).slice();
+   // The animation GLB carries its own mannequin mesh; keep only keyframe data in memory.
+   try{gltf.scene.traverse(o=>{if(o.geometry)o.geometry.dispose();const mats=Array.isArray(o.material)?o.material:(o.material?[o.material]:[]);mats.forEach(m=>m&&m.dispose())})}catch(_){}
+   resolve(clips);
+  },undefined,err=>{console.warn('Animação KayKit indisponível:',key,err);resolve([])});
+ });
+ return _kaykitAnimationCache[url];
+}
+function _safeKayKitClip(clip,root){
+ const tracks=(clip.tracks||[]).filter(track=>{
+  const full=String(track.name||''),dot=full.lastIndexOf('.');
+  if(dot<0)return false;
+  const prop=full.slice(dot+1);
+  if(prop!=='quaternion'&&prop!=='rotation')return false;
+  const nodeName=full.slice(0,dot).split(/[/:]/).pop();
+  const target=root.getObjectByName(nodeName);
+  if(!target||!target.isBone)return false;
+  return !/^(hips|pelvis|root|armature|mixamorig:?hips|mixamorig:?root)$/i.test(String(target.name||nodeName));
+ });
+ return tracks.length?new THREE.AnimationClip(clip.name,clip.duration,tracks):null;
+}
+function _mapKayKitPlayerClips(clips,role){
+ const find=(re)=>clips.find(c=>re.test(String(c&&c.name||'')))||null;
+ _externalFrogClips.idle=find(/idle/i)||_externalFrogClips.idle;
+ _externalFrogClips.walk=find(/walk|walking/i)||_externalFrogClips.walk;
+ _externalFrogClips.run=find(/run|running|sprint/i)||_externalFrogClips.run||_externalFrogClips.walk;
+ _externalFrogClips.jump=find(/jump|hop/i)||_externalFrogClips.jump;
+ _externalFrogClips.slash=find(/attack|melee|sword|slash|combo/i)&&!find(/bow|shoot|ranged/i)?find(/attack|melee|sword|slash|combo/i):_externalFrogClips.slash;
+ _externalFrogClips.shoot=find(/bow|archery/i)||find(/shoot/i)||_externalFrogClips.shoot;
+ _externalFrogClips.cast=find(/spell|cast|magic|heal|staff/i)||_externalFrogClips.cast;
+ _externalFrogClips.block=find(/block|parry|guard/i)||_externalFrogClips.block;
+ _externalFrogClips.hit=find(/hit|hurt|damage|react/i)||_externalFrogClips.hit;
+ _externalFrogClips.roll=find(/roll|dodge|evade|dash/i)||_externalFrogClips.roll;
+ _externalFrogClips.land=find(/land|landing/i)||_externalFrogClips.land;
+ _externalFrogClips.death=find(/death|defeat|die/i)||_externalFrogClips.death;
+ _externalFrogClips.attack=role==='archer'?(_externalFrogClips.shoot||_externalFrogClips.slash):
+  (['mage','healer','support'].includes(role)?(_externalFrogClips.cast||_externalFrogClips.slash):_externalFrogClips.slash);
+}
+async function _loadKayKitPlayerAnimations(model,scene,request,role){
+ const combat=['archer','mage','healer','support'].includes(role)?'combatRanged':'combatMelee';
+ const keys=['general','movementBasic','movementAdvanced',combat,'simulation','special'];
+ if(role==='crafter')keys.push('tools');
+ const loaded=await Promise.all(keys.map(key=>_loadKayKitAnimationSet(key)));
+ if(request!==_externalSkinRequest||_externalFrogSkin!==model)return;
+ if(!_externalFrogMixer)_externalFrogMixer=new THREE.AnimationMixer(scene);
+ const imported=[];
+ loaded.flat().forEach(clip=>{
+  const safe=_safeKayKitClip(clip,scene);
+  if(safe&&!_externalFrogAvailableClips.some(x=>x.name===safe.name)){
+   _externalFrogAvailableClips.push(safe);imported.push(safe);
+  }
+ });
+ _externalFrogActions=_externalFrogAvailableClips.map(clip=>_externalFrogMixer.clipAction(clip));
+ _mapKayKitPlayerClips(_externalFrogAvailableClips,role);
+ if(!_externalFrogCurrent&&_externalFrogClips.idle){
+  const idle=_externalFrogMixer.clipAction(_externalFrogClips.idle);
+  idle.reset().setEffectiveWeight(1).play();_externalFrogCurrent=idle;
+ }
+ const clipMap=Object.fromEntries(Object.entries(_externalFrogClips).map(([k,v])=>[k,v&&v.name||null]));
+ window.__rpgPlayerAnimationDebug={...(window.__rpgPlayerAnimationDebug||{}),active:true,role,externalAnimationSets:keys,externalClips:imported.length,totalClips:_externalFrogAvailableClips.length,clipMap,clip:_externalFrogClips.idle&&_externalFrogClips.idle.name||'procedural-idle',procedural:!_externalFrogClips.idle};
+ window.__rpgAnimationAssetDebug={role,sets:keys,loadedSets:keys.filter((_,i)=>loaded[i].length>0),clips:imported.length,clipMap};
+}
 function loadExternalFrogSkin(url,statusEl){
   if(!window.THREE || !THREE.GLTFLoader){window.__rpgSkinLoadDebug={status:'loader_missing',requested:String(url||'')};_skinStatus(statusEl,'O carregador 3D não foi carregado. Confira a conexão com a CDN.',true);return;}
   const raw=String(url||'').trim();
   if(!raw || !/\.glb(?:[?#].*)?$/i.test(raw)){_skinStatus(statusEl,'Use um caminho ou URL que termine em .glb.',true);return;}
-  // Os GLBs de classe têm cerca de 20 MB cada; em aparelhos com pouca memória, manter o rig local evita falha de GPU/memória e personagem invisível.
-  if(LOW_MEM){resetExternalFrogSkin();frog.visible=true;window.__rpgSkinLoadDebug={status:'mobile_safe_rig',requested:raw,reason:'GLB pesado ignorado no perfil de pouca memória'};_skinStatus(statusEl,'Modo leve: usando personagem local para manter o herói visível.');return;}
+  // Os modelos KayKit compactos têm cerca de 3,5 MB e são seguros para o perfil móvel. Skins externas arbitrárias continuam bloqueadas em aparelhos com pouca memória.
+  const bundledClassSkin=/^\\/skins\\/classes\\/(Barbarian|Knight|Mage|Rogue_Hooded)\\.glb$/i.test(raw);
+  if(LOW_MEM&&!bundledClassSkin){resetExternalFrogSkin();frog.visible=true;window.__rpgSkinLoadDebug={status:'mobile_custom_skin_skipped',requested:raw,reason:'Skin externa personalizada bloqueada no modo leve'};_skinStatus(statusEl,'Modo leve: skin personalizada ignorada; aparência de classe local preservada.');return;}
   if(_externalFrogSkin&&_externalFrogSkin.userData.sourceUrl===raw){_skinStatus(statusEl,'Skin já está aplicada.');return;}
   const request=++_externalSkinRequest;
   _skinStatus(statusEl,'Carregando modelo 3D…');
@@ -5986,6 +6069,7 @@ function loadExternalFrogSkin(url,statusEl){
           });
           return new THREE.AnimationClip(clip.name,clip.duration,tracks);
         }).filter(clip=>clip.tracks.length);
+        _externalFrogAvailableClips=safeAnimations.slice();
         _externalFrogMixer=new THREE.AnimationMixer(gltf.scene);
         _externalFrogActions=safeAnimations.map(clip=>_externalFrogMixer.clipAction(clip));
         const clipName=a=>String(a&&a.name||'').toLowerCase().replace(/[_-]+/g,' ').replace(/ +/g,' ').replace(/^(?:ual1|ual2) /,'').trim();
@@ -6019,6 +6103,7 @@ function loadExternalFrogSkin(url,statusEl){
         frog.userData._animOverride=null;frog.userData._animHp=(typeof st!=='undefined'&&st)?st.hp:null;frog.userData._animWasAir=false;
       }
       window.__rpgPlayerAnimationDebug={active:true,skin:raw,requestedSkin:raw,race:sv&&sv.race||'human',clips:(gltf.animations||[]).length,bones:boneNodes.length,state:'idle',clip:_externalFrogClips.idle?(_externalFrogClips.idle.name||'idle'):'procedural-idle',procedural:!_externalFrogClips.idle,clipMap:Object.fromEntries(Object.entries(_externalFrogClips).map(([k,v])=>[k,v&&v.name||null])),forwardCorrection:raw.indexOf('/skins/classes/')===0?'180deg':'none'};
+      _loadKayKitPlayerAnimations(model,gltf.scene,request,_kaykitRole()).catch(err=>console.warn('Falha ao preparar animações KayKit:',err));
       if(sv&&sv.frog)sv.frog.externalSkin=raw;
       _skinStatus(statusEl,'Skin carregada! '+((gltf.animations||[]).length?('Animações encontradas: '+gltf.animations.length+'.'):'Modelo sem animações incorporadas.'));
       if(typeof save==='function')save();
