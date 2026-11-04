@@ -129,7 +129,7 @@ class GameIntegrityTests(unittest.TestCase):
     def test_starting_class_role_mapping_covers_tanks_and_orc_support(self):
         self.assertIn("cavaleiro:'tank',paladino:'tank',templario:'tank'", self.source)
         self.assertIn("START_RACE==='orc'&&['sacerdote','sumo'].includes(id)?'support'", self.source)
-        self.assertIn("sv.job==='novice'&&!sv.lineageClass&&!sv.cp", self.source)
+        self.assertIn("sv.job==='novice'&&(!sv.charClass||sv.charClass==='novice')&&!sv.cp", self.source)
 
     def test_bow_projectiles_are_archer_only_and_spawn_at_weapon(self):
         self.assertIn("if(!['arqueiro','ranger'].includes(String(sv&&sv.job||'')))", self.source)
