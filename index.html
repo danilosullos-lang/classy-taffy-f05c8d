@@ -2854,7 +2854,7 @@ function spawnEn(t,d,z,tier){
   const m=mkEn(t),bar=new T.Sprite(new T.SpriteMaterial({color:0xff4d4d,fog:false}));
   bar.scale.set(2,.16,1);
   const spawnD=d==null?rnd(-8,8):d,spawnZ=z==null?st.z-rnd(32,46):z;
-  const kind=tier||'normal',level=AetheriaMonsterProgression.levelFor(ET[t],spawnD,spawnZ,kind);
+  const kind=tier||'normal',biome=FLDON&&typeof fldBiome==='function'?fldBiome(spawnD,spawnZ):null,level=AetheriaMonsterProgression.levelFor(ET[t],spawnD,spawnZ,kind,biome);
   const scaled=AetheriaMonsterProgression.scaleStats(ET[t],level);
   const e=Object.assign({t,mx:scaled.hp,m,bar,d:spawnD,z:spawnZ,level,elite:kind==='elite',
     cd:1,ph:0,tm:rnd(2,4)},ET[t]);
