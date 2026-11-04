@@ -1490,11 +1490,10 @@ const RPG_TOWN_NPC_CLIPS={};
 const RPG_TOWN_SOLIDS=new Map();
 const RPG_STARTER_REALM_SOLIDS=new Map();
 function rpgStarterRealmBlockedAt(x,z,radius=.55){
-  // Corredor público de saída da vila: mantém uma passagem livre pelo eixo
-  // central para que o personagem nunca fique preso atrás de paredes/portões
-  // importados cujo collider cubra visualmente a abertura.
-  const localD=x-cx(z);
-  if(Math.abs(localD)<3.2&&z>=19942&&z<=20058)return false;
+  // A malha GLB da vila inicial possui colisores automáticos imprecisos:
+  // eles fecham portas e corredores. Até existir colisão por portas validada,
+  // o cenário inicial fica sem colisão de cenário para garantir a saída.
+  if(z>=19850&&z<=20150)return false;
   for(const solids of RPG_STARTER_REALM_SOLIDS.values())for(const b of solids){
     const px=Math.max(b.minX,Math.min(x,b.maxX)),pz=Math.max(b.minZ,Math.min(z,b.maxZ));
     const dx=x-px,dz=z-pz;
@@ -1524,9 +1523,9 @@ function rpgStarterRealmCanEscape(fromX,fromZ,toX,toZ,radius=.55){
 }
 function rpgTownBlocked(d,z){
   const radius=.78;
-  // A faixa central é a rota de saída da vila inicial, inclusive para os
-  // colliders simplificados que vêm do GLB.
-  if(Math.abs(d)<3.2&&z>=19942&&z<=20058)return false;
+  // Não aplicar caixas de colisão aproximadas dentro da vila inicial:
+  // o GLB não fornece aberturas confiáveis e estava prendendo o jogador.
+  if(z>=19850&&z<=20150)return false;
   for(const solids of RPG_TOWN_SOLIDS.values())for(const r of solids){
     if(Math.abs(d-r.d)<=r.halfD+radius&&Math.abs(z-r.z)<=r.halfZ+radius)return true;
   }
