@@ -393,7 +393,7 @@ const { chromium } = require('playwright');
       playerVisibility.meshes<1||playerVisibility.visibleMeshes<1){
       throw new Error('O personagem ficou invisível após andar/correr: '+JSON.stringify(playerVisibility));
     }
-    const hudNaN=await page.evaluate(()=>/\\bNaN\\b/.test(document.body.innerText));
+    const hudNaN=await page.evaluate(()=>/\bNaN\b/.test(document.body.innerText));
     if(hudNaN)throw new Error('O HUD exibiu um valor NaN após a movimentação.');
 
     // Exercise camera drag on a phone-sized viewport and verify the low-memory
