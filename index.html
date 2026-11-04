@@ -7005,6 +7005,7 @@ function tick(now){
   renderFrame(now);
 }
 
+function rpgMonsterFacingYaw(dx,dz){return Math.atan2(dx,-dz)}
 function enemies(dt,now){
   if(tongue.visible){tongue.userData.t-=dt;if(tongue.userData.t<=0)tongue.visible=false}
   if(!st.run||st.pause)return;
@@ -7044,7 +7045,7 @@ function enemies(dt,now){
     }else if(e.stun<=0&&dist<e.r&&e.cd<=0&&st.y<.6){e._attackAnimUntil=now+650;if(e.m.userData.monsterActions)setMonsterAnimation(e,'attack');sfx('monsterAttack',dist,e);hit(e.dm);const th=abSum('thorns');if(th)dmgEn(e,e.dm*th/100,true);e.cd=1.3}
     const gy=e.land?gnd(e.d,e.z)+.1:0;
     e.m.position.set(cx(e.z)+e.d,gy+(e.fly?2.2:0)+Math.sin(now/300+i)*.08,e.z);
-    e.m.rotation.y=Math.atan2(-dd,-dz); // Continua acompanhando o jogador também durante a preparação e execução do golpe.
+    e.m.rotation.y=rpgMonsterFacingYaw(dd,dz); // Modelo aponta para o jogador no eixo local -Z.
     if(e.m.userData.monsterActions&&(!e._attackAnimUntil||now>=e._attackAnimUntil))setMonsterAnimation(e,e.fly?'fly':(monsterMoving?'walk':'idle'));
     e.m.scale.lerp(ONE,.2);
     if(e.m.userData.shadow){
@@ -8329,7 +8330,7 @@ function fldEnemies(dt,now){
     if(!e.fly&&st.y<1.6){const ddx=FLD.x-e.d,ddz=FLD.z-e.z,dd2=Math.hypot(ddx,ddz),mn=br+.55;if(dd2<mn&&dd2>1e-4){const ps=mn-dd2;FLD.x+=ddx/dd2*ps*.6;FLD.z+=ddz/dd2*ps*.6;e.d-=ddx/dd2*ps*.4;e.z-=ddz/dd2*ps*.4}}
     const gy=Math.max(fieldH(e.d,e.z),FWL-.2)+.1+(e.fly?2.4:0);
     e.m.position.set(e.d,gy+Math.sin(now/300+i)*.08,e.z);
-    e.m.rotation.y=Math.atan2(-dd,-dz); // Continua acompanhando o jogador também durante a preparação e execução do golpe.
+    e.m.rotation.y=rpgMonsterFacingYaw(dd,dz); // Modelo aponta para o jogador no eixo local -Z.
     e.m.scale.lerp(e.sc?(e.scV||(e.scV=new T.Vector3().setScalar(e.sc))):ONE,.2);if(e.elite){FLD.eT=(FLD.eT||0)-dt;if(FLD.eT<=0){FLD.eT=.35;pEmit(e.m.position.x+rnd(-.5,.5),e.m.position.y+e.hh,e.m.position.z+rnd(-.5,.5),0,rnd(1,3),0,0xffe080,0xff9a20,.5,.7,0,.5,.2,.9)}}
     if(e.m.userData.shadow){e.m.userData.shadow.position.y=.05-.1;e.m.userData.shadow.scale.setScalar(1);e.m.userData.shadow.material.opacity=.3}
     e.bar.position.set(e.m.position.x,e.m.position.y+e.hh,e.m.position.z);e.bar.scale.x=Math.max(.02,e.hp/e.mx*2);
