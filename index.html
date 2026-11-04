@@ -1725,6 +1725,28 @@ function rpgWorldPlace(group,key,offset,z,scale=1,rotation=0,yOffset=0){
     model.traverse(o=>{if(!o.isMesh||!o.material)return;const clone=m=>{if(!m)return m;const c=m.clone();c.userData.rpgChunkOwnedMaterial=true;if(c.color)c.color.multiply(tint);return c};o.material=Array.isArray(o.material)?o.material.map(clone):clone(o.material)});
   }
   model.position.set(x,y+(source.userData.rpgGroundOffset||0)+yOffset,z);model.rotation.y=rotation;group.add(model);
+  if(key==='starterRealm')rpgStarterRealmBuildCollisions(model,Math.floor(z/90));
+}
+function rpgStarterRealmBuildCollisions(model,index){
+  // Build lightweight, per-mesh static colliders from the imported GLB.
+  // Ground/terrain meshes and giant merged surfaces are deliberately excluded
+  // so the player can still cross roads, plazas and bridges.
+  model.updateMatrixWorld(true);
+  const solids=[];
+  const box=new T.Box3(),size=new T.Vector3(),center=new T.Vector3();
+  model.traverse(node=>{
+    if(!node.isMesh||!node.geometry)return;
+    box.setFromObject(node);box.getSize(size);box.getCenter(center);
+    if(!Number.isFinite(size.x+size.y+size.z)||size.y<.65||size.y>28)return;
+    if(size.x<.18&&size.z<.18)return;
+    if(size.x>22||size.z>22)return;
+    if(center.y+size.y*.5<.55)return;
+    const halfD=Math.max(.22,size.x*.5),halfZ=Math.max(.22,size.z*.5);
+    const midZ=center.z;
+    solids.push({d:center.x-cx(midZ),z:midZ,halfD:halfD+.32,halfZ:halfZ+.32,source:'starterRealm'});
+  });
+  RPG_TOWN_SOLIDS.set(index,solids);
+  model.userData.rpgCollisionCount=solids.length;
 }
 let RPG_NPC_SKIN_TEXTURE=null;
 function rpgNpcSkinTexture(){
