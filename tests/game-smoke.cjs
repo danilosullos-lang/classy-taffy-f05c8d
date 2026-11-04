@@ -714,7 +714,6 @@ if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/
       cameraRuntime,
       rotatedViewport,
       treeAppearance,
-      townNpcAppearance,
       monsterCatalogIntegration,
       monsterAppearance,
       monsterRuntimeAssets,
