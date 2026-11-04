@@ -1,43 +1,40 @@
 # Aetheria RPG — account API setup
 
-The game currently keeps its legacy offline save in the browser. The new account API adds
-server-side accounts and per-account character slots without removing that offline save.
+The game keeps its offline browser save and now also includes an in-game **Conta / Nuvem** panel. Cloud accounts are an optional extra; they do not disable local saves.
 
-## Required Vercel environment variables
+## Database
 
-- `DATABASE_URL`: Neon PostgreSQL connection string.
-- `JWT_SECRET`: at least 32 random bytes; use a different value per environment.
+1. Create a PostgreSQL database (Neon is supported).
+2. Run the complete `database/schema.sql` migration in its SQL console.
+3. Configure `DATABASE_URL` and `JWT_SECRET` in the hosting environment. Generate the secret with:
+   ```sh
+   openssl rand -base64 48
+   ```
+   Use at least 32 random bytes and a different secret per environment.
 
-Generate a secret with:
-```sh
-openssl rand -base64 48
-```
+## Deploying the API with the Node server
 
-## Database setup
+The repository includes a Node HTTP server that serves the game and routes `/api/*` requests to the same account handlers.
 
-1. Create a PostgreSQL database in Neon (or another provider compatible with Neon serverless).
-2. Run the complete `database/schema.sql` migration in its SQL editor.
-3. Add `DATABASE_URL` and `JWT_SECRET` to Vercel Project Settings → Environment Variables.
-4. Redeploy the project.
+For a Render **Web Service**:
+- Runtime: Node
+- Build command: `npm install`
+- Start command: `npm start`
+- Environment variables: `DATABASE_URL`, `JWT_SECRET`
 
-## API
+A Render **Static Site** cannot execute these API handlers. If the existing Render service is a Static Site, it must remain the frontend while the API is deployed as a Node Web Service or on Vercel. Do not expect `/api` to work on a static-only host.
+
+## API endpoints
 
 - `POST /api/auth/register` — JSON `{ "email": "...", "password": "at least 10 characters" }`
-- `POST /api/auth/login` — same JSON shape; returns a 12-hour bearer token.
-- `GET /api/characters` — requires `Authorization: Bearer <token>`.
+- `POST /api/auth/login` — returns a 12-hour bearer token.
+- `GET /api/characters` — authenticated character list.
 - `PUT /api/characters` — creates/updates a character in slots 0–5.
 
-Character payload uses `name`, `race`, `classId`, `slot`, `level`, `mapId`,
-`position`, `vitals`, and optional `data`. The API validates identity, bounds, and payload size.
-All SQL values are parameterized. Passwords are stored as scrypt hashes, never plaintext.
+Passwords use scrypt hashes; SQL values are parameterized; the API validates race, class, level, position, vitals and save size.
 
-## Client
+## In-game usage
 
-Load `assets/engine/account-client.js` and use `AetheriaAccount.create()`.
-The access token is held in sessionStorage for the current browser session. The existing
-offline save remains available; this API is an additional cloud-save capability.
+Open **☁️ Conta / Nuvem** from the start screen, create an account or log in, then choose **Salvar na nuvem**. **Restaurar selecionado** replaces the current local save with the selected cloud save after confirmation. The local save remains available when offline.
 
-## Important operational note
-
-The API will return HTTP 503 until both environment variables are configured and the SQL
-migration has been applied. No database account or secret is embedded in the repository.
+The API returns HTTP 503 until the database migration and environment variables are configured. No credentials or database secrets are stored in the repository.

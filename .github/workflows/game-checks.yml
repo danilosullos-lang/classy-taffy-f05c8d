@@ -79,6 +79,9 @@ jobs:
           node --check /tmp/aetheria-inline.js
           node --check assets/combat/nj-mmo-combat-core.js
           node --check assets/engine/aetheria-engine.js
+          node --check assets/engine/account-client.js
+          node --check assets/engine/account-ui.js
+          node --check server.js
           node tests/engine-foundation.cjs
           node tests/account-client.cjs
           node tests/auth-core.mjs

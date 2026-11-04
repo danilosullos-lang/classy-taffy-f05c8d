@@ -472,9 +472,9 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     await page.waitForFunction(()=>window.__rpgPlayerAnimationDebug&&window.__rpgPlayerAnimationDebug.gameRunning===true,{timeout:5000});
     await page.keyboard.down('ArrowDown');
     await page.waitForTimeout(3500);
-    const backwardWorldState = await page.evaluate(() => ({...window.__rpgWorldDebug}));
+    const backwardWorldState = await page.evaluate(() => ({...window.__rpgWorldDebug,fieldPosition:typeof FLD!=='undefined'?{x:FLD.x,z:FLD.z}:null,blockedAtPlayer:typeof rpgStarterRealmBlockedAt==='function'?rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55):null,deltaFromSpawn:typeof FLD!=='undefined'?FLD.z-20000:null}));
     await page.keyboard.up('ArrowDown');
-    if (!backwardWorldState.freeRoam || backwardWorldState.waterVisible || !backwardWorldState.groundLoaded || backwardWorldState.playerZ <= 8) {
+    if (!backwardWorldState.freeRoam || backwardWorldState.waterVisible || !backwardWorldState.groundLoaded || backwardWorldState.playerZ <= 20008) {
       throw new Error('A exploração livre/terreno sólido não foi ativada: '+JSON.stringify(backwardWorldState));
     }
     await page.keyboard.down('ArrowUp');
