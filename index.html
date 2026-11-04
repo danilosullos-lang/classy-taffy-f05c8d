@@ -4151,21 +4151,21 @@ const CLASS_SKIN_PREVIEWS={
  sumo:{name:'Sumo Sacerdote — KayKit',desc:'Aparência de túnica e cajado para a especialização de suporte.',url:'/skins/classes/Mage.glb'}
 };
 let _cpPreview={renderer:null,scene:null,camera:null,model:null,mixer:null,clock:null,raf:0,loading:''},_cpPreviewRequest=0;
-// Personagens humanoides fantasy CC0 (Gobkit Free Character Pack Vol.3).
-// Os arquivos incluem rig humanoide e clipes Idle/Walk/Run/Attack/Hit/Death/Special.
+// Modelos locais versionados no próprio repositório. Evita CORS, hotlink e falhas
+// de disponibilidade de servidores externos no carregamento do personagem principal.
 const PLAYABLE_CLASS_SKINS={
- guerreiro:'https://gobkit.com/freebies/human003/HeavyWarrior.glb',
- cavaleiro:'https://gobkit.com/freebies/human003/KnightCaptain.glb',
- paladino:'https://gobkit.com/freebies/human003/KnightCaptain.glb',
- templario:'https://gobkit.com/freebies/human003/KnightCaptain.glb',
- mago:'https://gobkit.com/freebies/human006/OrcWarShaman.glb',
- arquimago:'https://gobkit.com/freebies/human006/OrcWarShaman.glb',
- sacerdote:'https://gobkit.com/freebies/human003/Priestess.glb',
- sumo:'https://gobkit.com/freebies/human003/Priestess.glb',
- ladino:'https://gobkit.com/freebies/human003/Scout.glb',
- assassino:'https://gobkit.com/freebies/human003/Scout.glb',
- arqueiro:'https://gobkit.com/freebies/human003/Archer.glb',
- ranger:'https://gobkit.com/freebies/human003/Archer.glb'
+ guerreiro:'/skins/classes/Barbarian.glb',
+ cavaleiro:'/skins/classes/Knight.glb',
+ paladino:'/skins/classes/Knight.glb',
+ templario:'/skins/classes/Knight.glb',
+ mago:'/skins/classes/Mage.glb',
+ arquimago:'/skins/classes/Mage.glb',
+ sacerdote:'/skins/classes/Mage.glb',
+ sumo:'/skins/classes/Mage.glb',
+ ladino:'/skins/classes/Rogue_Hooded.glb',
+ assassino:'/skins/classes/Rogue_Hooded.glb',
+ arqueiro:'/skins/lyra-archer-animated.glb',
+ ranger:'/skins/lyra-archer-animated.glb'
 };
 function playableClassSkin(id){
   // A classe escolhida nunca deve mudar silenciosamente por causa do perfil gráfico.
@@ -5856,7 +5856,7 @@ function loadExternalFrogSkin(url,statusEl){
     if(request!==_externalSkinRequest)return;
     try{
       const boneNodes=[];let visibleMeshes=0;gltf.scene.traverse(o=>{if(o.isBone)boneNodes.push(o);if(o.isMesh&&o.geometry)visibleMeshes++});
-      if(raw!=='/skins/lyra-archer-animated.glb'&&(visibleMeshes===0||(boneNodes.length<8&&!(gltf.animations&&gltf.animations.length)))){
+      if(visibleMeshes===0){
         const requested=raw;sv.frog=sv.frog||{};sv.frog.externalSkin='/skins/lyra-archer-animated.glb';
         window.__rpgClassSkinFallback={requested,reason:'Modelo sem rig ou animações suficientes; mantendo a skin animada compatível.'};
         _skinStatus(statusEl,'Este modelo não possui rig compatível. Ativando personagem animado de segurança…');
@@ -5976,7 +5976,15 @@ function loadExternalFrogSkin(url,statusEl){
   },err=>{
     if(request!==_externalSkinRequest)return;
     console.error('Falha ao carregar skin 3D:',err);
-    _skinStatus(statusEl,'Não foi possível carregar. Confira o caminho, o arquivo e a conexão.',true);
+    // Último recurso local: mantém um personagem visível mesmo se o arquivo da classe falhar.
+    const fallback='/skins/classes/Barbarian.glb';
+    if(raw!==fallback){
+      sv.frog=sv.frog||{};sv.frog.externalSkin=fallback;
+      _skinStatus(statusEl,'A skin escolhida falhou; carregando o guerreiro local de segurança…');
+      loadExternalFrogSkin(fallback,statusEl);
+      return;
+    }
+    _skinStatus(statusEl,'A skin não carregou. O personagem básico continuará visível; verifique a conexão e os arquivos.',true);
   });
 }
 
