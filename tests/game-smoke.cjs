@@ -48,10 +48,13 @@ const { chromium } = require('playwright');
       }, { timeout: 10000 });
     }
 
+    // Simulate a legacy saved Apprentice: the old save must not skip class creation.
+    await page.evaluate(()=>{sv.charCreated=1;sv.job='novice';sv.charClass='novice';sv.lv=Math.max(1,sv.lv||1);});
     await page.locator('#go').click();
 
     // First-run accounts now choose a class and see its actual local 3D skin preview.
     const characterPicker = page.locator('#charpick');
+    if(!(await characterPicker.isVisible()))throw new Error('Um save antigo de Aprendiz entrou no mundo sem abrir o seletor de classe.');
     if (await characterPicker.isVisible()) {
       // Race selection must change the available Interlude-style class identity.
       await page.locator('[data-start-race="elf"]').click();
