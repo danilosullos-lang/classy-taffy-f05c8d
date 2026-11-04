@@ -393,6 +393,11 @@ const { chromium } = require('playwright');
     if (idleState.state !== 'idle') {
       throw new Error('A personagem não voltou à animação idle ao soltar os controles: '+JSON.stringify(idleState));
     }
+    await page.evaluate(()=>{
+      st.hp=hpMax();st.y=0;st.vy=0;st.coyote=.2;st.iframe=3;
+      frog.userData._animOverride=null;frog.userData._animHp=st.hp;
+      EN.forEach(e=>{e.dead=true;if(e.m)e.m.visible=false;});
+    });
     await page.keyboard.down('Space');
     await page.waitForTimeout(260);
     const jumpingState=await page.evaluate(()=>({...window.__rpgPlayerAnimationDebug}));
