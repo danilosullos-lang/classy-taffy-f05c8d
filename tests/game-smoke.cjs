@@ -1,11 +1,11 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const gameSource = fs.readFileSync('index.html', 'utf8');
-if ((gameSource.match(/if\(!\(e\.slam&&e\.ph===1\)\)e\.m\.rotation\.y/g) || []).length) {
-  throw new Error('Monstros deixam de acompanhar o jogador durante o golpe slam.');
+if ((gameSource.match(/e\.m\.rotation\.y=rpgMonsterFacingYaw\(dd,dz\)/g) || []).length !== 2) {
+  throw new Error('A correção de direção precisa estar aplicada no mundo normal e no Mundo Aberto.');
 }
-if ((gameSource.match(/e\.m\.rotation\.y=Math\.atan2\(-dd,-dz\)/g) || []).length < 2) {
-  throw new Error('Atualização de direção dos monstros ausente em uma das regiões.');
+if (gameSource.includes('Math.atan2(-dd,-dz)')) {
+  throw new Error('Ainda existe cálculo invertido da direção dos monstros.');
 }
 
 (async () => {
@@ -40,6 +40,17 @@ if ((gameSource.match(/e\.m\.rotation\.y=Math\.atan2\(-dd,-dz\)/g) || []).length
     }));
     if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
+    }
+    const monsterFacingAudit=await page.evaluate(()=>{
+      const right=rpgMonsterFacingYaw(1,0),left=rpgMonsterFacingYaw(-1,0);
+      const front=rpgMonsterFacingYaw(0,-1),back=rpgMonsterFacingYaw(0,1);
+      return {right,left,front,back,valid:[right,left,front,back].every(Number.isFinite)};
+    });
+    if(!monsterFacingAudit.valid||Math.abs(monsterFacingAudit.right-Math.PI/2)>.001||
+      Math.abs(monsterFacingAudit.left+Math.PI/2)>.001||
+      Math.abs(monsterFacingAudit.front)>.001||
+      Math.abs(Math.abs(monsterFacingAudit.back)-Math.PI)>.001){
+      throw new Error('Cálculo de orientação dos monstros incorreto: '+JSON.stringify(monsterFacingAudit));
     }
     const bossLevelAudit=await page.evaluate(()=>({first:bossAt(0).lv,late:bossAt(100).lv}));
     if(bossLevelAudit.first<1||bossLevelAudit.late!==80)throw new Error('Níveis dos chefes não respeitam o teto 80: '+JSON.stringify(bossLevelAudit));
