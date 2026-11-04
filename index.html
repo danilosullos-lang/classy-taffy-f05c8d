@@ -5931,11 +5931,22 @@ function loadExternalFrogSkin(url,statusEl){
       try{_hjob=null;heroGear(frog.userData.hero,sv.job||'novice');}catch(e){console.warn('Não foi possível prender o arco à skin:',e)}
       if(gltf.animations&&gltf.animations.length){
         // Remove root-motion tracks that can pull the complete character away during locomotion.
-        const rootNames=new Set([gltf.scene.name,...(gltf.scene.children||[]).map(o=>o.name)].filter(Boolean));
+        // Remove root-motion do objeto importado, do Armature e dos ossos raiz (Hips/Pelvis).
+        // Muitos GLBs usam caminhos "Armature/Hips.position", não apenas "Scene.position".
+        const rootMotionNodes=new Set([gltf.scene]);
+        let firstBone=null;
+        gltf.scene.traverse(o=>{if(!firstBone&&o.isBone)firstBone=o});
+        for(let p=firstBone&&firstBone.parent;p&&p!==gltf.scene;p=p.parent)rootMotionNodes.add(p);
+        const rootBoneNames=/^(hips|pelvis|root|armature|mixamorig:?hips|mixamorig:?root)$/i;
         const safeAnimations=gltf.animations.map(clip=>{
           const tracks=(clip.tracks||[]).filter(track=>{
-            const name=String(track.name||''),parts=name.split('.'),node=parts[0],prop=parts[parts.length-1];
-            return !((prop==='position'||prop==='scale')&&rootNames.has(node));
+            const full=String(track.name||''),dot=full.lastIndexOf('.');
+            if(dot<0)return true;
+            const path=full.slice(0,dot),prop=full.slice(dot+1);
+            if(prop!=='position'&&prop!=='scale')return true;
+            const nodeName=path.split(/[/:]/).pop();
+            const target=gltf.scene.getObjectByName(nodeName);
+            return !(rootMotionNodes.has(target)||rootBoneNames.test(nodeName));
           });
           return new THREE.AnimationClip(clip.name,clip.duration,tracks);
         }).filter(clip=>clip.tracks.length);
@@ -8484,6 +8495,57 @@ if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventList
   addEventListener('resize',()=>{sig='';layout()});
   addEventListener('orientationchange',()=>setTimeout(()=>{sig='';layout()},300));
   setTimeout(layout,1200);
+})();
+
+/* v52 — estabilidade mobile: resize seguro, limite de memória gráfica e recuperação WebGL */
+(function(){
+  if(!window.R||!window.C)return;
+  const canvas=R.domElement;
+  let resizeQueued=false,lastW=0,lastH=0;
+  function fitMobileRenderer(){
+    resizeQueued=false;
+    const vv=window.visualViewport;
+    const w=Math.max(1,Math.round(vv&&vv.width||window.innerWidth||document.documentElement.clientWidth));
+    const h=Math.max(1,Math.round(vv&&vv.height||window.innerHeight||document.documentElement.clientHeight));
+    if(w===lastW&&h===lastH)return;
+    lastW=w;lastH=h;
+    // Limita o framebuffer a ~1,1 milhão de pixels em aparelhos móveis.
+    const area=w*h;
+    const pixelCap=LOW_MEM?0.48:1.0;
+    const areaCap=LOW_MEM?1100000:2200000;
+    const ratio=Math.max(0.38,Math.min(pixelCap,Math.sqrt(areaCap/Math.max(1,area)),window.devicePixelRatio||1));
+    try{
+      R.setPixelRatio(ratio);
+      R.setSize(w,h,false);
+      canvas.style.width='100vw';canvas.style.height='100dvh';
+      C.aspect=w/h;C.fov=C.aspect<1?56+Math.min(4,(1-C.aspect)*8):60;
+      C.updateProjectionMatrix();
+      if(composer){composer.setPixelRatio(ratio);composer.setSize(w,h)}
+      if(bloomPass)bloomPass.setSize(w,h);
+      window.__rpgMobileRenderProfile={width:w,height:h,pixelRatio:ratio,bufferPixels:Math.round(w*h*ratio*ratio),lowMemory:!!LOW_MEM};
+    }catch(err){console.warn('[Aetheria] Falha ao ajustar tela:',err)}
+  }
+  function queueResize(){
+    if(resizeQueued)return;resizeQueued=true;
+    requestAnimationFrame(()=>requestAnimationFrame(fitMobileRenderer));
+  }
+  ['resize','orientationchange'].forEach(ev=>window.addEventListener(ev,queueResize,{passive:true}));
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',queueResize,{passive:true});
+  if(window.ResizeObserver){try{new ResizeObserver(queueResize).observe(document.documentElement)}catch(_){}}
+  canvas.addEventListener('webglcontextlost',e=>{
+    e.preventDefault();
+    window.__rpgWebGLStatus='context-lost';
+    let note=document.getElementById('webglRecoveryNotice');
+    if(!note){note=document.createElement('div');note.id='webglRecoveryNotice';note.style.cssText='position:fixed;z-index:99999;left:12px;right:12px;top:50%;transform:translateY(-50%);padding:16px;border-radius:12px;background:#24172e;color:white;text-align:center;font:600 14px system-ui;box-shadow:0 8px 30px #0009';document.body.appendChild(note)}
+    note.textContent='A GPU do aparelho reiniciou. Reduzindo os gráficos para recuperar o jogo…';
+  },{passive:false});
+  canvas.addEventListener('webglcontextrestored',()=>{
+    window.__rpgWebGLStatus='restored';queueResize();
+    const note=document.getElementById('webglRecoveryNotice');if(note)note.remove();
+  });
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueResize()});
+  queueResize();
+  setTimeout(queueResize,250);setTimeout(queueResize,900);
 })();
 </script>
 <div id="assetCredit" aria-label="Texturas CC0 do Poly Haven">Materiais PBR CC0 · Powered by Poly Haven</div>
