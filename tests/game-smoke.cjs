@@ -424,6 +424,35 @@ const { chromium } = require('playwright');
     }
     await page.evaluate(()=>closeBag());
 
+    // The initial two cards are intentional Lineage-style base archetypes.
+    // An Elf Fighter unlocks Elven Scout (archer) at level 20 after the first trial.
+    const elfArcherTransfer=await page.evaluate(()=>{
+      const snapshot=JSON.parse(JSON.stringify(sv));
+      try{
+        sv.race='elf';sv.lineageRace='elf';sv.lineageBaseClass='fighter';sv.lineageStage=0;
+        sv.lineageMarks={first:true};sv.lv=20;sv.job='guerreiro';sv.lineageClass='Elven Fighter';
+        sv.lineageRole='fighter';sv.lineageFirstClass=null;sv.frog=sv.frog||{};
+        const options=lineageOptions();
+        const scout=options.find(x=>x.id==='elven_scout');
+        if(!scout||scout.role!=='archer'||scout.job!=='arqueiro')return {ok:false,options};
+        const selected=selectLineageClass('elven_scout');
+        const result={ok:selected===true,job:sv.job,role:sv.lineageRole,classId:sv.lineageClassId,
+          skin:sv.frog.externalSkin,options:options.map(x=>x.id)};
+        return result;
+      }finally{
+        Object.keys(sv).forEach(k=>delete sv[k]);
+        Object.assign(sv,snapshot);
+        save(true);
+        if(snapshot.frog&&snapshot.frog.externalSkin&&typeof loadExternalFrogSkin==='function'){
+          loadExternalFrogSkin(snapshot.frog.externalSkin,null);
+        }
+      }
+    });
+    if(!elfArcherTransfer.ok||elfArcherTransfer.job!=='arqueiro'||elfArcherTransfer.role!=='archer'||
+      elfArcherTransfer.classId!=='elven_scout'||elfArcherTransfer.skin!=='/skins/classes/Rogue_Hooded.glb'){
+      throw new Error('A transferência Elven Scout não ativa a classe Arqueiro corretamente: '+JSON.stringify(elfArcherTransfer));
+    }
+
     // Independently inspect the GLB and verify the full imported animation library.
     const playerAnimationCheck = await page.evaluate(async () => {
       if (!window.THREE || !THREE.GLTFLoader) throw new Error('GLTFLoader não está disponível para testar a skin do jogador.');
