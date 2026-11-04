@@ -104,6 +104,39 @@ class GameIntegrityTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.source)
 
+    def test_compact_kaykit_class_skins_and_animation_rigs_are_present(self):
+        for asset in (
+            "skins/classes/Barbarian.glb", "skins/classes/Knight.glb",
+            "skins/classes/Mage.glb", "skins/classes/Rogue_Hooded.glb",
+            "assets/animations/kaykit/rig-medium/general.glb",
+            "assets/animations/kaykit/rig-medium/movement-basic.glb",
+            "assets/animations/kaykit/rig-medium/movement-advanced.glb",
+            "assets/animations/kaykit/rig-medium/combat-melee.glb",
+            "assets/animations/kaykit/rig-medium/combat-ranged.glb",
+            "assets/animations/kaykit/rig-medium/simulation.glb",
+            "assets/animations/kaykit/rig-medium/special.glb",
+            "assets/animations/kaykit/rig-medium/tools.glb",
+        ):
+            path = ROOT / asset
+            with self.subTest(asset=asset):
+                self.assertTrue(path.is_file(), f"Missing KayKit runtime asset: {asset}")
+                self.assertEqual(path.read_bytes()[:4], b"glTF", f"Not a real GLB file: {asset}")
+        self.assertIn("function _loadKayKitPlayerAnimations", self.source)
+        self.assertIn("const bundledClassSkin=raw.startsWith('/skins/classes/')", self.source)
+        self.assertIn("combatRanged", self.source)
+        self.assertIn("combatMelee", self.source)
+
+    def test_starting_class_role_mapping_covers_tanks_and_orc_support(self):
+        self.assertIn("cavaleiro:'tank',paladino:'tank',templario:'tank'", self.source)
+        self.assertIn("START_RACE==='orc'&&['sacerdote','sumo'].includes(id)?'support'", self.source)
+        self.assertIn("sv.job==='novice'&&!sv.lineageClass&&!sv.cp", self.source)
+
+    def test_bow_projectiles_are_archer_only_and_spawn_at_weapon(self):
+        self.assertIn("if(!['arqueiro','ranger'].includes(String(sv&&sv.job||'')))", self.source)
+        self.assertIn("originSource='right-hand'", self.source)
+        self.assertIn("originSource='bow-grip'", self.source)
+        self.assertIn("window.__rpgCombatVisualDebug", self.source)
+
     def test_playable_skin_assets_are_present_and_local(self):
         for asset in ("skins/classes/Barbarian.glb", "skins/classes/Knight.glb",
                       "skins/classes/Mage.glb", "skins/classes/Rogue_Hooded.glb",
