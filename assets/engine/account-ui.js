@@ -18,6 +18,6 @@ button('Restaurar selecionado',cloud,()=>{try{const o=slots.selectedOptions[0],p
 button('Atualizar lista',cloud,list);button('Sair',cloud,()=>{api.logout();email.style.display=pass.style.display='block';status.textContent='Sessão encerrada. Save local preservado.';});
 button('Fechar',card,()=>modal.style.display='none');
 cloud.style.display='none';
-const go=document.getElementById('go');if(go&&go.parentElement)button('☁️ Conta / Nuvem',go.parentElement,()=>{modal.style.display='flex';if(api.authenticated){email.style.display=pass.style.display='none';cloud.style.display='block';list();}});
+const go=document.getElementById('go');if(go&&go.parentElement){const cb=button('☁️ Conta / Nuvem',go.parentElement,()=>{modal.style.display='flex';if(api.authenticated){email.style.display=pass.style.display='none';cloud.style.display='block';list();}});cb.className='big alt';cb.removeAttribute('style');}
 window.AetheriaAccountCloudSync={save:saveCloud};
 })();
