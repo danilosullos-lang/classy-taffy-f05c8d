@@ -5956,12 +5956,12 @@ function loadExternalFrogSkin(url,statusEl){
   const request=++_externalSkinRequest;
   _skinStatus(statusEl,'Carregando modelo 3D…');
   const loader=new THREE.GLTFLoader();
-  window.__rpgSkinLoadDebug={status:'loading',requested:raw,startedAt:new Date().toISOString(),lowMemory:!!LOW_MEM};
+  window.__rpgSkinLoadDebug={status:'loading',requested:raw,startedAt:new Date().toISOString(),lowMemory:!!LOW_MEM};if(window.__rpgRuntimeDiagnostics){window.__rpgRuntimeDiagnostics.skinStatus='loading';window.__rpgRuntimeDiagnostics.requestedSkin=raw;}
   loader.load(raw,gltf=>{
     if(request!==_externalSkinRequest)return;
     try{
       const boneNodes=[];let visibleMeshes=0,totalMeshes=0;gltf.scene.traverse(o=>{if(o.isBone)boneNodes.push(o);if(o.isMesh&&o.geometry){totalMeshes++;if(o.visible!==false)visibleMeshes++}});
-      window.__rpgSkinLoadDebug={status:'parsed',requested:raw,meshes:totalMeshes,visibleMeshes,bones:boneNodes.length,animations:(gltf.animations||[]).length};
+      window.__rpgSkinLoadDebug={status:'parsed',requested:raw,meshes:totalMeshes,visibleMeshes,bones:boneNodes.length,animations:(gltf.animations||[]).length};if(window.__rpgRuntimeDiagnostics){window.__rpgRuntimeDiagnostics.skinStatus='parsed';window.__rpgRuntimeDiagnostics.meshes=totalMeshes;window.__rpgRuntimeDiagnostics.bones=boneNodes.length;}
       const fallback='/skins/classes/Barbarian.glb';
       if(visibleMeshes===0){
         if(raw!==fallback){sv.frog=sv.frog||{};sv.frog.externalSkin=fallback;window.__rpgClassSkinFallback={requested:raw,reason:'GLB carregado sem malhas visíveis.'};_skinStatus(statusEl,'Modelo sem malhas visíveis; tentando personagem local de segurança…');loadExternalFrogSkin(fallback,statusEl);return;}
@@ -6103,14 +6103,14 @@ function loadExternalFrogSkin(url,statusEl){
         }
         frog.userData._animOverride=null;frog.userData._animHp=(typeof st!=='undefined'&&st)?st.hp:null;frog.userData._animWasAir=false;
       }
-      window.__rpgPlayerAnimationDebug={active:true,skin:raw,requestedSkin:raw,race:sv&&sv.race||'human',clips:(gltf.animations||[]).length,bones:boneNodes.length,state:'idle',clip:_externalFrogClips.idle?(_externalFrogClips.idle.name||'idle'):'procedural-idle',procedural:!_externalFrogClips.idle,clipMap:Object.fromEntries(Object.entries(_externalFrogClips).map(([k,v])=>[k,v&&v.name||null])),forwardCorrection:raw.indexOf('/skins/classes/')===0?'180deg':'none'};
+      window.__rpgPlayerAnimationDebug={active:true,skin:raw,requestedSkin:raw,race:sv&&sv.race||'human',clips:(gltf.animations||[]).length,bones:boneNodes.length,state:'idle',clip:_externalFrogClips.idle?(_externalFrogClips.idle.name||'idle'):'procedural-idle',procedural:!_externalFrogClips.idle,clipMap:Object.fromEntries(Object.entries(_externalFrogClips).map(([k,v])=>[k,v&&v.name||null])),forwardCorrection:raw.indexOf('/skins/classes/')===0?'180deg':'none'};if(window.__rpgRuntimeDiagnostics){window.__rpgRuntimeDiagnostics.skinStatus='applied';window.__rpgRuntimeDiagnostics.activeSkin=raw;window.__rpgRuntimeDiagnostics.playerVisible=!!frog.visible;}
       _loadKayKitPlayerAnimations(model,gltf.scene,request,_kaykitRole()).catch(err=>console.warn('Falha ao preparar animações KayKit:',err));
       if(sv&&sv.frog)sv.frog.externalSkin=raw;
       _skinStatus(statusEl,'Skin carregada! '+((gltf.animations||[]).length?('Animações encontradas: '+gltf.animations.length+'.'):'Modelo sem animações incorporadas.'));
       if(typeof save==='function')save();
     }catch(err){
       console.error('Falha ao preparar skin 3D:',err);
-      window.__rpgSkinLoadDebug={status:'apply_error',requested:raw,error:String(err&&err.message||err)};
+      window.__rpgSkinLoadDebug={status:'apply_error',requested:raw,error:String(err&&err.message||err)};if(window.__rpgRuntimeDiagnostics){window.__rpgRuntimeDiagnostics.skinStatus='apply_error';window.__rpgRuntimeDiagnostics.error=String(err&&err.message||err);}
       // Aplicação é transacional: se qualquer etapa falhar, restaura o personagem-base.
       try{resetExternalFrogSkin();frog.visible=true;frog.traverse(o=>{if(o.isMesh&&o!==bub)o.visible=true;});}catch(_){}
       _skinStatus(statusEl,'A skin falhou ao ser aplicada; personagem-base restaurado: '+(err.message||'erro no modelo'),true);
@@ -6120,7 +6120,7 @@ function loadExternalFrogSkin(url,statusEl){
   },err=>{
     if(request!==_externalSkinRequest)return;
     console.error('Falha ao carregar skin 3D:',err);
-    window.__rpgSkinLoadDebug={status:'load_error',requested:raw,error:String(err&&err.message||err)};
+    window.__rpgSkinLoadDebug={status:'load_error',requested:raw,error:String(err&&err.message||err)};if(window.__rpgRuntimeDiagnostics){window.__rpgRuntimeDiagnostics.skinStatus='load_error';window.__rpgRuntimeDiagnostics.error=String(err&&err.message||err);}
     // Último recurso local: mantém um personagem visível mesmo se o arquivo da classe falhar.
     const fallback='/skins/classes/Barbarian.glb';
     if(raw!==fallback){
@@ -8697,7 +8697,7 @@ if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventList
     }
     if(typeof playableClassSkin==='function'&&typeof loadExternalFrogSkin==='function'){
       sv.frog=sv.frog||{};
-      const skin=sv.frog.externalSkin||playableClassSkin(sv.job);
+      const skin=(PLAYABLE_CLASS_SKINS&&PLAYABLE_CLASS_SKINS[sv.job])?playableClassSkin(sv.job):(sv.frog.externalSkin||playableClassSkin(sv.job));
       sv.frog.externalSkin=skin;
       window.__rpgRuntimeDiagnostics.savedSkin=skin;
       window.__rpgRuntimeDiagnostics.skinStatus='loading';
