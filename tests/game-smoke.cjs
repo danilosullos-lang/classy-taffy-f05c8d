@@ -1,4 +1,12 @@
 const { chromium } = require('playwright');
+const fs = require('fs');
+const gameSource = fs.readFileSync('index.html', 'utf8');
+if ((gameSource.match(/if\(!\(e\.slam&&e\.ph===1\)\)e\.m\.rotation\.y/g) || []).length) {
+  throw new Error('Monstros deixam de acompanhar o jogador durante o golpe slam.');
+}
+if ((gameSource.match(/e\.m\.rotation\.y=Math\.atan2\(-dd,-dz\)/g) || []).length < 2) {
+  throw new Error('Atualização de direção dos monstros ausente em uma das regiões.');
+}
 
 (async () => {
   const browser = await chromium.launch({
@@ -678,7 +686,7 @@ const { chromium } = require('playwright');
         fxClassSkillVfx(role,role==='mage'?'e':'q',[],false);
       }
       // Avança o relógio de efeitos explicitamente: o smoke pode rodar com RAF reduzido/pausado.
-      for(let tick=0;tick<16;tick++)fxTick(.05);
+      for(let tick=0;tick<60;tick++)fxTick(.01);
       await new Promise(resolve=>setTimeout(resolve,50));
       return {castClip,classVfx:{...window.__rpgClassVfxDebug.casts},debug:{...window.__rpgMageFireVfxDebug},fireballOrigin:window.__rpgMageFireVfxDebug.lastFireballOrigin,
         fireballDelta:window.__rpgMageFireVfxDebug.fireballs-start,meteorDelta:window.__rpgMageFireVfxDebug.meteors-meteors};
