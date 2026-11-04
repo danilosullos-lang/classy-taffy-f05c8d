@@ -5845,22 +5845,23 @@ function loadExternalSkinCatalog(selectEl,statusEl){
     });
 }
 function loadExternalFrogSkin(url,statusEl){
-  if(!window.THREE || !THREE.GLTFLoader){_skinStatus(statusEl,'O carregador 3D não foi carregado. Confira a conexão com a CDN.',true);return;}
+  if(!window.THREE || !THREE.GLTFLoader){window.__rpgSkinLoadDebug={status:'loader_missing',requested:String(url||'')};_skinStatus(statusEl,'O carregador 3D não foi carregado. Confira a conexão com a CDN.',true);return;}
   const raw=String(url||'').trim();
   if(!raw || !/\.glb(?:[?#].*)?$/i.test(raw)){_skinStatus(statusEl,'Use um caminho ou URL que termine em .glb.',true);return;}
   if(_externalFrogSkin&&_externalFrogSkin.userData.sourceUrl===raw){_skinStatus(statusEl,'Skin já está aplicada.');return;}
   const request=++_externalSkinRequest;
   _skinStatus(statusEl,'Carregando modelo 3D…');
   const loader=new THREE.GLTFLoader();
+  window.__rpgSkinLoadDebug={status:'loading',requested:raw,startedAt:new Date().toISOString(),lowMemory:!!LOW_MEM};
   loader.load(raw,gltf=>{
     if(request!==_externalSkinRequest)return;
     try{
-      const boneNodes=[];let visibleMeshes=0;gltf.scene.traverse(o=>{if(o.isBone)boneNodes.push(o);if(o.isMesh&&o.geometry)visibleMeshes++});
+      const boneNodes=[];let visibleMeshes=0,totalMeshes=0;gltf.scene.traverse(o=>{if(o.isBone)boneNodes.push(o);if(o.isMesh&&o.geometry){totalMeshes++;if(o.visible!==false)visibleMeshes++}});
+      window.__rpgSkinLoadDebug={status:'parsed',requested:raw,meshes:totalMeshes,visibleMeshes,bones:boneNodes.length,animations:(gltf.animations||[]).length};
+      const fallback='/skins/classes/Barbarian.glb';
       if(visibleMeshes===0){
-        const requested=raw;sv.frog=sv.frog||{};sv.frog.externalSkin='/skins/lyra-archer-animated.glb';
-        window.__rpgClassSkinFallback={requested,reason:'Modelo sem rig ou animações suficientes; mantendo a skin animada compatível.'};
-        _skinStatus(statusEl,'Este modelo não possui rig compatível. Ativando personagem animado de segurança…');
-        loadExternalFrogSkin('/skins/lyra-archer-animated.glb',statusEl);return;
+        if(raw!==fallback){sv.frog=sv.frog||{};sv.frog.externalSkin=fallback;window.__rpgClassSkinFallback={requested:raw,reason:'GLB carregado sem malhas visíveis.'};_skinStatus(statusEl,'Modelo sem malhas visíveis; tentando personagem local de segurança…');loadExternalFrogSkin(fallback,statusEl);return;}
+        throw new Error('O modelo de segurança não contém malhas visíveis.');
       }
       resetExternalFrogSkin();
       const model=new T.Group();
@@ -5894,13 +5895,9 @@ function loadExternalFrogSkin(url,statusEl){
       const normalizedBox=new T.Box3().setFromObject(model);
       const normalizedSize=normalizedBox.getSize(new T.Vector3());
       // Rejeita GLBs cuja caixa útil fica invisível/fora da escala esperada.
-      if(!Number.isFinite(normalizedSize.y)||normalizedSize.y<1.15||normalizedSize.y>2.2){
-        if(raw!=='/skins/lyra-archer-animated.glb'){
-          window.__rpgClassSkinFallback={requested:raw,reason:'Altura útil fora do padrão após normalização: '+normalizedSize.y};
-          sv.frog=sv.frog||{};sv.frog.externalSkin='/skins/lyra-archer-animated.glb';
-          loadExternalFrogSkin('/skins/lyra-archer-animated.glb',statusEl);return;
-        }
-        throw new Error('A skin animada de segurança também está fora da escala esperada.');
+      if(!Number.isFinite(normalizedSize.y)||normalizedSize.y<0.35||normalizedSize.y>3.5){
+        if(raw!==fallback){window.__rpgClassSkinFallback={requested:raw,reason:'Altura útil inválida após normalização: '+normalizedSize.y};sv.frog=sv.frog||{};sv.frog.externalSkin=fallback;_skinStatus(statusEl,'Escala do modelo inválida; tentando personagem local de segurança…');loadExternalFrogSkin(fallback,statusEl);return;}
+        throw new Error('A escala do personagem de segurança é inválida: '+normalizedSize.y);
       }
       const center=normalizedBox.getCenter(new T.Vector3());
       model.position.set(-center.x,-normalizedBox.min.y,-center.z);
@@ -5914,7 +5911,7 @@ function loadExternalFrogSkin(url,statusEl){
           o.visible=false;
         }
       });
-      frog.add(model);
+      frog.add(model);model.visible=true;gltf.scene.visible=true;frog.visible=true;
       _externalFrogSkin=model;_externalFrogPose=[];
       model.traverse(o=>{
         if(!o.isBone)return;
@@ -5969,6 +5966,7 @@ function loadExternalFrogSkin(url,statusEl){
       if(typeof save==='function')save();
     }catch(err){
       console.error('Falha ao preparar skin 3D:',err);
+      window.__rpgSkinLoadDebug={status:'apply_error',requested:raw,error:String(err&&err.message||err)};
       _skinStatus(statusEl,'O modelo abriu, mas não pôde ser aplicado: '+(err.message||'erro no modelo'),true);
     }
   },xhr=>{
@@ -5976,6 +5974,7 @@ function loadExternalFrogSkin(url,statusEl){
   },err=>{
     if(request!==_externalSkinRequest)return;
     console.error('Falha ao carregar skin 3D:',err);
+    window.__rpgSkinLoadDebug={status:'load_error',requested:raw,error:String(err&&err.message||err)};
     // Último recurso local: mantém um personagem visível mesmo se o arquivo da classe falhar.
     const fallback='/skins/classes/Barbarian.glb';
     if(raw!==fallback){
@@ -5984,9 +5983,21 @@ function loadExternalFrogSkin(url,statusEl){
       loadExternalFrogSkin(fallback,statusEl);
       return;
     }
+    window.__rpgSkinLoadDebug={status:'fallback_failed',requested:raw,error:String(err&&err.message||err)};
     _skinStatus(statusEl,'A skin não carregou. O personagem básico continuará visível; verifique a conexão e os arquivos.',true);
   });
 }
+// Diagnóstico acessível pelo console do navegador: await window.aetheriaCheckSkinAssets()
+window.aetheriaCheckSkinAssets=async function(){
+  const paths=[...new Set(Object.values(PLAYABLE_CLASS_SKINS))],assets=[];
+  for(const path of paths){
+    try{const response=await fetch(path,{method:'HEAD',cache:'no-store'});assets.push({path,ok:response.ok,status:response.status,bytes:response.headers.get('content-length'),type:response.headers.get('content-type')});}
+    catch(error){assets.push({path,ok:false,error:String(error&&error.message||error)});}
+  }
+  const report={assets,active:window.__rpgSkinLoadDebug||null,animation:window.__rpgPlayerAnimationDebug||null,lowMemory:!!LOW_MEM};
+  console.table(assets);console.log('Aetheria skin report:',report);return report;
+};
+
 
 /* ---------- EDITOR DE PERSONAGEM ---------- */
 const CHARACTER_EDITOR = {
