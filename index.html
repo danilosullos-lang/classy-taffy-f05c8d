@@ -6889,7 +6889,7 @@ function enemies(dt,now){
   }
   for(let i=EN.length-1;i>=0;i--){
     const e=EN[i];if(e.m&&e.m.userData.monsterMixer)e.m.userData.monsterMixer.update(dt);
-    if((e.dead&&(e.deadAt==null||now-e.deadAt>=950))||Math.hypot(e.z-st.z,e.d-st.d)>85){(S.remove(e.m,e.bar),disp(e.m));EN.splice(i,1);continue}
+    if((e.dead&&(e.deadAt==null||now-e.deadAt>=950))||Math.hypot(e.z-st.z,e.d-st.d)>85){(S.remove(e.m,e.bar,e.nameTag),disp(e.m));EN.splice(i,1);continue}
     if(e.dead){if(e.bar)e.bar.visible=false;continue}
     const dz=st.z-e.z,dd=st.d-e.d,dist=Math.hypot(dz,dd)||1;
     if(dist>20&&dist<30&&(!e._idleSoundAt||now-e._idleSoundAt>rnd(14000,22000))){sfx('monsterIdle',dist,e);e._idleSoundAt=now}
@@ -8174,7 +8174,7 @@ function fldEnemies(dt,now){
   for(let i=EN.length-1;i>=0;i--){
     const e=EN[i];if(e.m&&e.m.userData.monsterMixer)e.m.userData.monsterMixer.update(dt);
     if(e.dead&&e.elite&&!e.lt){e.lt=1;fldEliteLoot(e)}
-    if(e.dead||Math.hypot(e.z-st.z,e.d-st.d)>95){S.remove(e.m,e.bar);disp(e.m);EN.splice(i,1);continue}
+    if(e.dead||Math.hypot(e.z-st.z,e.d-st.d)>95){S.remove(e.m,e.bar,e.nameTag);disp(e.m);EN.splice(i,1);continue}
     const dz=st.z-e.z,dd=st.d-e.d,dist=Math.hypot(dz,dd)||1,spd=(e.stun>0?0:e.sp)*dt;
     if(dist<32&&!(e.slam&&e.ph===1)){e.z+=dz/dist*spd;e.d+=dd/dist*spd}
     else if(!(e.slam&&e.ph===1)){e.wt-=dt;if(e.wt<=0){e.wt=rnd(2,4);e.wa=Math.random()*6.28}e.d+=Math.cos(e.wa)*spd*.4;e.z+=Math.sin(e.wa)*spd*.4}
@@ -8264,7 +8264,7 @@ function fldEnter(){
   rgBanner('🌾 Mundo Aberto','Ande para qualquer lado · arraste a tela para girar a câmera','#8fe05a')}
 function fldExit(silent){
   if(!FLDON)return;
-  EN.forEach(e=>{S.remove(e.m,e.bar);disp(e.m)});EN.length=0;
+  EN.forEach(e=>{S.remove(e.m,e.bar,e.nameTag);disp(e.m)});EN.length=0;
   things.forEach(t=>S.remove(t.m));things.length=0;
   for(const k in FLD.cells){FLD.cells[k].forEach(m=>S.remove(m))}FLD.cells={};
   if(FLD.ground)FLD.ground.visible=false;if(FLD.water)FLD.water.visible=false;if(FLD.campG)FLD.campG.visible=false;if(FLD.wx)FLD.wx.visible=false;if(FLD.ff)FLD.ff.visible=false;fldPoiClear();FLD.cols={};FLD.cth={};
