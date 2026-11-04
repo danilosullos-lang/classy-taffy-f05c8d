@@ -1486,12 +1486,21 @@ const RPG_DUNGEON={entries:[],near:null,active:null,returnPoint:null,rewards:[],
 const RPG_TOWN_NPCS=new Map();
 const RPG_TOWN_NPC_CLIPS={};
 const RPG_TOWN_SOLIDS=new Map();
+const RPG_STARTER_REALM_SOLIDS=new Map();
+function rpgStarterRealmBlockedAt(x,z,radius=.55){
+  for(const solids of RPG_STARTER_REALM_SOLIDS.values())for(const b of solids){
+    const px=Math.max(b.minX,Math.min(x,b.maxX)),pz=Math.max(b.minZ,Math.min(z,b.maxZ));
+    const dx=x-px,dz=z-pz;
+    if(dx*dx+dz*dz<radius*radius)return true;
+  }
+  return false;
+}
 function rpgTownBlocked(d,z){
   const radius=.78;
   for(const solids of RPG_TOWN_SOLIDS.values())for(const r of solids){
     if(Math.abs(d-r.d)<=r.halfD+radius&&Math.abs(z-r.z)<=r.halfZ+radius)return true;
   }
-  return false;
+  return rpgStarterRealmBlockedAt(cx(z)+d,z,radius);
 }
 function rpgNpcAddRoleProp(npc,def){
   const metal=new T.MeshStandardMaterial({color:def.role==='priest'?0x9bdcff:0xc69a4c,metalness:.55,roughness:.32,map:rpgPbrTexture('@armor','diffuse'),normalMap:rpgPbrTexture('@armor','normal'),roughnessMap:rpgPbrTexture('@armor','roughness')});
@@ -1732,7 +1741,7 @@ function rpgStarterRealmBuildCollisions(model,index){
   // Ground/terrain meshes and giant merged surfaces are deliberately excluded
   // so the player can still cross roads, plazas and bridges.
   model.updateMatrixWorld(true);
-  const solids=[];
+  const solids=[],worldSolids=[];
   const box=new T.Box3(),size=new T.Vector3(),center=new T.Vector3();
   model.traverse(node=>{
     if(!node.isMesh||!node.geometry)return;
@@ -1740,13 +1749,16 @@ function rpgStarterRealmBuildCollisions(model,index){
     if(!Number.isFinite(size.x+size.y+size.z)||size.y<.65||size.y>28)return;
     if(size.x<.18&&size.z<.18)return;
     if(size.x>22||size.z>22)return;
-    if(center.y+size.y*.5<.55)return;
+    if(center.y+size.y*.5<.55||center.y-size.y*.5>2.5)return;
     const halfD=Math.max(.22,size.x*.5),halfZ=Math.max(.22,size.z*.5);
     const midZ=center.z;
     solids.push({d:center.x-cx(midZ),z:midZ,halfD:halfD+.32,halfZ:halfZ+.32,source:'starterRealm'});
+    worldSolids.push({minX:center.x-halfD-.32,maxX:center.x+halfD+.32,minZ:center.z-halfZ-.32,maxZ:center.z+halfZ+.32});
   });
   RPG_TOWN_SOLIDS.set(index,solids);
+  RPG_STARTER_REALM_SOLIDS.set(index,worldSolids);
   model.userData.rpgCollisionCount=solids.length;
+  model.userData.rpgWorldCollisionCount=worldSolids.length;
 }
 let RPG_NPC_SKIN_TEXTURE=null;
 function rpgNpcSkinTexture(){
@@ -1961,7 +1973,9 @@ function updateRpgWorld(){
   };
   window.__rpgCollisionDebug={
     blocked:(d,z)=>rpgTownBlocked(Number(d)||0,Number(z)||0),
+    starterRealmBlockedAt:(x,z,r)=>rpgStarterRealmBlockedAt(Number(x)||0,Number(z)||0,Number(r)||.55),
     solidCount:Array.from(RPG_TOWN_SOLIDS.values()).reduce((n,list)=>n+list.length,0),
+    starterRealmSolidCount:Array.from(RPG_STARTER_REALM_SOLIDS.values()).reduce((n,list)=>n+list.length,0),
     chunkCount:RPG_TOWN_SOLIDS.size,
     chunks:Array.from(RPG_TOWN_SOLIDS.entries()).map(([index,solids])=>({index,count:solids.length})),
     solidRecords:Array.from(RPG_TOWN_SOLIDS.entries()).flatMap(([index,solids])=>solids.map(r=>({index,...r})))
@@ -8505,6 +8519,14 @@ function fieldFrame(now){
         const okx=Math.abs(nx-FLD.x)<1e-5||(fieldH(nx,FLD.z)-hh)/Math.abs(nx-FLD.x)<=1.3,okz=Math.abs(nz-FLD.z)<1e-5||(fieldH(FLD.x,nz)-hh)/Math.abs(nz-FLD.z)<=1.3;
         if(!okx){nx=FLD.x;FLD.vx*=.2}if(!okz){nz=FLD.z;FLD.vz*=.2}}}
     {const q=fldColAt(nx,nz,.55,st.y);if(q[0]!==nx||q[1]!==nz){const ex=q[0]-nx,ez=q[1]-nz,el=Math.hypot(ex,ez)||1,vn=(FLD.vx*ex+FLD.vz*ez)/el;if(vn<0){FLD.vx-=vn*ex/el;FLD.vz-=vn*ez/el}nx=q[0];nz=q[1]}}
+    // O modo Campo Aberto usa outro controlador; sem esta etapa o personagem atravessa o GLB.
+    if(rpgStarterRealmBlockedAt(nx,nz,.55)){
+      const blockX=rpgStarterRealmBlockedAt(nx,FLD.z,.55);
+      const blockZ=rpgStarterRealmBlockedAt(FLD.x,nz,.55);
+      if(blockX){nx=FLD.x;FLD.vx=0}
+      if(blockZ){nz=FLD.z;FLD.vz=0}
+      if(!blockX&&!blockZ){nx=FLD.x;nz=FLD.z;FLD.vx=0;FLD.vz=0}
+    }
     FLD.x=nx;FLD.z=nz;
     if(wet&&FLD.bio===4){FLD.lavaT=(FLD.lavaT||0)+dt;if(FLD.lavaT>.5){FLD.lavaT=0;hit(Math.max(3,Math.round(hpMax()*.035)));fxRing(FLD.x,FWL+.05,FLD.z,0xff7a20,2,.4)}}
     if(wet&&Math.hypot(FLD.vx,FLD.vz)>1&&now-(FLD.sp_||0)>280){FLD.sp_=now;fxRing(FLD.x,FWL+.05,FLD.z,0xcfeeff,2.2,.5)}
