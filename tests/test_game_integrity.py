@@ -104,6 +104,17 @@ class GameIntegrityTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.source)
 
+    def test_playable_skin_assets_are_present_and_local(self):
+        for asset in ("skins/classes/Barbarian.glb", "skins/classes/Knight.glb",
+                      "skins/classes/Mage.glb", "skins/classes/Rogue_Hooded.glb",
+                      "skins/lyra-archer-animated.glb"):
+            with self.subTest(asset=asset):
+                self.assertTrue((ROOT / asset).is_file(), f"Missing playable skin: {asset}")
+                self.assertGreater((ROOT / asset).stat().st_size, 1024,
+                                   f"Skin is empty or an LFS pointer: {asset}")
+        self.assertIn("window.aetheriaCheckSkinAssets", self.source)
+        self.assertIn("window.__rpgSkinLoadDebug", self.source)
+
     def test_mobile_memory_guard_cannot_be_overridden_by_hd_toggle(self):
         for marker in ("const LOW_MEM=!!(", "q=LOW_MEM?'l':requested",
                        "const shadows=!LOW_MEM&&!!p[1]",
