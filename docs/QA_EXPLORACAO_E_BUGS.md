@@ -73,3 +73,10 @@ Status: verificar fluxo pretendido e acessibilidade do mapa antes de mudar.
 
 ## Limites da rodada
 A automação conseguiu entrar no mundo e inspecionar a região inicial, mas não completou a troca entre as cinco classes nem a travessia de todas as regiões. Elementos de movimento e combate são desenhados no canvas e parte da automação não conseguiu inspecionar diretamente suas interações. Não declarar o jogo livre de bugs até executar a matriz pendente e repetir os testes após cada correção.
+
+## Arquitetura do mapa — inspeção estática do código
+- O modo Campo Aberto gera células dinamicamente ao redor do jogador e remove as células distantes; portanto, não é um mapa finito com um único perímetro a percorrer.
+- O terreno é procedural e escolhe biomas por coordenadas: Campos de Valdora, Floresta Sombria, Tundra Gelada, Deserto Escaldante e Terras Vulcânicas.
+- Pontos de interesse também são gerados por região: vilarejos, ruínas e totens; totens descobertos alimentam a viagem rápida.
+- Há água/lagos/rios e elevações no gerador de terreno, mas sua colisão e travessia ainda precisam ser verificadas em execução.
+- Consequência para QA: a validação correta deve cobrir rotas representativas e cada bioma/POI gerado, não afirmar que um mundo procedural potencialmente ilimitado foi totalmente percorrido.
