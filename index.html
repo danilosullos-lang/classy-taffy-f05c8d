@@ -6948,7 +6948,7 @@ const VR=50,V={on:false,open:false,nomic:false,stream:null,calls:{},audio:{},ana
 function extraPage(B,back){
   if(MU.page==='fruit')return frPage(B,back);
   if(['cfg','ach','about','map'].includes(MU.page))return extraPage2(B,back);
-  if(MU.page==='players'){const ps=PEERS.filter(p=>!p.isMe&&p.presence&&p.presence.name);return '<h2>👥 Jogadores</h2>'+(ps.map(p=>{const n=String(p.presence.name).slice(0,16),m=(sv.muted||[]).includes(n);return '<div class="it"><span>'+esc(n)+' · Nv'+pn(p.presence.lv)+' · '+Math.round(Math.hypot((+p.presence.z||0)-st.z,(+p.presence.d||0)-st.d))+' m</span><button data-a="goto" data-i="'+esc(p.peer)+'">📍 Ir até</button><button data-a="trade" data-i="'+esc(p.peer)+'">🤝 Trocar</button><button data-a="rep" data-i="'+esc(p.peer)+'" data-n="'+esc(n)+'">🚩 Denunciar</button><button data-a="block" data-n="'+esc(n)+'">🚫 Bloquear</button><button data-a="mute" data-n="'+esc(n)+'">'+(m?'🔇 Silenciado':'🔊 Silenciar')+'</button></div>'}).join('')||'<small style="opacity:.7">Ninguém online agora.</small>')+back}
+  if(MU.page==='players'){const ps=PEERS.filter(p=>!p.isMe&&p.presence&&p.presence.name);return '<h2>👥 Jogadores</h2>'+(ps.map(p=>{const n=String(p.presence.name).slice(0,16),m=(sv.muted||[]).includes(n),pz=Number(p.presence.z),pd=Number(p.presence.d),sz=Number(st&&st.z),sd=Number(st&&st.d),valid=[pz,pd,sz,sd].every(Number.isFinite),dist=valid?Math.round(Math.hypot(pz-sz,pd-sd)):null;return '<div class="it"><span>'+esc(n)+' · Nv'+pn(p.presence.lv)+' · '+(valid?dist+' m':'distância indisponível')+'</span><button data-a="goto" data-i="'+esc(p.peer)+'">📍 Ir até</button><button data-a="trade" data-i="'+esc(p.peer)+'">🤝 Trocar</button><button data-a="rep" data-i="'+esc(p.peer)+'" data-n="'+esc(n)+'">🚩 Denunciar</button><button data-a="block" data-n="'+esc(n)+'">🚫 Bloquear</button><button data-a="mute" data-n="'+esc(n)+'">'+(m?'🔇 Silenciado':'🔊 Silenciar')+'</button></div>'}).join('')||'<small style="opacity:.7">Ninguém online agora.</small>')+back}
   if(MU.page==='voice')return '<h2>🎙️ Voz</h2><div style="font-size:13px;opacity:.85;margin-bottom:6px">Conversa por voz com jogadores <b>perto de você</b> (até '+VR+' m).</div>'+B('vtoggle',V.on?'🟢 Voz ligada — tocar para desligar':'⚪ Ligar voz')+B('vmode','🎚️ Modo: '+(V.open?'microfone aberto':'push-to-talk'))+back;
   return '<h2>💬 Chat</h2><div class="tabs"><button class="tab'+(MU.ch!=='p'?' on':'')+'" data-a="chn" data-c="g">🌐 Geral</button><button class="tab'+(MU.ch==='p'?' on':'')+'" data-a="chn" data-c="p">📍 Perto</button></div><div id="cl" style="max-height:34vh;overflow:auto;font-size:13px;text-align:left;min-height:60px"></div><div style="display:flex;gap:6px;margin:8px 0"><input id="ci" maxlength="120" placeholder="Mensagem…" style="flex:1;padding:10px;border-radius:10px;border:1px solid #fff4;background:#0006;color:#fff"><button class="big" data-a="send" style="margin:0">Enviar</button></div>'+B('pf','🧼 Filtro: '+(sv.opt.pf===false?'desligado':'ligado'))+back;
 }
@@ -7250,12 +7250,14 @@ addEventListener('keydown',e=>{if(e.code==='KeyM'&&!e.repeat&&!(document.activeE
 setInterval(()=>{if(st)applyGear(frog,gearSig())},1000);
 const ARW=['↑','↗','→','↘','↓','↙','←','↖'];
 setInterval(()=>{const el=$('rad');if(!el||!st||!room){if(el)el.innerHTML='';return}
-  const rows=room.peers().filter(p=>!p.isMe&&p.presence&&p.presence.name&&p.presence.z!=null).map(p=>{const q=p.presence,dz=q.z-st.z,dd=q.d-st.d,dist=Math.hypot(dz,dd),a=Math.atan2(dd,-dz);return{n:esc(String(q.name).slice(0,12)),dist,arrow:ARW[((Math.round(a/(Math.PI/4))%8)+8)%8],fl:q.fl|0,hp:q.hp}}).sort((a,b)=>a.dist-b.dist).slice(0,4);
+  const sz=Number(st&&st.z),sd=Number(st&&st.d);
+  const rows=Number.isFinite(sz)&&Number.isFinite(sd)?room.peers().filter(p=>!p.isMe&&p.presence&&p.presence.name&&Number.isFinite(Number(p.presence.z))&&Number.isFinite(Number(p.presence.d))).map(p=>{const q=p.presence,dz=Number(q.z)-sz,dd=Number(q.d)-sd,dist=Math.hypot(dz,dd),a=Math.atan2(dd,-dz);return{n:esc(String(q.name).slice(0,12)),dist,arrow:ARW[((Math.round(a/(Math.PI/4))%8)+8)%8],fl:q.fl|0,hp:q.hp}}).sort((a,b)=>a.dist-b.dist).slice(0,4):[];
   el.innerHTML=rows.map(r=>'<div style="color:'+(r.fl===1?'#ff6b6b':r.fl===2?'#c9a0ff':'#fff')+'">'+r.arrow+' '+r.n+' <b>'+Math.round(r.dist)+' m</b>'+(r.hp!=null?' <span style="color:'+(r.hp>60?'#7dff9a':r.hp>30?'#ffd24a':'#ff6b6b')+'">❤'+r.hp+'%</span>':'')+'</div>').join('')},500);
 $('mu').addEventListener('click',e=>{const b=e.target.closest('[data-a="goto"]');if(!b||!st||!room)return;const p=room.peers().find(x=>x.peer===b.dataset.i);if(!p||!p.presence)return;
   if(FLDON||boss||inPvp()||TR){say('Não é possível agora');return}
-  const q=p.presence,mark=Math.floor(-q.z);if(mark>Math.max(sv.best||0,500)+300){say('Amigo muito longe');return}if(Math.abs(q.d)>PL()){say('Área não acessível');return}
-  st.z=q.z+6;st.d=q.d;st.vz=0;st.nb=nbFor(Math.max(0,mark));st.warn=0;st.lock=false;LD={};things.forEach(t=>{t.dead=1});save();closeMenu();say('📍 Você foi até '+String(q.name).slice(0,16))});
+  const q=p.presence,qz=Number(q.z),qd=Number(q.d);if(!Number.isFinite(qz)||!Number.isFinite(qd)){say('A posição deste jogador ainda não está disponível');return}
+  const mark=Math.floor(-qz);if(mark>Math.max(sv.best||0,500)+300){say('Amigo muito longe');return}if(Math.abs(qd)>PL()){say('Área não acessível');return}
+  st.z=qz+6;st.d=qd;st.vz=0;st.nb=nbFor(Math.max(0,mark));st.warn=0;st.lock=false;LD={};things.forEach(t=>{t.dead=1});save();closeMenu();say('📍 Você foi até '+String(q.name).slice(0,16))});
 const starsG=new T.BufferGeometry();{const a=new Float32Array(420*3);for(let i=0;i<420;i++){const th=Math.random()*6.283,ph=Math.acos(Math.random()*.9+.1),r=104;a[i*3]=r*Math.sin(ph)*Math.cos(th);a[i*3+1]=r*Math.cos(ph);a[i*3+2]=r*Math.sin(ph)*Math.sin(th)}starsG.setAttribute('position',new T.BufferAttribute(a,3))}
 const stars=new T.Points(starsG,new T.PointsMaterial({color:0xffffff,size:1.6,sizeAttenuation:false,transparent:true,opacity:0,fog:false,depthWrite:false}));stars.frustumCulled=false;S.add(stars);
 function lilies(k,n){const m=new T.InstancedMesh(new T.CylinderGeometry(.7,.7,.06,9),new T.MeshStandardMaterial({flatShading:true,roughness:1}),n),M4=new T.Matrix4(),Q=new T.Quaternion(),P=new T.Vector3(),Sc=new T.Vector3(),C0=new T.Color();
@@ -7798,7 +7800,9 @@ function valGrass(k){
   const mx=mm.getContext('2d'),c2=cp.getContext('2d');
   const hex=c=>'#'+new T.Color(c).getHexString();
   function drawMap(){
-    const W=168,R=84,S=R/46,P=(d,z)=>[R+(d-st.d)*S,R+(z-st.z)*S];
+    const W=168,R=84,S=R/46,px=Number(st&&st.d),pz=Number(st&&st.z);
+    if(!Number.isFinite(px)||!Number.isFinite(pz)){mx.clearRect(0,0,W,W);mx.fillStyle='#171326';mx.fillRect(0,0,W,W);mx.fillStyle='rgba(255,255,255,.75)';mx.font='11px sans-serif';mx.textAlign='center';mx.fillText('Localizando…',R,R);return}
+    const P=(d,z)=>[R+(d-px)*S,R+(z-pz)*S];
     mx.clearRect(0,0,W,W);mx.save();mx.beginPath();mx.arc(R,R,R-1,0,6.283);mx.clip();
     const Z=ZN[FLDON?0:Math.floor(Math.max(0,-st.z)/300)%ZN.length];
     if(FLDON)fldMiniTerrain(mx,W,R,S);else{mx.fillStyle=hex(Z.g);mx.fillRect(0,0,W,W);
@@ -7818,7 +7822,9 @@ function valGrass(k){
     mx.restore();
   }
   function drawCompass(){
-    const W=220,H=26,m=Math.max(0,-st.z),span=260,X=v=>W/2+(v-m)/span*W;
+    const W=220,H=26,z=Number(st&&st.z);
+    if(!Number.isFinite(z)){c2.clearRect(0,0,W,H);const l0=$('cmpl');if(l0)l0.textContent='';return}
+    const m=Math.max(0,-z),span=260,X=v=>W/2+(v-m)/span*W;
     c2.clearRect(0,0,W,H);c2.fillStyle='rgba(20,16,32,.62)';c2.fillRect(0,0,W,H);c2.strokeStyle='rgba(255,210,74,.5)';c2.strokeRect(.5,.5,W-1,H-1);
     if(FLDON){const yaw=FLD.cy;c2.font='bold 15px sans-serif';c2.textAlign='center';
       for(let a=0;a<360;a+=15){const rel=Math.atan2(Math.sin(a*Math.PI/180-yaw),Math.cos(a*Math.PI/180-yaw));if(Math.abs(rel)>Math.PI/2)continue;const x=W/2+rel/(Math.PI/2)*(W/2);
