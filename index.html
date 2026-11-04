@@ -472,6 +472,7 @@ ${Oe}`;q.test(K)&&(N(H),H=setTimeout(V,Ps))},pe=()=>{k.iceGatheringState==="comp
   (*! noble-secp256k1 - MIT License (c) 2019 Paul Miller (paulmillr.com) *)
 */
 </script>
+<script src="assets/monsters/progression.js"></script>
 <script src="assets/combat/nj-mmo-combat-core.js"></script>
 <script>
 
@@ -2001,7 +2002,7 @@ function clearRpgDungeonGuardians(entry){
   for(let i=EN.length-1;i>=0;i--){
     const enemy=EN[i];
     if(enemy.rpgDungeonGuardian&&(!entry||enemy.rpgDungeonIndex===entry.index)){
-      S.remove(enemy.m,enemy.bar);disp(enemy.m);EN.splice(i,1);
+      S.remove(enemy.m,enemy.bar,enemy.nameTag);disp(enemy.m);EN.splice(i,1);
     }
   }
   RPG_DUNGEON.guardiansRemaining=0;
@@ -2837,23 +2838,37 @@ function attachMonsterAsset(enemy){
     enemy.m.userData.monsterAssetUrl=url;
   }).catch(err=>console.warn('Não foi possível carregar monstro '+enemy.t+':',err));
 }
-function spawnEn(t,d,z){
+function makeMonsterNameTag(e){
+  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=80;
+  const ctx=canvas.getContext('2d');
+  const label=(e.elite?'ELITE · ':'')+String(e.n||'Monstro')+'  Nv. '+e.level;
+  ctx.fillStyle='rgba(8,12,20,.78)';ctx.beginPath();ctx.roundRect(8,8,496,64,14);ctx.fill();
+  ctx.font='bold 30px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle=e.elite?'#ffd45e':'#f2f5ff';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(label,256,41,476);
+  const texture=new T.CanvasTexture(canvas);if('colorSpace' in texture&&T.SRGBColorSpace)texture.colorSpace=T.SRGBColorSpace;
+  const sprite=new T.Sprite(new T.SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:false,fog:false}));
+  sprite.scale.set(Math.max(2.6,Math.min(5.2,2.3+label.length*.045)),.42,1);sprite.renderOrder=20;sprite.frustumCulled=false;
+  return sprite;
+}
+function spawnEn(t,d,z,tier){
   const m=mkEn(t),bar=new T.Sprite(new T.SpriteMaterial({color:0xff4d4d,fog:false}));
   bar.scale.set(2,.16,1);
-  const e=Object.assign({t,mx:ET[t].hp,m,bar,
-    d:d==null?rnd(-8,8):d,z:z==null?st.z-rnd(32,46):z,
+  const spawnD=d==null?rnd(-8,8):d,spawnZ=z==null?st.z-rnd(32,46):z;
+  const kind=tier||'normal',level=AetheriaMonsterProgression.levelFor(ET[t],spawnD,spawnZ,kind);
+  const scaled=AetheriaMonsterProgression.scaleStats(ET[t],level);
+  const e=Object.assign({t,mx:scaled.hp,m,bar,d:spawnD,z:spawnZ,level,elite:kind==='elite',
     cd:1,ph:0,tm:rnd(2,4)},ET[t]);
-  const dp=rgDepth();
-  const hpScale=1.8*(1+dp*.32)*(1+Math.max(0,sv.lv-1)*.025);
-  const dmgScale=1+dp*.14+Math.max(0,sv.lv-1)*.015;
-  e.hp=e.mx=Math.round(e.hp*hpScale);e.dm=Math.round(e.dm*dmgScale);e.xp=Math.round(e.xp*(1+dp*.2));m.traverse(o=>{o.castShadow=true});S.add(m,bar);EN.push(e);attachMonsterAsset(e);
+  e.hp=e.mx=scaled.hp;e.dm=scaled.dm;e.xp=scaled.xp;
+  if(e.elite){e.hp=e.mx=Math.round(e.hp*5);e.dm=Math.round(e.dm*1.5);e.xp=Math.round(e.xp*6);bar.material.color.setHex(0xffd24a);m.scale.setScalar(1.12)}
+  e.nameTag=makeMonsterNameTag(e);
+  m.traverse(o=>{o.castShadow=true});S.add(m,bar,e.nameTag);EN.push(e);attachMonsterAsset(e);
 }
 function dmgEn0(e,d,q){
   if(e.dead)return;if(!q)ftext(e.m.position.x,e.m.position.y+e.hh,e.m.position.z,Math.round(d),'#fff');
   e.hp-=d;e.m.scale.setScalar(1.18);sfx('enemyHit',0,e);fxBurst(e.m.position.x,e.m.position.y+(e.hh||1)*.55,e.m.position.z,0xffd18a,8,3,.28,true);
   if(e.hp<=0){sfx('enemyDown',0,e);fxBurst(e.m.position.x,e.m.position.y+.8,e.m.position.z,0xff9d46,22,5,.62,true);fxRing(e.m.position.x,.12,e.m.position.z,0xffa64d,2.8,.42);
 
-    e.dead=1;e.deadAt=performance.now();if(e.bar)e.bar.visible=false;if(e.m.userData.monsterActions)setMonsterAnimation(e,'death');sv.tk=(sv.tk||0)+1;if(sv.pk&&sv.pk.karma>0){sv.pk.mobClean=(sv.pk.mobClean||0)+1;if(sv.pk.mobClean>=10){sv.pk.mobClean=0;sv.pk.karma=Math.max(0,sv.pk.karma-1);say('🕊️ Karma reduzido ao derrotar monstros');save()}}say('💥 '+e.n+' derrotado!');gain(e.xp);
+    e.dead=1;e.deadAt=performance.now();if(e.bar)e.bar.visible=false;if(e.nameTag)e.nameTag.visible=false;if(e.m.userData.monsterActions)setMonsterAnimation(e,'death');sv.tk=(sv.tk||0)+1;if(sv.pk&&sv.pk.karma>0){sv.pk.mobClean=(sv.pk.mobClean||0)+1;if(sv.pk.mobClean>=10){sv.pk.mobClean=0;sv.pk.karma=Math.max(0,sv.pk.karma-1);say('🕊️ Karma reduzido ao derrotar monstros');save()}}say('💥 '+e.n+' derrotado!');gain(e.xp);
     if(e.rpgDungeonGuardian&&!e.rpgDungeonCounted){
       e.rpgDungeonCounted=true;
       if(RPG_DUNGEON.active&&RPG_DUNGEON.active.index===e.rpgDungeonIndex){
@@ -3934,7 +3949,7 @@ $('missions').onclick=()=>{openAr('missions')};
 /* ---------- Boot ---------- */
 function reset(){
   things.forEach(t=>S.remove(t.m));things.length=0;
-  EN.forEach(e=>(S.remove(e.m,e.bar),disp(e.m)));EN.length=0;
+  EN.forEach(e=>(S.remove(e.m,e.bar,e.nameTag),disp(e.m)));EN.length=0;
   LD={};boss=null;heron.visible=false;heron.scale.setScalar(1);heron.rotation.set(0,0,0);hRock.visible=false;HR.mode=0;HR.perch=0;
   $('alert').style.display=$('boss').style.display='none';
   st={hp:hpMax(),mp:mpMax(),z:0,d:0,y:0,vy:0,bub:0,run:true,pause:false,
@@ -6909,6 +6924,7 @@ function enemies(dt,now){
       e.m.userData.shadow.material.opacity=Math.max(0.05,0.35-airH*0.05);
     }
     e.bar.position.set(e.m.position.x,e.m.position.y+e.hh,e.m.position.z);
+    if(e.nameTag)e.nameTag.position.set(e.m.position.x,e.m.position.y+e.hh+.48,e.m.position.z);
     e.bar.scale.x=Math.max(.02,e.hp/e.mx*2);
   }
 }
@@ -8675,9 +8691,9 @@ function fldMiniPois(mx,R,S){
   for(let di=-1;di<=1;di++)for(let dj=-1;dj<=1;dj++){const p=fldPoi(ri+di,rj+dj);if(!p)continue;const dx=p.x-st.d,dz=p.z-st.z;if(Math.hypot(dx,dz)>lim)continue;mx.fillText(p.type==='village'?'🏘️':p.type==='ruins'?'🏛️':'🗿',R+dx*S,R+dz*S+5)}}
 /* ---- monstros elite ---- */
 function fldMakeEnemy(t,x,z,elite){
-  spawnEn(t,x,z);const e=EN[EN.length-1],b=ET[t],f=1+sv.lv*.12;
-  e.hp=e.mx=Math.round(b.hp*f);e.dm=Math.round(b.dm*(1+sv.lv*.07));e.xp=Math.round(b.xp*(1+sv.lv*.35));e.d=x;e.z=z;e.fld=1;e.wt=0;e.wa=Math.random()*6.28;
-  if(elite){e.elite=1;e.hp=e.mx=e.hp*5;e.dm=Math.round(e.dm*1.5);e.xp*=6;e.sc=1.12;e.hh*=1.12;e.r*=1.08;e.bar.material.color.setHex(0xffd24a);e.m.scale.setScalar(1.12)}
+  spawnEn(t,x,z,elite?'elite':'normal');const e=EN[EN.length-1];
+  e.d=x;e.z=z;e.fld=1;e.wt=0;e.wa=Math.random()*6.28;
+  if(elite){e.sc=1.12;e.hh*=1.12;e.r*=1.08}
   return e}
 function fldEliteLoot(e){
   const n=2+(Math.random()<.4?1:0);for(let i=0;i<n;i++)drop(mkItem(Math.max(2,roll(8))),e.d+rnd(-1.5,1.5),e.z+rnd(-1.5,1.5));
