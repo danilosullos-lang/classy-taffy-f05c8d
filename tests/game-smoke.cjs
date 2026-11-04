@@ -452,6 +452,48 @@ const { chromium } = require('playwright');
       throw new Error('A transferência Elven Scout não ativa a classe Arqueiro corretamente: '+JSON.stringify(elfArcherTransfer));
     }
 
+    // Load the actual archer skin and ranged animation role in the browser, equip a bow,
+    // and verify that a projectile is emitted from a hand/grip rather than the torso.
+    const archerRuntime=await page.evaluate(async()=>{
+      const snapshot=JSON.parse(JSON.stringify(sv)),inventorySnapshot=JSON.parse(JSON.stringify(inv)),uidSnapshot=uid;
+      const waitFor=async(predicate,timeout=30000)=>{
+        const start=performance.now();
+        while(performance.now()-start<timeout){if(predicate())return true;await new Promise(resolve=>setTimeout(resolve,100));}
+        return false;
+      };
+      try{
+        sv.race='elf';sv.lineageRace='elf';sv.lineageRole='archer';sv.job='arqueiro';
+        sv.lineageClass='Elven Scout';sv.lineageClassId='elven_scout';sv.lineageBaseClass='fighter';
+        sv.lineageStage=1;sv.lv=20;sv.jlv=1;sv.frog=sv.frog||{};
+        sv.frog.externalSkin=playableClassSkin('arqueiro');
+        loadExternalFrogSkin(sv.frog.externalSkin,null);
+        const skinReady=await waitFor(()=>window.__rpgPlayerAnimationDebug?.skin==='/skins/classes/Rogue_Hooded.glb'&&
+          window.__rpgAnimationAssetDebug?.role==='archer'&&window.__rpgAnimationAssetDebug.clips>=20);
+        if(!skinReady)return {ok:false,reason:'archer skin/animation timeout',skin:window.__rpgSkinLoadDebug,animation:window.__rpgPlayerAnimationDebug,assets:window.__rpgAnimationAssetDebug};
+        rpgEnsureClassWeapon('arqueiro');rpgEquipWeaponVisual(null,'arqueiro');
+        const weaponReady=await waitFor(()=>window.__rpgWeaponDebug?.loaded===true);
+        const weapon={...(window.__rpgWeaponDebug||{})};
+        spawnBowArrow(new THREE.Vector3(frog.position.x,frog.position.y+1.1,frog.position.z-5),0x8ad9ff);
+        const projectile={...(window.__rpgCombatVisualDebug||{})};
+        updateBowArrows(1);
+        const clipMap={...(window.__rpgPlayerAnimationDebug.clipMap||{})};
+        return {ok:skinReady&&weaponReady,role:window.__rpgPlayerAnimationDebug.role,
+          skin:window.__rpgPlayerAnimationDebug.skin,clips:window.__rpgAnimationAssetDebug.clips,
+          clipMap,weapon,projectile};
+      }finally{
+        Object.keys(sv).forEach(k=>delete sv[k]);Object.assign(sv,snapshot);
+        inv.splice(0,inv.length,...inventorySnapshot);uid=uidSnapshot;save(true);
+        if(snapshot.frog?.externalSkin){loadExternalFrogSkin(snapshot.frog.externalSkin,null);}
+        if(snapshot.job){rpgEnsureClassWeapon(snapshot.job);rpgEquipWeaponVisual(null,snapshot.job);}
+      }
+    });
+    if(!archerRuntime.ok||archerRuntime.role!=='archer'||archerRuntime.skin!=='/skins/classes/Rogue_Hooded.glb'||
+      archerRuntime.weapon.family!=='bow'||archerRuntime.projectile.blocked||
+      !['bow-grip','right-hand','weapon-rig'].includes(archerRuntime.projectile.originSource)||
+      archerRuntime.projectile.origin[1]-archerRuntime.projectile.playerY<.65){
+      throw new Error('Skin, animação, arco ou origem do projétil do Arqueiro incorretos: '+JSON.stringify(archerRuntime));
+    }
+
     // Independently inspect the GLB and verify the full imported animation library.
     const playerAnimationCheck = await page.evaluate(async () => {
       if (!window.THREE || !THREE.GLTFLoader) throw new Error('GLTFLoader não está disponível para testar a skin do jogador.');
