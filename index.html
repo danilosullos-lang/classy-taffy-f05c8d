@@ -8463,7 +8463,14 @@ hit=function(d){
   st.hp-=d;sfx('hit');hitstop=Math.max(hitstop,.04);if(sv.opt.vib!==false&&navigator.vibrate)navigator.vibrate(40);
   if(st.hp<=0){
     if(abSum('revive')&&Date.now()>(st.rvAt||0)){st.rvAt=Date.now()+300000;st.hp=Math.max(1,hpMax()*abSum('revive')/100);rgBanner('🔥 RENASCEU!','Habilidade passiva','#ffb347');return}
-    fldBossClear();const lost=Math.floor(sv.gold*.05);sv.gold-=lost;st.hp=hpMax();FLD.x=FLD.ox;FLD.z=FLD.oz;FLD.vx=FLD.vz=0;st.bub=3;
+    fldBossClear();const lost=Math.floor(sv.gold*.05);sv.gold-=lost;st.hp=hpMax();
+    // Respawn sempre apoiado no terreno: zera todo o estado vertical do salto
+    // antes de reposicionar, e recalcula a altura real do ponto seguro.
+    FLD.x=FLD.ox;FLD.z=FLD.oz;FLD.vx=FLD.vz=0;FLD.h=0;FLD.cy=0;FH=0;
+    st.y=0;st.vy=0;st.gy=Math.max(fieldH(FLD.x,FLD.z),FWL-.28);
+    st.coyote=0;st.jumpBuf=0;st.wet=fieldH(FLD.x,FLD.z)<FWL+.15;
+    st.bub=3;st.iframe=3;FLD.faceT=0;C._init=false;FLD.gx=1e9;
+    fldGround();fldCells(true);
     EN.forEach(e=>{if(!e.dead&&Math.hypot(e.d-FLD.ox,e.z-FLD.oz)<40)e.dead=1});
     rgBanner('💀 Você caiu!','Perdeu 🪙'+lost+' · renasceu no centro do campo','#ff6b6b');save()}
 };
