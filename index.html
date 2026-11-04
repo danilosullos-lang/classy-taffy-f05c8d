@@ -2866,8 +2866,8 @@ function spawnEn(t,d,z,tier){
 }
 function dmgEn0(e,d,q){
   if(e.dead)return;if(!q)ftext(e.m.position.x,e.m.position.y+e.hh,e.m.position.z,Math.round(d),'#fff');
-  e.hp-=d;e.m.scale.setScalar(1.18);sfx('enemyHit',0,e);fxBurst(e.m.position.x,e.m.position.y+(e.hh||1)*.55,e.m.position.z,0xffd18a,8,3,.28,true);
-  if(e.hp<=0){sfx('enemyDown',0,e);fxBurst(e.m.position.x,e.m.position.y+.8,e.m.position.z,0xff9d46,22,5,.62,true);fxRing(e.m.position.x,.12,e.m.position.z,0xffa64d,2.8,.42);
+  e.hp-=d;e.m.scale.setScalar(1.18);sfx('enemyHit',0,e);fxBurst(e.m.position.x,e.m.position.y+(e.hh||1)*.55,e.m.position.z,0xffd18a,8,3,.28,true,'spark');
+  if(e.hp<=0){sfx('enemyDown',0,e);fxBurst(e.m.position.x,e.m.position.y+.8,e.m.position.z,0xff9d46,22,5,.62,true,'fire');fxRing(e.m.position.x,.12,e.m.position.z,0xffa64d,2.8,.42);
 
     e.dead=1;e.deadAt=performance.now();if(e.bar)e.bar.visible=false;if(e.nameTag)e.nameTag.visible=false;if(e.m.userData.monsterActions)setMonsterAnimation(e,'death');sv.tk=(sv.tk||0)+1;if(sv.pk&&sv.pk.karma>0){sv.pk.mobClean=(sv.pk.mobClean||0)+1;if(sv.pk.mobClean>=10){sv.pk.mobClean=0;sv.pk.karma=Math.max(0,sv.pk.karma-1);say('🕊️ Karma reduzido ao derrotar monstros');save()}}say('💥 '+e.n+' derrotado!');gain(AetheriaMonsterProgression.expReward(e.xp,e.level,sv.lv));
     if(e.rpgDungeonGuardian&&!e.rpgDungeonCounted){
@@ -4426,13 +4426,38 @@ function psTick(dt){
 }
 
 const FX=[];
+const KENNEY_VFX_PATHS={
+  fire:'assets/effects/kenney-particle-pack/flame_04.png',
+  fireball:'assets/effects/kenney-particle-pack/fire_01.png',
+  magic:'assets/effects/kenney-particle-pack/magic_04.png',
+  spark:'assets/effects/kenney-particle-pack/spark_07.png',
+  slash:'assets/effects/kenney-particle-pack/slash_02.png',
+  smoke:'assets/effects/kenney-particle-pack/smoke_03.png',
+  holy:'assets/effects/kenney-particle-pack/light_03.png',
+  impact:'assets/effects/kenney-particle-pack/circle_03.png',
+  trail:'assets/effects/kenney-particle-pack/trace_06.png'
+};
+const KENNEY_VFX_TEXTURES=Object.create(null);
+window.__rpgVfxAssetsDebug={loaded:[],failed:[]};
+const _kenneyVfxLoader=new T.TextureLoader();
+Object.entries(KENNEY_VFX_PATHS).forEach(([key,url])=>{
+  _kenneyVfxLoader.load(url,texture=>{
+    texture.colorSpace=T.SRGBColorSpace;
+    KENNEY_VFX_TEXTURES[key]=texture;
+    window.__rpgVfxAssetsDebug.loaded.push(key);
+  },undefined,error=>{
+    window.__rpgVfxAssetsDebug.failed.push({key,url,error:String(error||'load failed')});
+    console.warn('VFX texture not loaded:',key,error);
+  });
+});
 function fxAdd(m,life,upd){S.add(m);const f={m,t:0,life,upd};FX.push(f);return f}
 const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches); /* respeita a opção do sistema */
 function shake(a,t){if(RM)a*=.25;SHK.a=Math.max(SHK.a,a);SHK.t=Math.max(SHK.t,t)}
 function flash(col,op){if(RM)op*=.35;const e=$('fxOverlay');e.style.transition='none';e.style.background=col;e.style.opacity=op;requestAnimationFrame(()=>{e.style.transition='opacity .45s';e.style.opacity=0})}
 function fxRing(x,y,z,col,R,life,delay){const mk=()=>{const m=new T.Mesh(new T.RingGeometry(.9,1,40),new T.MeshBasicMaterial({color:col,transparent:true,opacity:.85,side:2,depthWrite:false}));m.rotation.x=-Math.PI/2;m.position.set(x,y+.15,z);fxAdd(m,life,(f,k)=>{f.m.scale.setScalar(1+(R-1)*(1-(1-k)*(1-k)));f.m.material.opacity=.85*(1-k)})};delay?setTimeout(mk,delay*1000):mk()}
-function fxBurst(x,y,z,col,n,sp,life,up){const g=new T.BufferGeometry(),a=new Float32Array(n*3),v=[];for(let i=0;i<n;i++){const th=Math.random()*6.283,ph=Math.random()*3.14,s=sp*(.4+Math.random()*.6);v.push([Math.sin(ph)*Math.cos(th)*s,up?Math.abs(Math.cos(ph))*s+sp*.4:Math.cos(ph)*s,Math.sin(ph)*Math.sin(th)*s])}
-  g.setAttribute('position',new T.BufferAttribute(a,3));const p=new T.Points(g,new T.PointsMaterial({map:dotTex,color:col,size:.7,transparent:true,depthWrite:false,blending:T.AdditiveBlending}));p.position.set(x,y,z);p.frustumCulled=false;
+function fxBurst(x,y,z,col,n,sp,life,up,textureKey){const g=new T.BufferGeometry(),a=new Float32Array(n*3),v=[];for(let i=0;i<n;i++){const th=Math.random()*6.283,ph=Math.random()*3.14,s=sp*(.4+Math.random()*.6);v.push([Math.sin(ph)*Math.cos(th)*s,up?Math.abs(Math.cos(ph))*s+sp*.4:Math.cos(ph)*s,Math.sin(ph)*Math.sin(th)*s])}
+  g.setAttribute('position',new T.BufferAttribute(a,3));const spriteMap=(textureKey&&KENNEY_VFX_TEXTURES[textureKey])||dotTex;
+  const p=new T.Points(g,new T.PointsMaterial({map:spriteMap,color:col,size:.7,transparent:true,depthWrite:false,blending:T.AdditiveBlending}));p.position.set(x,y,z);p.frustumCulled=false;
   fxAdd(p,life,(f,k,dt)=>{const A=g.attributes.position.array;for(let i=0;i<n;i++){A[i*3]+=v[i][0]*dt;A[i*3+1]+=v[i][1]*dt;A[i*3+2]+=v[i][2]*dt;v[i][1]-=7*dt}g.attributes.position.needsUpdate=true;p.material.opacity=1-k})}
 function fxBeam(a,b,col,w,life){const d=new T.Vector3().subVectors(b,a),L=d.length(),m=new T.Mesh(new T.CylinderGeometry(w,w,1,8),new T.MeshBasicMaterial({color:col,transparent:true,opacity:.9,depthWrite:false,blending:T.AdditiveBlending}));m.position.copy(a).addScaledVector(d,.5);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.clone().normalize());m.scale.set(1,L,1);fxAdd(m,life,(f,k)=>{f.m.material.opacity=.9*(1-k);const s=1-k*.7;f.m.scale.set(s,L,s)})}
 function fxPillar(x,y,z,col,h,r,life){const m=new T.Mesh(new T.CylinderGeometry(r,r*1.3,h,14,1,true),new T.MeshBasicMaterial({color:col,transparent:true,opacity:.7,side:2,depthWrite:false,blending:T.AdditiveBlending}));m.position.set(x,y+h/2,z);fxAdd(m,life,(f,k)=>{f.m.material.opacity=.7*(1-k);const s=1-k*.6;f.m.scale.set(s,1,s)})}
@@ -6932,11 +6957,11 @@ function enemies(dt,now){
 
 function dmg(d){
   if(!boss||!(boss.hp>0))return;
-  ftext(heron.position.x,3.5*heron.scale.y,heron.position.z,Math.round(d),'#ffd24a');sfx('bossHit');fxBurst(heron.position.x,heron.position.y+heron.scale.y,heron.position.z,0xffdf75,26,6,.55,true);shake(.12,.12);
+  ftext(heron.position.x,3.5*heron.scale.y,heron.position.z,Math.round(d),'#ffd24a');sfx('bossHit');fxBurst(heron.position.x,heron.position.y+heron.scale.y,heron.position.z,0xffdf75,26,6,.55,true,'magic');shake(.12,.12);
   boss.hp-=d;{const ls=abSum('lifesteal');if(ls)st.hp=Math.min(hpMax(),st.hp+d*ls/100)}
   heron.scale.setScalar(bossAt(boss.i).sc*1.12);
   if(boss.hp<=0){
-    sfx('lvl');fxBurst(heron.position.x,heron.position.y+2,heron.position.z,0xffd45e,70,9,1.15,true);fxRing(heron.position.x,.12,heron.position.z,0xffd45e,7,.9);boss.hp=0;heron.visible=false;
+    sfx('lvl');fxBurst(heron.position.x,heron.position.y+2,heron.position.z,0xffd45e,70,9,1.15,true,'holy');fxRing(heron.position.x,.12,heron.position.z,0xffd45e,7,.9);boss.hp=0;heron.visible=false;
     $('alert').style.display=$('boss').style.display='none';
     say('CHEFE DERROTADO! 🏆');frDropAt(frog.position.x+rnd(-3,3),frog.position.z-7,2);if(Math.random()<.35)frDropAt(frog.position.x+rnd(-3,3),frog.position.z-9,2);
     if(bossAt(boss.i).w)sv.stats.worldboss=(sv.stats.worldboss||0)+1;sv.stats.bosses=(sv.stats.bosses||0)+1;sv.bk=(sv.bk||0)+1;if(bossAt(boss.i).w)sv.wbk=(sv.wbk||0)+1;rpgQuestProgress('boss');checkMissions();
