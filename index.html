@@ -7092,7 +7092,9 @@ function tick(now){
 
 // Os modelos de monstros importados usam a frente no eixo local +Z.
  // O cálculo geométrico aponta para -Z; a meia-volta alinha o rosto com o alvo.
-function rpgMonsterFacingYaw(dx,dz){return Math.atan2(dx,-dz)+Math.PI}
+// Os inimigos avançam no eixo Z e os modelos deste conjunto usam frente local -Z.
+// Não somar PI: isso faria todos olharem para o lado oposto ao alvo.
+function rpgMonsterFacingYaw(dx,dz){return Math.atan2(dx,-dz)}
 function enemies(dt,now){
   if(tongue.visible){tongue.userData.t-=dt;if(tongue.userData.t<=0)tongue.visible=false}
   if(!st.run||st.pause)return;
@@ -7132,7 +7134,7 @@ function enemies(dt,now){
     }else if(e.stun<=0&&dist<e.r&&e.cd<=0&&st.y<.6){e._attackAnimUntil=now+650;if(e.m.userData.monsterActions)setMonsterAnimation(e,'attack');sfx('monsterAttack',dist,e);hit(e.dm);const th=abSum('thorns');if(th)dmgEn(e,e.dm*th/100,true);e.cd=1.3}
     const gy=e.land?gnd(e.d,e.z)+.1:0;
     e.m.position.set(cx(e.z)+e.d,gy+(e.fly?2.2:0)+Math.sin(now/300+i)*.08,e.z);
-    e.m.rotation.y=rpgMonsterFacingYaw(dd,dz); // Modelo aponta para o jogador no eixo local -Z.
+    e.m.rotation.y=rpgMonsterFacingYaw(dd,dz); // Frente local -Z alinhada ao vetor real até o jogador.
     if(e.m.userData.monsterActions&&(!e._attackAnimUntil||now>=e._attackAnimUntil))setMonsterAnimation(e,e.fly?'fly':(monsterMoving?'walk':'idle'));
     e.m.scale.lerp(ONE,.2);
     if(e.m.userData.shadow){
