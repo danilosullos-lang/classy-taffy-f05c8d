@@ -39,3 +39,6 @@ assets/animations/quaternius/**/*.glb -filter -diff -merge -text
 
 # Quaternius CC0 animation GLBs are served as actual web assets.
 assets/animations/quaternius/**/*.glb -filter -diff -merge -text
+
+# Quaternius CC0 animation GLBs are served as actual web assets.
+assets/animations/quaternius/**/*.glb -filter -diff -merge -text
