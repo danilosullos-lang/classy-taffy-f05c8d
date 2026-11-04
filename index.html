@@ -624,7 +624,7 @@ const LOW_MEM=!!(MOBILE_DEVICE||(navigator.deviceMemory&&navigator.deviceMemory<
 window.__rpgLowMemoryMode=LOW_MEM;
 const R=new T.WebGLRenderer({antialias:false,powerPreference:'low-power',alpha:false,depth:true,stencil:false,preserveDrawingBuffer:false});
 R.setSize(innerWidth,innerHeight);
-R.setPixelRatio(Math.min(devicePixelRatio||1,LOW_MEM?.55:1.25));
+R.setPixelRatio(Math.min(devicePixelRatio||1,LOW_MEM?.72:1.25));
 R.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();window.__rpgWebGLStatus='context-lost';console.error('WebGL context perdido; perfil de memória:',LOW_MEM?'leve':'normal')},{passive:false});
 R.domElement.addEventListener('webglcontextrestored',()=>{window.__rpgWebGLStatus='restored';console.warn('WebGL context restaurado')});
 R.shadowMap.enabled=!LOW_MEM;
@@ -635,13 +635,13 @@ R.toneMappingExposure=1.12;
 document.body.prepend(R.domElement);
 
 const S=new T.Scene();
-S.fog=new T.Fog(0xb9c3cf,100,280);
+S.fog=new T.Fog(0xc4d3df,125,340);
 const C=new T.PerspectiveCamera(60,innerWidth/innerHeight,.1,400);
 function fitCam(){C.aspect=innerWidth/innerHeight;C.fov=C.aspect<1?56+Math.min(4,(1-C.aspect)*8):60;C.updateProjectionMatrix()}
 fitCam();
 
-const hemi=new T.HemisphereLight(0xf2f8ff,0x4a7a52,.76);S.add(hemi);
-const sun=new T.DirectionalLight(0xfff5e2,.92);
+const hemi=new T.HemisphereLight(0xf4f8ff,0x54744d,.92);S.add(hemi);
+const sun=new T.DirectionalLight(0xfff2d8,1.08);
 sun.position.set(-18,30,16);
 sun.castShadow=!LOW_MEM;
 sun.shadow.mapSize.set(LOW_MEM?512:1536,LOW_MEM?512:1536);
@@ -1219,7 +1219,7 @@ function rpgPbrTexture(id,channel){
   if(LOW_MEM&&channel!=='diffuse')return null;
   const asset=rpgPbrResolve(id),key=id+':'+channel;if(RPG_PBR.cache[key])return RPG_PBR.cache[key];
   const ext=(RPG_PBR.extensions[asset]||{})[channel]||(channel==='diffuse'||channel==='roughness'?'jpg':'png');
-  const tex=RPG_PBR.loader.load('/assets/textures/polyhaven/'+asset+'/'+channel+'.'+ext,()=>{if(LOW_MEM&&tex.image&&tex.image.width>512){const scale=(LOW_MEM?256:512)/Math.max(tex.image.width,tex.image.height),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(tex.image.width*scale));canvas.height=Math.max(1,Math.round(tex.image.height*scale));canvas.getContext('2d').drawImage(tex.image,0,0,canvas.width,canvas.height);tex.image=canvas}tex.needsUpdate=true},undefined,()=>{delete RPG_PBR.cache[key];if(channel==='diffuse'){const c=document.createElement('canvas');c.width=c.height=4;const x=c.getContext('2d');x.fillStyle='#8f9a82';x.fillRect(0,0,4,4);tex.image=c;tex.needsUpdate=true}});
+  const tex=RPG_PBR.loader.load('/assets/textures/polyhaven/'+asset+'/'+channel+'.'+ext,()=>{if(LOW_MEM&&tex.image&&tex.image.width>512){const scale=(LOW_MEM?384:512)/Math.max(tex.image.width,tex.image.height),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(tex.image.width*scale));canvas.height=Math.max(1,Math.round(tex.image.height*scale));canvas.getContext('2d').drawImage(tex.image,0,0,canvas.width,canvas.height);tex.image=canvas}tex.needsUpdate=true},undefined,()=>{delete RPG_PBR.cache[key];if(channel==='diffuse'){const c=document.createElement('canvas');c.width=c.height=4;const x=c.getContext('2d');x.fillStyle='#8f9a82';x.fillRect(0,0,4,4);tex.image=c;tex.needsUpdate=true}});
   tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.repeat.set(2,2);tex.anisotropy=LOW_MEM?1:4;
   if(channel==='diffuse')tex.encoding=T.sRGBEncoding;
   tex.userData=tex.userData||{};tex.userData.rpgPbrRole=id&&id[0]==='@'?id:null;
@@ -2298,7 +2298,7 @@ const WEATHER={
     const baseFog=100+(1-this.intensity)*100;
     S.fog.near=baseFog*(this.current==='fog'?0.3:1);
     S.fog.far=230*(this.current==='fog'?0.4:1)*(1-this.intensity*0.4);
-    sun.intensity=0.92*(1-this.intensity*0.7);
+    sun.intensity=1.08*(1-this.intensity*0.7);
     if(this.rain){
       this.rain.material.opacity=this.intensity*0.8;
       if(this.intensity>0.05){
@@ -3964,8 +3964,8 @@ $('inv').onclick=()=>{
   try{navigator.clipboard.writeText(u).then(()=>say(msg),()=>say(u))}catch(e){say(u)}
 };
 let HQ=!LOW_MEM&&!(navigator.deviceMemory&&navigator.deviceMemory<=2)&&!(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4);
-const QP={l:[LOW_MEM?.65:.85,false],m:[1.2,true],h:[Math.min(devicePixelRatio||1,1.6),true]};
-function applyQ(){try{DRS=1}catch(e){}const requested=sv.opt.q||'h',q=LOW_MEM?'l':requested,p=QP[q]||QP.l;sv.opt.q=q;HQ=!LOW_MEM&&q!=='l';R.setPixelRatio(Math.min(devicePixelRatio||1,p[0],LOW_MEM?.55:1.25));R.setSize(innerWidth,innerHeight);
+const QP={l:[LOW_MEM?.78:.85,false],m:[1.2,true],h:[Math.min(devicePixelRatio||1,1.6),true]};
+function applyQ(){try{DRS=1}catch(e){}const requested=sv.opt.q||'h',q=LOW_MEM?'l':requested,p=QP[q]||QP.l;sv.opt.q=q;HQ=!LOW_MEM&&q!=='l';R.setPixelRatio(Math.min(devicePixelRatio||1,p[0],LOW_MEM?.72:1.25));R.setSize(innerWidth,innerHeight);
   const shadows=!LOW_MEM&&!!p[1];if(R.shadowMap.enabled!==shadows){R.shadowMap.enabled=shadows;S.traverse(o=>{if(o.material)o.material.needsUpdate=true})}
   if(composer)composer.setSize(innerWidth,innerHeight);
   if(bloomPass)bloomPass.enabled=!LOW_MEM&&q!=='l';
