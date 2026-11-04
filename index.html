@@ -4280,11 +4280,38 @@ $('cpConfirm').onclick=confirmStartClass;
 $('cpBack').onclick=()=>{$('charpick').style.display='none'};
 function startLabels(){const c=sv&&sv.cp;const z=c&&Number(c.z);const distance=Number.isFinite(z)?Math.max(0,Math.floor(-z))+' m':'posição salva';$('go').textContent=c?'⚰️ Continuar ('+distance+')':'Jogar';$('go0').style.display=c?'':'none'}
 function launchGame(){$('ov').style.display='none';reset();daily();musicOn(true);if(!sv.seen){sv.seen=1;save();openMenu('help')}}
+function migrateLegacyPlayableCharacter(){
+  const aliases={fighter:'guerreiro',warrior:'guerreiro',novice:'guerreiro',apprentice:'guerreiro',
+    mystic:'mago',mage:'mago',wizard:'mago',archer:'arqueiro',ranger:'ranger',
+    rogue:'ladino',thief:'ladino',assassin:'assassino',priest:'sacerdote',healer:'sacerdote',
+    tank:'cavaleiro',knight:'cavaleiro',paladin:'paladino'};
+  const current=String(sv&&sv.job||'').trim().toLowerCase();
+  if(current&&Object.prototype.hasOwnProperty.call(PLAYABLE_CLASS_SKINS,current))return true;
+  const hasSavedCharacter=!!(sv&&(sv.charCreated||sv.charClass||current||sv.cp||
+    Number(sv.lv)>1||Number(sv.xp)>0||(Array.isArray(inv)&&inv.length>0)));
+  if(!hasSavedCharacter)return false;
+  const id=aliases[current]||'guerreiro';
+  // Migração conservadora: mantém nível, XP, inventário, posição, ouro e atributos.
+  // Apenas normaliza a classe antiga para uma classe jogável atual.
+  sv.job=id;sv.charCreated=1;sv.charClass=sv.charClass||id;
+  sv.race=sv.race||'human';
+  sv.lineageRace=sv.lineageRace||sv.race;
+  sv.lineageBaseClass=sv.lineageBaseClass||(id==='mago'?'mystic':'fighter');
+  sv.lineageClass=sv.lineageClass||((INTERLUDE_CLASS_LABELS[sv.race]||INTERLUDE_CLASS_LABELS.human)[id]||id);
+  sv.lineageClassId=sv.lineageClassId||sv.race+'_'+sv.lineageBaseClass;
+  sv.lineageStage=Number.isFinite(sv.lineageStage)?sv.lineageStage:0;
+  sv.lineageRole=sv.lineageRole||({mago:'mage',arquimago:'mage',arqueiro:'archer',ranger:'archer',ladino:'dagger',assassino:'dagger',sacerdote:'healer',sumo:'healer',cavaleiro:'tank',paladino:'tank',templario:'tank'})[id]||'fighter';
+  sv.frog=sv.frog||{};
+  sv.frog.externalSkin=sv.frog.externalSkin||playableClassSkin(id);
+  save(true);
+  return true;
+}
 function startGame(){
-  // Só classes jogáveis podem entrar no mundo; saves antigos "Aprendiz/Fighter" recebem o seletor sem perder progresso.
-  const hasPlayableClass=!!(sv&&sv.job&&PLAYABLE_CLASS_SKINS&&Object.prototype.hasOwnProperty.call(PLAYABLE_CLASS_SKINS,sv.job));
-  if((!sv.charCreated&&sv.lv<=1)||!hasPlayableClass){if(showCharacterPicker())return}
+  // Saves legados são migrados sem apagar o progresso nem obrigar a recriar o herói.
+  if(!migrateLegacyPlayableCharacter()){if(showCharacterPicker())return}
+  updateLineageSkillBar();
   launchGame();
+  if(sv.frog&&sv.frog.externalSkin&&typeof loadExternalFrogSkin==='function')loadExternalFrogSkin(sv.frog.externalSkin,null);
 }
 $('go').onclick=startGame;$('go0').onclick=()=>{FRESH=true;sv.cp=null;startGame()};
 
