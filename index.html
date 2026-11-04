@@ -7083,7 +7083,9 @@ function tick(now){
   renderFrame(now);
 }
 
-function rpgMonsterFacingYaw(dx,dz){return Math.atan2(dx,-dz)}
+// Os modelos de monstros importados usam a frente no eixo local +Z.
+ // O cálculo geométrico aponta para -Z; a meia-volta alinha o rosto com o alvo.
+function rpgMonsterFacingYaw(dx,dz){return Math.atan2(dx,-dz)+Math.PI}
 function enemies(dt,now){
   if(tongue.visible){tongue.userData.t-=dt;if(tongue.userData.t<=0)tongue.visible=false}
   if(!st.run||st.pause)return;
