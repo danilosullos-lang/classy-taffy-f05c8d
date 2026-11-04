@@ -20,17 +20,27 @@ def valid_png(data):
 
 def main():
     DEST.mkdir(parents=True,exist_ok=True)
-    tree=json.loads(fetch(API).decode("utf-8"))
-    prefix="addons/kenney_particle_pack/"
-    paths=sorted(x["path"] for x in tree.get("tree",[]) if x.get("type")=="blob" and x.get("path","").startswith(prefix) and x["path"].lower().endswith(".png"))
-    if len(paths)<80:
-        raise RuntimeError(f"Expected at least 80 CC0 particle PNGs, found {len(paths)}")
+    # Prefer the already checked-in, verified CC0 collection. This keeps CI
+    # deterministic and avoids GitHub API rate limits on every push.
+    local_paths=sorted(p for p in DEST.rglob("*.png") if valid_png(p.read_bytes()))
+    if len(local_paths)>=80:
+        paths=[p.relative_to(DEST).as_posix() for p in local_paths]
+        source_paths=None
+    else:
+        tree=json.loads(fetch(API).decode("utf-8"))
+        prefix="addons/kenney_particle_pack/"
+        source_paths=sorted(x["path"] for x in tree.get("tree",[]) if x.get("type")=="blob" and x.get("path","").startswith(prefix) and x["path"].lower().endswith(".png"))
+        if len(source_paths)<80:
+            raise RuntimeError(f"Expected at least 80 CC0 particle PNGs, found {len(source_paths)}")
+        paths=[source_path[len(prefix):] for source_path in source_paths]
     records=[]
-    for source_path in paths:
-        relative=source_path[len(prefix):]
+    for relative in paths:
         path=DEST/relative
         data=path.read_bytes() if path.exists() else b""
         if not valid_png(data):
+            if source_paths is None:
+                raise RuntimeError(f"Checked-in Kenney PNG became invalid: {relative}")
+            source_path=source_paths[paths.index(relative)]
             data=fetch(BASE+source_path)
             if not valid_png(data):
                 raise RuntimeError(f"Invalid PNG from Kenney pack: {source_path}")
