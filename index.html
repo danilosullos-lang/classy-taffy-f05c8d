@@ -979,6 +979,9 @@ function updateExternalFrogAnimation(dt,now){
     if(_externalFrogCurrent&&clip===_externalFrogClips.walk)_externalFrogCurrent.setEffectiveTimeScale(Math.min(1.65,Math.max(.78,speed/3.2)));
     if(_externalFrogCurrent&&clip===_externalFrogClips.run)_externalFrogCurrent.setEffectiveTimeScale(Math.min(1.45,Math.max(.9,speed/5.2)));
     _externalFrogMixer.update(Math.min(.05,Math.max(0,dt||0)));
+    // Watchdog visual: uma animação nunca pode ocultar o ator ou seus meshes.
+    frog.visible=true;_externalFrogSkin.visible=true;
+    _externalFrogSkin.traverse(o=>{if(o.isMesh){o.visible=true;o.frustumCulled=false;}});
     if(window.__rpgPlayerAnimationDebug){
       window.__rpgPlayerAnimationDebug.state=air?'jump':(moving?(sprinting?'run':'walk'):'idle');
       window.__rpgPlayerAnimationDebug.clip=clip.name;
@@ -5869,7 +5872,19 @@ function loadExternalFrogSkin(url,statusEl){
       const model=new T.Group();
       model.name='ExternalFrogSkin';
       model.userData.externalSkinMarker=true;model.userData.sourceUrl=raw;
-      model.add(gltf.scene);gltf.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false}});
+      model.add(gltf.scene);
+      // Modelos animados podem recalcular bounds incorretamente após o primeiro ciclo.
+      // Desativar frustum culling nos meshes do jogador evita que o corpo suma ao andar.
+      gltf.scene.traverse(o=>{
+        if(o.isMesh&&o.geometry){
+          o.visible=true;o.frustumCulled=false;o.castShadow=!LOW_MEM;o.receiveShadow=false;
+          if(o.isSkinnedMesh){
+            try{o.computeBoundingSphere();if(o.computeBoundingBox)o.computeBoundingBox()}catch(_){}
+          }
+          const mats=Array.isArray(o.material)?o.material:[o.material];
+          mats.forEach(m=>{if(m){m.visible=true;if(m.opacity===0){m.opacity=1;m.transparent=false;}m.needsUpdate=true;}});
+        }
+      });
       const box=new T.Box3().setFromObject(model);
       const size=box.getSize(new T.Vector3());
       const maxDim=Math.max(size.x,size.y,size.z);
@@ -5927,26 +5942,27 @@ function loadExternalFrogSkin(url,statusEl){
         if(kind)_externalFrogPose.push({bone:o,kind,side,x:o.rotation.x,y:o.rotation.y,z:o.rotation.z});
       });
       frog.userData.externalSkinActive=true;
+      // Mantém a skin externa e suas malhas renderizáveis durante todos os estados.
+      model.visible=true;gltf.scene.visible=true;frog.visible=true;
+      model.traverse(o=>{if(o.isMesh){o.visible=true;o.frustumCulled=false;}});
       // Reanexa o arco aos ossos da nova skin, se ela os possuir.
       try{_hjob=null;heroGear(frog.userData.hero,sv.job||'novice');}catch(e){console.warn('Não foi possível prender o arco à skin:',e)}
       if(gltf.animations&&gltf.animations.length){
-        // Remove root-motion tracks that can pull the complete character away during locomotion.
-        // Remove root-motion do objeto importado, do Armature e dos ossos raiz (Hips/Pelvis).
-        // Muitos GLBs usam caminhos "Armature/Hips.position", não apenas "Scene.position".
-        const rootMotionNodes=new Set([gltf.scene]);
-        let firstBone=null;
-        gltf.scene.traverse(o=>{if(!firstBone&&o.isBone)firstBone=o});
-        for(let p=firstBone&&firstBone.parent;p&&p!==gltf.scene;p=p.parent)rootMotionNodes.add(p);
+        // Segurança: no personagem só aceitamos rotação de ossos.
+        // Tracks de posição/escala/visibilidade/material podem encolher ou deslocar
+        // o modelo inteiro em certos packs e fazê-lo desaparecer depois do primeiro ciclo.
         const rootBoneNames=/^(hips|pelvis|root|armature|mixamorig:?hips|mixamorig:?root)$/i;
         const safeAnimations=gltf.animations.map(clip=>{
           const tracks=(clip.tracks||[]).filter(track=>{
             const full=String(track.name||''),dot=full.lastIndexOf('.');
-            if(dot<0)return true;
+            if(dot<0)return false;
             const path=full.slice(0,dot),prop=full.slice(dot+1);
-            if(prop!=='position'&&prop!=='scale')return true;
+            if(prop!=='quaternion'&&prop!=='rotation')return false;
             const nodeName=path.split(/[/:]/).pop();
             const target=gltf.scene.getObjectByName(nodeName);
-            return !(rootMotionNodes.has(target)||rootBoneNames.test(nodeName));
+            if(!target||!target.isBone)return false;
+            if(rootBoneNames.test(String(target.name||nodeName)))return false;
+            return true;
           });
           return new THREE.AnimationClip(clip.name,clip.duration,tracks);
         }).filter(clip=>clip.tracks.length);
@@ -5989,7 +6005,9 @@ function loadExternalFrogSkin(url,statusEl){
     }catch(err){
       console.error('Falha ao preparar skin 3D:',err);
       window.__rpgSkinLoadDebug={status:'apply_error',requested:raw,error:String(err&&err.message||err)};
-      _skinStatus(statusEl,'O modelo abriu, mas não pôde ser aplicado: '+(err.message||'erro no modelo'),true);
+      // Aplicação é transacional: se qualquer etapa falhar, restaura o personagem-base.
+      try{resetExternalFrogSkin();frog.visible=true;frog.traverse(o=>{if(o.isMesh&&o!==bub)o.visible=true;});}catch(_){}
+      _skinStatus(statusEl,'A skin falhou ao ser aplicada; personagem-base restaurado: '+(err.message||'erro no modelo'),true);
     }
   },xhr=>{
     if(request===_externalSkinRequest&&xhr&&xhr.total>0)_skinStatus(statusEl,'Carregando… '+Math.round(xhr.loaded/xhr.total*100)+'%');
