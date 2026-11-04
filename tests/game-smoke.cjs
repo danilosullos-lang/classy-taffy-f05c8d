@@ -545,6 +545,8 @@ const { chromium } = require('playwright');
       monsterAppearance,
       monsterRuntimeAssets,
       classTransferState,
+      elfArcherTransfer,
+      archerRuntime,
       runtimeErrors: pageErrors.length
     }, null, 2));
   } catch (error) {
