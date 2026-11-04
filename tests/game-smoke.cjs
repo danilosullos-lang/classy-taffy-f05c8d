@@ -54,10 +54,10 @@ const { chromium } = require('playwright');
 
     // First-run accounts now choose a class and see its actual local 3D skin preview.
     const characterPicker = page.locator('#charpick');
+    let raceBaseClasses={};
     if(!(await characterPicker.isVisible()))throw new Error('Um save antigo de Aprendiz entrou no mundo sem abrir o seletor de classe.');
     if (await characterPicker.isVisible()) {
       // The five races intentionally have only their Lineage 2 base classes at level 1.
-      const raceBaseClasses={};
       for(const [race,expected] of Object.entries({
         human:['guerreiro','mago'],elf:['guerreiro','mago'],
         dark_elf:['guerreiro','mago'],orc:['guerreiro','mago'],dwarf:['guerreiro']
