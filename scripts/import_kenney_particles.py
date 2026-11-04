@@ -1,26 +1,17 @@
 #!/usr/bin/env python3
-"""Import a small, verified subset of Kenney's CC0 Particle Pack."""
+"""Import and verify the complete PNG collection from Kenney's CC0 Particle Pack."""
 from __future__ import annotations
 import hashlib, json, pathlib, time, urllib.request
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 DEST=ROOT/"assets"/"effects"/"kenney-particle-pack"
-BASE="https://raw.githubusercontent.com/Calinou/kenney-particle-pack/master/addons/kenney_particle_pack"
-FILES={
-  "flame_04.png":"fire",
-  "fire_01.png":"fireball",
-  "magic_04.png":"magic",
-  "spark_07.png":"spark",
-  "slash_02.png":"slash",
-  "smoke_03.png":"smoke",
-  "light_03.png":"holy",
-  "circle_03.png":"impact",
-  "trace_06.png":"trail",
-}
-LICENSE_URL="https://raw.githubusercontent.com/Calinou/kenney-particle-pack/master/addons/kenney_particle_pack/LICENSE.txt"
+API="https://api.github.com/repos/Calinou/kenney-particle-pack/git/trees/master?recursive=1"
+BASE="https://raw.githubusercontent.com/Calinou/kenney-particle-pack/master/"
+LICENSE_PATH="addons/kenney_particle_pack/LICENSE.txt"
+ROLE_PREFIXES=("fire","flame","magic","spark","slash","smoke","light","circle","trace","dirt","flare","muzzle","scorch","scratch","star","symbol","twirl","window")
 
 def fetch(url):
-    req=urllib.request.Request(url,headers={"User-Agent":"Aetheria-RPG-CC0-VFX-Importer/1.0"})
+    req=urllib.request.Request(url,headers={"User-Agent":"Aetheria-RPG-CC0-VFX-Importer/1.1","Accept":"application/json, application/octet-stream"})
     with urllib.request.urlopen(req,timeout=90) as response:
         return response.read()
 
@@ -29,24 +20,33 @@ def valid_png(data):
 
 def main():
     DEST.mkdir(parents=True,exist_ok=True)
+    tree=json.loads(fetch(API).decode("utf-8"))
+    prefix="addons/kenney_particle_pack/"
+    paths=sorted(x["path"] for x in tree.get("tree",[]) if x.get("type")=="blob" and x.get("path","").startswith(prefix) and x["path"].lower().endswith(".png"))
+    if len(paths)<80:
+        raise RuntimeError(f"Expected at least 80 CC0 particle PNGs, found {len(paths)}")
     records=[]
-    for filename,role in FILES.items():
-        path=DEST/filename
+    for source_path in paths:
+        relative=source_path[len(prefix):]
+        path=DEST/relative
         data=path.read_bytes() if path.exists() else b""
         if not valid_png(data):
-            data=fetch(f"{BASE}/{filename}")
+            data=fetch(BASE+source_path)
             if not valid_png(data):
-                raise RuntimeError(f"Invalid PNG from Kenney pack: {filename}")
+                raise RuntimeError(f"Invalid PNG from Kenney pack: {source_path}")
+            path.parent.mkdir(parents=True,exist_ok=True)
             path.write_bytes(data)
+        stem=pathlib.PurePosixPath(relative).name.split("_")[0]
+        role=stem if stem in ROLE_PREFIXES else "particle"
         records.append({"file":path.relative_to(ROOT).as_posix(),"role":role,"bytes":len(data),"sha256":hashlib.sha256(data).hexdigest()})
     license_path=DEST/"LICENSE.txt"
     if not license_path.exists() or license_path.stat().st_size<200:
-        license_data=fetch(LICENSE_URL)
+        license_data=fetch(BASE+LICENSE_PATH)
         if b"CC0" not in license_data and b"Creative Commons Zero" not in license_data:
             raise RuntimeError("Kenney particle pack license text did not confirm CC0")
         license_path.write_bytes(license_data)
     manifest={
-      "name":"Kenney Particle Pack — selected VFX sprites",
+      "name":"Kenney Particle Pack",
       "creator":"Kenney",
       "source":"https://kenney.nl/assets/particle-pack",
       "repositoryMirror":"https://github.com/Calinou/kenney-particle-pack",
@@ -54,9 +54,11 @@ def main():
       "licenseUrl":"https://creativecommons.org/publicdomain/zero/1.0/",
       "importedAt":time.strftime("%Y-%m-%d",time.gmtime()),
       "count":len(records),
+      "originalSprites":80,
+      "rotatedVariants":len([x for x in records if "/rotated/" in x["file"]]),
       "assets":records
     }
     (DEST/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"Imported/verified {len(records)} Kenney CC0 particle sprites.")
+    print(f"Imported/verified complete Kenney CC0 particle collection: {len(records)} PNGs.")
 
 if __name__=="__main__": main()
