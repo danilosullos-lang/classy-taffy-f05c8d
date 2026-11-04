@@ -634,7 +634,7 @@ document.body.prepend(R.domElement);
 const S=new T.Scene();
 S.fog=new T.Fog(0xb9c3cf,100,280);
 const C=new T.PerspectiveCamera(60,innerWidth/innerHeight,.1,400);
-function fitCam(){C.aspect=innerWidth/innerHeight;C.fov=C.aspect<1?60+Math.min(18,(1-C.aspect)*34):60;C.updateProjectionMatrix()}
+function fitCam(){C.aspect=innerWidth/innerHeight;C.fov=C.aspect<1?56+Math.min(4,(1-C.aspect)*8):60;C.updateProjectionMatrix()}
 fitCam();
 
 const hemi=new T.HemisphereLight(0xf2f8ff,0x4a7a52,.76);S.add(hemi);
@@ -6523,7 +6523,7 @@ function tick(now){
   if(!CAMV.drag){CAMV.idle+=dt;if(CAMV.idle>3){const r=Math.min(1,dt*2.2);CAMV.yaw-=CAMV.yaw*r;CAMV.pitch-=CAMV.pitch*r}}
   const fpx=frog.position.x,cYs=Math.sin(CAMV.yaw),cYc=Math.cos(CAMV.yaw);
   const rotX=(ox,oz)=>fpx+ox*cYc+oz*cYs,rotZ=(ox,oz)=>z0-ox*cYs+oz*cYc;
-  const oX=cx(z0-9)+st.d*.9+st.vz*0.35-fpx,oZ=z0+12+st.vz*0.5-z0;
+  const oX=cx(z0-7)+st.d*.9+st.vz*0.35-fpx,oZ=z0+9.5+st.vz*0.5-z0;
   const camTargetX=rotX(oX,oZ);
   let camTargetY=Math.max(9+st.gy,gnd(bx-cx(z0+12),z0+12)+3.5)+st.y*0.4+CAMV.pitch;
   const camTargetZ=rotZ(oX,oZ);
