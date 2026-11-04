@@ -8556,7 +8556,11 @@ function rgReportPrompt(n,t){
   window.tosShow=ro=>{el.style.display='block';box.style.display=ro?'none':'block';cls.style.display=ro?'block':'none';el.scrollTop=0};
   btn.onclick=()=>{if(btn.disabled)return;try{localStorage.setItem(K,JSON.stringify({v:1,t:Date.now()}))}catch(e){}el.style.display='none'};
   cls.onclick=()=>{el.style.display='none'};
-  try{if(!localStorage.getItem(K))tosShow(false)}catch(e){tosShow(false)}
+  // Os termos e a política continuam disponíveis como informação,
+  // mas não bloqueiam mais a entrada no jogo nem exigem aceite no primeiro acesso.
+  el.style.display='none';
+  if(box)box.style.display='none';
+  if(cls){cls.style.display='block';cls.textContent='Fechar';}
 })();
 
 /* =====================================================================
