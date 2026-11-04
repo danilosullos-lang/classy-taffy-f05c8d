@@ -8223,7 +8223,17 @@ function fldColAt(x,z,r,y){
   const pi=Math.floor(x/CELL),pj=Math.floor(z/CELL);
   for(let it=0;it<2;it++)for(let di=-1;di<=1;di++)for(let dj=-1;dj<=1;dj++){const cs=FLD.cols[(pi+di)+','+(pj+dj)];if(!cs)continue;
     for(let k=0;k<cs.length;k++){const c=cs[k];if(y>c.h)continue;const dx=x-c.x,dz=z-c.z,mn=c.r+r,d2=dx*dx+dz*dz;if(d2<mn*mn&&d2>1e-8){const d=Math.sqrt(d2);x=c.x+dx/d*mn;z=c.z+dz/d*mn}}}
-  const pc=FLD.pcols;if(pc)for(let it=0;it<2;it++)for(let k=0;k<pc.length;k++){const c=pc[k];if(y>c.h)continue;const dx=x-c.x,dz=z-c.z,mn=c.r+r,d2=dx*dx+dz*dz;if(d2<mn*mn&&d2>1e-8){const d=Math.sqrt(d2);x=c.x+dx/d*mn;z=c.z+dz/d*mn}}
+  // Vilas procedurais usam círculos aproximados no centro das casas.
+  // Esses círculos se sobrepunham e fechavam todas as passagens em algumas
+  // sementes. Dentro do perímetro da vila, ignoramos apenas esses colliders
+  // de POI; o terreno e os obstáculos externos continuam colidindo.
+  let insideVillage=false;
+  for(const key in (FLD.pb||{})){
+    const poi=FLD.pb[key]&&FLD.pb[key].p;
+    if(poi&&poi.type==='village'&&Math.hypot(x-poi.x,z-poi.z)<32){insideVillage=true;break}
+  }
+  const pc=FLD.pcols;
+  if(pc&&!insideVillage)for(let it=0;it<2;it++)for(let k=0;k<pc.length;k++){const c=pc[k];if(y>c.h)continue;const dx=x-c.x,dz=z-c.z,mn=c.r+r,d2=dx*dx+dz*dz;if(d2<mn*mn&&d2>1e-8){const d=Math.sqrt(d2);x=c.x+dx/d*mn;z=c.z+dz/d*mn}}
   return[x,z]}
 const FJ={x:0,y:0};
 (()=>{const joy=$('joy');if(!joy)return;const R=42;let act=false,c0x=0,c0y=0;
