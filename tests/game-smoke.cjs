@@ -13,8 +13,11 @@ if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/
   throw new Error('A região inicial Medieval MMO Starter Realm não está posicionada no ponto de spawn.');
 }
 if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
-    !gameSource.includes("if(key==='starterRealm')rpgStarterRealmBuildCollisions(model,Math.floor(z/90))")) {
-  throw new Error('O mapa inicial não gera colisões estáticas a partir das malhas do GLB.');
+    !gameSource.includes("if(key==='starterRealm')rpgStarterRealmBuildCollisions(model,Math.floor(z/90))") ||
+    !gameSource.includes("const RPG_STARTER_REALM_SOLIDS=new Map()") ||
+    !gameSource.includes("function rpgStarterRealmBlockedAt") ||
+    !gameSource.includes("rpgStarterRealmBlockedAt(nx,nz,.55)")) {
+  throw new Error('O mapa inicial não gera/aplica colisões no controlador do Mundo Aberto.');
 }
 
 (async () => {
@@ -206,6 +209,20 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if(!starterRealmAudit.loaded||starterRealmAudit.meshes<100||starterRealmAudit.vertices<10000||
        !starterRealmAudit.attachedToSpawnChunk||!starterRealmAudit.realmPosition||Math.abs(starterRealmAudit.realmPosition[2]-20000)>1){
       throw new Error('Mapa inicial não carregou no chunk do ponto de nascimento: '+JSON.stringify(starterRealmAudit));
+    }
+    const starterRealmCollisionAudit=await page.evaluate(()=>{
+      const solids=Array.from(RPG_STARTER_REALM_SOLIDS.values()).flat();
+      const sample=solids[0];
+      return {
+        count:solids.length,
+        blocksInside:!!sample&&rpgStarterRealmBlockedAt((sample.minX+sample.maxX)/2,(sample.minZ+sample.maxZ)/2,.55),
+        clearOutside:!rpgStarterRealmBlockedAt(1000000,1000000,.55),
+        fieldControllerUsesCollision:gameSourceForCollisionAudit()
+      };
+      function gameSourceForCollisionAudit(){return typeof fldColAt==='function'&&typeof rpgStarterRealmBlockedAt==='function'}
+    });
+    if(starterRealmCollisionAudit.count<10||!starterRealmCollisionAudit.blocksInside||!starterRealmCollisionAudit.clearOutside||!starterRealmCollisionAudit.fieldControllerUsesCollision){
+      throw new Error('Colisão física do Starter Realm não passou na auditoria: '+JSON.stringify(starterRealmCollisionAudit));
     }
 
     // The spawn chunk now uses the imported Medieval MMO scene instead of the
