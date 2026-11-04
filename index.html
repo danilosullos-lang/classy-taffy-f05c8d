@@ -5908,19 +5908,19 @@ function _safeKayKitClip(clip,root){
 function _mapKayKitPlayerClips(clips,role){
  const name=c=>String(c&&c.name||'');
  const find=re=>clips.find(c=>re.test(name(c)))||null;
- const findAction=re=>clips.find(c=>re.test(name(c))&&!/^(?:idle|walk|walking|run|running|sprint|jog)\\b/i.test(name(c))&&!/holding.?bow|bow.?hold/i.test(name(c)))||null;
+ const findAction=re=>clips.find(c=>re.test(name(c))&&!/(?:^|_)(?:idle|walk|walking|run|running|sprint|jog|reload|aim|aiming|draw)(?:_|$)|holding.?bow|bow.?hold/i.test(name(c)))||null;
  _externalFrogClips.idle=find(/idle/i)||_externalFrogClips.idle;
  _externalFrogClips.walk=find(/walk|walking/i)||_externalFrogClips.walk;
  _externalFrogClips.run=find(/run|running|sprint/i)||_externalFrogClips.run||_externalFrogClips.walk;
  // Never reuse a melee strike as a jump. If this rig has no take-off clip,
  // use its landing cycle, then a safe locomotion pose as a final fallback.
- _externalFrogClips.jump=find(/jump|hop|leap|take.?off/i)||find(/land|landing/i)||_externalFrogClips.land||_externalFrogClips.walk||_externalFrogClips.idle;
+ _externalFrogClips.jump=find(/jump|leap|take.?off/i)||find(/land|landing/i)||_externalFrogClips.land||_externalFrogClips.walk||_externalFrogClips.idle;
  const melee=findAction(/attack|melee|sword|slash|combo/i)&&!/(bow|shoot|ranged|archery|arrow)/i.test(name(findAction(/attack|melee|sword|slash|combo/i)))?findAction(/attack|melee|sword|slash|combo/i):null;
  _externalFrogClips.slash=melee||_externalFrogClips.slash;
  // Prefer an actual ranged action, not a locomotion clip whose name merely contains "Bow".
- const bowAction=findAction(/(?:bow|archery|arrow|ranged).*(?:shoot|attack|release|fire|aim|draw)|(?:shoot|attack|release|fire|aim|draw).*(?:bow|archery|arrow|ranged)/i)
-  ||findAction(/shoot|fire.?arrow|arrow.?fire|ranged.?attack/i)
-  ||findAction(/archery|bow|arrow/i);
+ const bowAction=findAction(/(?:bow|archery|arrow).*(?:shoot|release|fire)|(?:shoot|release|fire).*(?:bow|archery|arrow)/i)
+  ||findAction(/(?:ranged).*(?:shoot|attack)|(?:shoot|attack).*(?:ranged)/i)
+  ||findAction(/shoot|fire.?arrow|arrow.?fire/i);
  _externalFrogClips.shoot=role==='archer'?(bowAction||null):(bowAction||_externalFrogClips.shoot);
  _externalFrogClips.cast=find(/spell|cast|magic|heal|staff/i)||_externalFrogClips.cast;
  _externalFrogClips.block=find(/block|parry|guard/i)||_externalFrogClips.block;
