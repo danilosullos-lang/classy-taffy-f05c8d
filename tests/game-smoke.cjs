@@ -7,6 +7,10 @@ if ((gameSource.match(/e\.m\.rotation\.y=rpgMonsterFacingYaw\(dd,dz\)/g) || []).
 if (gameSource.includes('Math.atan2(-dd,-dz)')) {
   throw new Error('Ainda existe cálculo invertido da direção dos monstros.');
 }
+if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/assets/28840/v1/model.glb',0)") ||
+    !gameSource.includes("if(useStarterRealm)rpgWorldPlace(group,'starterRealm',0,0,1,0,0)")) {
+  throw new Error('A região inicial Medieval MMO Starter Realm não está integrada ao mundo.');
+}
 
 (async () => {
   const browser = await chromium.launch({
@@ -179,6 +183,22 @@ if (gameSource.includes('Math.atan2(-dd,-dz)')) {
       const d=window.__rpgPlayerAnimationDebug;
       return !!(d&&d.active&&typeof d.skin==='string'&&/\.glb(?:[?#].*)?$/i.test(d.skin));
     }, { timeout: 30000 });
+
+    // The complete CC0 starter realm must load from its permanent GLB source.
+    try {
+      await page.waitForFunction(() => window.__rpgWorldDebug&&window.__rpgWorldDebug.starterRealmLoaded, { timeout: 60000 });
+    } catch (error) {
+      const diagnostic=await page.evaluate(()=>({world:window.__rpgWorldDebug||null,errors:window.__rpgAssetErrors||null}));
+      throw new Error('Mapa Medieval MMO Starter Realm não carregou: '+JSON.stringify(diagnostic)+' · '+error.message);
+    }
+    const starterRealmAudit=await page.evaluate(()=>{
+      const root=RPG_WORLD.models.starterRealm;let meshes=0,vertices=0;
+      if(root)root.traverse(o=>{if(o.isMesh){meshes++;vertices+=o.geometry&&o.geometry.attributes.position?o.geometry.attributes.position.count:0;}});
+      return {loaded:!!root,meshes,vertices,source:RPG_WORLD.requested.starterRealm};
+    });
+    if(!starterRealmAudit.loaded||starterRealmAudit.meshes<100||starterRealmAudit.vertices<10000){
+      throw new Error('Mapa inicial carregado incompleto: '+JSON.stringify(starterRealmAudit));
+    }
 
     // The imported CC0 town kit must load into the live world, not just exist in the repository.
     try {
