@@ -30,3 +30,6 @@ assets/world/village-megakit/**/*.gltf -filter -diff -merge -text
 
 # KayKit weapon glTF descriptors must be real JSON files for Three.js and Vercel.
 assets/weapons/kaykit-fantasy-weapons-bits/**/*.gltf -filter -diff -merge -text
+
+# KayKit CC0 Rig_Medium animation clips are served directly to Three.js.
+assets/animations/kaykit/**/*.glb -filter -diff -merge -text
