@@ -7090,11 +7090,11 @@ function tick(now){
   renderFrame(now);
 }
 
-// Os modelos de monstros importados usam a frente no eixo local +Z.
- // O cálculo geométrico aponta para -Z; a meia-volta alinha o rosto com o alvo.
-// Os inimigos avançam no eixo Z e os modelos deste conjunto usam frente local -Z.
-// Não somar PI: isso faria todos olharem para o lado oposto ao alvo.
-function rpgMonsterFacingYaw(dx,dz){return Math.atan2(dx,-dz)}
+// Three.js considera -Z a frente local. Para apontar esse eixo ao vetor
+// (dx,dz), o sinal de X precisa ser invertido na conversão para yaw.
+// A fórmula anterior espelhava a direção horizontal e fazia os monstros
+// encararem para o lado oposto quando perseguiam o jogador em diagonal.
+function rpgMonsterFacingYaw(dx,dz){return Math.atan2(-dx,-dz)}
 function enemies(dt,now){
   if(tongue.visible){tongue.userData.t-=dt;if(tongue.userData.t<=0)tongue.visible=false}
   if(!st.run||st.pause)return;
