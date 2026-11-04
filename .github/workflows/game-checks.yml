@@ -78,3 +78,19 @@ jobs:
         env:
           GAME_URL: http://127.0.0.1:4173
         run: node tests/game-smoke.cjs
+      - name: Wait for Render deployment
+        run: |
+          for attempt in $(seq 1 90); do
+            if curl --fail --silent --show-error "https://classy-taffy-f05c8d.onrender.com/?ci=${GITHUB_SHA}" -o /tmp/aetheria-live.html 2>/dev/null &&
+              grep -q "para seguir o caminho de Arqueiro" /tmp/aetheria-live.html; then
+              echo "Render está servindo a versão com o fluxo de classes atualizado."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Render não confirmou a versão atualizada dentro do prazo."
+          exit 1
+      - name: Run full browser smoke tests against Render
+        env:
+          GAME_URL: https://classy-taffy-f05c8d.onrender.com
+        run: node tests/game-smoke.cjs
