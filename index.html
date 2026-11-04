@@ -297,6 +297,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <b>🦸 Nv <span id="lv">1</span></b> · <span id="pw">8</span>⚡
   <div class="bar"><i class="hp" id="hpb" style="width:100%"></i></div>
   <div class="bar"><i id="cpb" style="display:block;height:100%;width:100%;background:linear-gradient(90deg,#54caff,#1687d0);border-radius:3px"></i></div>
+  <div class="bar"><i id="mpb" style="display:block;height:100%;width:100%;background:linear-gradient(90deg,#8f78ff,#5634c7);border-radius:3px"></i></div>
   <div class="bar"><i class="xp" id="xpb" style="width:0%"></i><i id="jxb" style="position:absolute;left:0;bottom:0;height:3px;width:0%;background:#7fe3ff;border-radius:0"></i></div>
   <div class="bar"><i class="stam" id="stb" style="width:100%"></i></div>
   <span id="rk">Novato</span><span id="pvpBadge" style="display:block;margin-top:3px;font-size:10px;font-weight:800;color:#d8d8e8">⚪ Pacífico</span>
@@ -313,6 +314,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
 <div id="cmpw" style="position:absolute;top:calc(8px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);pointer-events:none;text-align:center;z-index:3"><canvas id="cmp" width="220" height="26" style="width:clamp(92px,26vw,220px);height:auto;display:block;border-radius:6px"></canvas><div id="cmpl" style="font-size:9px;opacity:.9;margin-top:1px;text-shadow:0 1px 3px #000"></div></div>
 
+<div id="castPanel" style="display:none;position:fixed;top:calc(112px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:8;width:min(220px,62vw);padding:6px 9px;border:1px solid #8f78ff;border-radius:9px;background:rgba(15,12,30,.9);color:#fff;text-align:center;font-size:11px;pointer-events:none"><b id="castName">Conjurando</b><div style="height:5px;margin-top:5px;border-radius:6px;background:#30284c;overflow:hidden"><i id="castFill" style="display:block;width:0;height:100%;background:linear-gradient(90deg,#9d8aff,#58d8ff)"></i></div></div>
 <div class="p" id="rd" style="display:none;top:calc(64px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:200px;text-align:center"><b id="rdn" style="font-size:12px"></b><div class="boss-hp"><i id="rdb" style="width:100%"></i></div><div id="rdt" style="font-size:10px;opacity:.9"></div></div>
 <div class="p" id="boss">
   <b id="bn" style="font-size:12px"></b>
@@ -2941,13 +2943,33 @@ function skill(k){
 
 /* ---------- Habilidades de classe estilo Interlude ---------- */
 const _legacyFrogSkill=skill;
-function lineageSkill(k){
- if(!st.run||st.pause||cd[k]>0||sv.lv<SKL[k][0])return;
+function lineageSkill(k,fromCast=false){
+ if(!st.run||st.pause||(!fromCast&&(cd[k]>0||sv.lv<SKL[k][0]||st.cast)))return;
  if(k==='w'){_legacyFrogSkill(k);return}
  const role=interludeRole(),set=INTERLUDE_SKILL_SETS[role]||INTERLUDE_SKILL_SETS.fighter,def=set[k];
  if(!def)return;
+ const mpCosts={q:0,e:10,c:14,f:8,g:12,h:20,t:16,v:35};
+ const mpCost=mpCosts[k]||0;
+ if(!fromCast&&st.mp<mpCost){say('💧 MP insuficiente para '+def[1]);return}
+ if(!fromCast){
+   const caster=['mage','healer','support'].includes(role);
+   const castTimes=caster?{q:.25,e:.85,c:1.05,f:0,g:.9,h:1.35,t:.45,v:2.1}:{archer:{q:.12,e:.35,h:.5,v:.9}[k]||0};
+   const castSeconds=typeof castTimes==='number'?castTimes:0;
+   st.mp=Math.max(0,st.mp-mpCost);
+   cd[k]=CD[k]*rgCdMul();
+   if(castSeconds>0){
+     const now=performance.now(),endsAt=now+castSeconds*1000;
+     const _core=window.AetheriaCombatCore;
+     const _state=window.__aetheriaCombatState||(window.__aetheriaCombatState=_core.createCombatState());
+     _core.beginSkillCast(_state,k,null,castSeconds*1000,now);
+     st.cast={key:k,endsAt,startedAt:now,duration:castSeconds*1000,mpCost};
+     const panel=$('castPanel'),name=$('castName');if(panel)panel.style.display='block';if(name)name.textContent='✨ '+def[1];
+     say('✨ Conjurando '+def[1]+'…');return;
+   }
+ } else {
+   const _state=window.__aetheriaCombatState;if(_state)window.AetheriaCombatCore.cancelSkillCast(_state);
+ }
  if(typeof playLineageCombatAnimation==='function')playLineageCombatAnimation(role,k);
- cd[k]=CD[k]*rgCdMul();
  const power=pw(),base=12+power*.24+stat('atk')*.85+rgPow()*.3;
  const targets=EN.filter(e=>!e.dead&&Math.hypot(e.d-st.d,e.z-st.z)<(k==='v'?32:k==='c'||k==='h'?22:25))
    .sort((a,b)=>Math.hypot(a.d-st.d,a.z-st.z)-Math.hypot(b.d-st.d,b.z-st.z));
@@ -3540,13 +3562,14 @@ const statGear=k=>best().reduce((a,i)=>a+sn(i,k),0);
 const stat=k=>{const v=statGear(k)+rgBonus(k),p=rgPct(k);return Math.round(p?v*(1+p/100):v)};
 const pw=()=>sv.lv*8+best().reduce((a,i)=>a+ip(i),0)+rgPow();
 const hpMax=()=>Math.round(120+(sv.lv-1)*10+stat('hp')*1.4);
+const mpMax=()=>{const role=interludeRole();const base={mage:120,healer:108,support:104,archer:76,dagger:68,tank:74,crafter:78,fighter:72}[role]||72;return Math.round(base+sv.lv*6+Math.max(0,stat('int'))*1.5)};
 const spdBase=()=>(4.4+3.6*(1-Math.exp(-sv.lv/18))+Math.min(.8,stat('spd')*.015))*Math.max(.7,1-best().reduce((a,i)=>a+(i.r===4?.04:i.r===5?.07:0),0))*(sv.opt.spdm||1);
 function gain(n){
   n=Math.round(n*(1+abSum('xp')/100)*(sv.xpBoost||1)*(sv.baseBoost||1)*(st&&st.pu&&st.pu.xp>0?2:1));sv.xp+=n;rgJobExp(n);
   sv.gold+=Math.round(n*rnd(1.8,3.4)*(1+abSum('gold')/100)*(sv.goldBoost||1));
   if(n>=3&&Math.random()<.25)dropCons();
   while(sv.xp>=need()&&sv.lv<MAXLV){
-    sv.xp-=need();sv.lv++;rgLevelUp(sv.lv);st.hp=hpMax();
+    sv.xp-=need();sv.lv++;rgLevelUp(sv.lv);st.hp=hpMax();st.mp=mpMax();
     say('Nível '+sv.lv+'! 🎉');sfx('lvl');
     for(const k in SKL)if(SKL[k][0]===sv.lv)say('🆕 '+SKL[k][1]+'!');
     sv.stats.level=sv.lv;checkMissions();
@@ -3560,7 +3583,7 @@ function hit(d){
   if(st.bub>0)return say('Bloqueado! 🫧');
   if(Math.random()*100<abSum('dodge')){say('💨 Esquivou!');return}
   if(st.shield>0){const sh=Math.min(st.shield,d);st.shield-=sh;d-=sh;if(d<=0){say('🛡️ Escudo absorveu o golpe!');return}}if(st.barrier>0){const b_=Math.min(st.barrier,d);st.barrier-=b_;d-=b_;if(d<=0){say('🛡️ Barreira!');return}}
-  d=Math.max(1,Math.round(d*100/(100+stat('def')*2)));ftext(frog.position.x,frog.position.y+2,frog.position.z,'-'+d,'#ff6b6b');
+  if(st.cast){st.cast=null;const panel=$('castPanel');if(panel)panel.style.display='none';const _state=window.__aetheriaCombatState;if(_state)window.AetheriaCombatCore.cancelSkillCast(_state);say('⛔ Conjuração interrompida!')}d=Math.max(1,Math.round(d*100/(100+stat('def')*2)));ftext(frog.position.x,frog.position.y+2,frog.position.z,'-'+d,'#ff6b6b');
   st.hp-=d;say('Ai! -'+d);sfx('hit');fxBurst(frog.position.x,frog.position.y+1,frog.position.z,0xff4b58,16,4,.42,true);flash('#ff1838',.16);hitstop=Math.max(hitstop,.04);
   if(sv.opt.vib!==false&&navigator.vibrate)navigator.vibrate(40);
   if(st.hp<=0){if(abSum('revive')&&Date.now()>(st.rvAt||0)){st.rvAt=Date.now()+300000;st.hp=Math.max(1,hpMax()*abSum('revive')/100);say('🔥 RENASCEU!');sv.rev=1;return}st.run=false;pvpDeath();const m=rgDist(),lost=Math.floor(sv.gold*.1);sv.gold-=lost;sv.best=Math.max(sv.best||0,m);save();
@@ -3915,7 +3938,7 @@ function reset(){
   EN.forEach(e=>(S.remove(e.m,e.bar),disp(e.m)));EN.length=0;
   LD={};boss=null;heron.visible=false;heron.scale.setScalar(1);heron.rotation.set(0,0,0);hRock.visible=false;HR.mode=0;HR.perch=0;
   $('alert').style.display=$('boss').style.display='none';
-  st={hp:hpMax(),z:0,d:0,y:0,vy:0,bub:0,run:true,pause:false,
+  st={hp:hpMax(),mp:mpMax(),z:0,d:0,y:0,vy:0,bub:0,run:true,pause:false,
     hT:8,hPh:0,hTm:0,hd:0,nb:0,lock:false,vz:0,dash:0,zl:0,eT:3,gy:0,lT:0,stam:100,sprinting:false,
     coyote:0,jumpBuf:0,
     hexed:0,gravPull:0,feared:0,inked:0,vortex:0,frozen:0,earthquake:0};
@@ -3937,6 +3960,7 @@ function ui(){
     tagS=null;
   }
   $('hpb').style.width=Math.max(0,st.hp/hpMax()*100)+'%';
+  const mpb=$('mpb');if(mpb)mpb.style.width=Math.max(0,Math.min(100,(st.mp||0)/mpMax()*100))+'%';
   $('xpb').style.width=sv.xp/(need())*100+'%';
   $('stb').style.width=(st.stam||0)+'%';
   $('lv').textContent=sv.lv;
@@ -6590,6 +6614,12 @@ function tick(now){
     if(st.jumpBuf>0){st.jumpBuf-=dt;if((st.y<=0.05||st.coyote>0)&&st.jumpBuf>0){st.vy=9.2;st.jumpBuf=0;st.coyote=0;sfx('jump');}}
     if(st.y>0||st.vy>0){st.vy-=24*dt;st.y+=st.vy*dt;if(st.y<=0){st.y=0;st.vy=0}}
     for(const k in cd)if(cd[k]>0)cd[k]-=dt;
+     if(st.mp<mpMax())st.mp=Math.min(mpMax(),st.mp+mpMax()*.012*dt);
+     if(st.cast){
+       const now=performance.now(),left=Math.max(0,st.cast.endsAt-now),pct=1-left/Math.max(1,st.cast.duration);
+       const fill=$('castFill');if(fill)fill.style.width=(pct*100)+'%';
+       if(left<=0){const key=st.cast.key;st.cast=null;const panel=$('castPanel');if(panel)panel.style.display='none';lineageSkill(key,true)}
+     }
     if(cd.q<=0&&sv.lv>=SKL.q[0]&&(EN.some(e=>!e.dead&&st.z-e.z>=0&&st.z-e.z<=16&&Math.abs(Math.atan2(e.d-st.d,st.z-e.z))<=.7)||things.some(t=>t.k==='f'&&!t.dead&&t.z<st.z&&st.z-t.z<9&&Math.abs(t.d-st.d)<4)))skill('q');
     if(st.bub>0)st.bub-=dt;
     if(st.dash>0)st.dash-=dt;if(st.rolT>0)st.rolT-=dt;if(st.iframe>0)st.iframe-=dt;if(st.rcd>0)st.rcd-=dt;
