@@ -20,6 +20,13 @@
     const tierBonus=tier==='boss'?12:tier==='champion'?8:tier==='elite'?4:0;
     return clamp(areaLevel+threatAt(stats)+tierBonus,1,MAX_LEVEL);
   }
+  function expMultiplier(playerLevel,monsterLevel){
+    const gap=(Number(playerLevel)||1)-(Number(monsterLevel)||1);
+    return gap<=5?1:gap<=10?.7:gap<=15?.4:.1;
+  }
+  function expReward(base,monsterLevel,playerLevel){
+    return Math.max(1,Math.round((Number(base)||1)*expMultiplier(playerLevel,monsterLevel)));
+  }
   function scaleStats(stats,level){
     const lv=clamp(Math.round(Number(level)||1),1,MAX_LEVEL);
     return {
@@ -28,5 +35,5 @@
       xp:Math.max(1,Math.round((Number(stats.xp)||1)*(1+(lv-1)*.05)))
     };
   }
-  root.AetheriaMonsterProgression=Object.freeze({MAX_LEVEL,BIOME_BANDS,depthAt,threatAt,levelFor,scaleStats});
+  root.AetheriaMonsterProgression=Object.freeze({MAX_LEVEL,BIOME_BANDS,depthAt,threatAt,levelFor,expMultiplier,expReward,scaleStats});
 })(typeof window!=='undefined'?window:globalThis);
