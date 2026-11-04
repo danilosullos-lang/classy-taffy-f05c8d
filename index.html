@@ -5912,12 +5912,17 @@ function loadExternalFrogSkin(url,statusEl){
       model.scale.multiply(new T.Vector3(raceShape[0],raceShape[1],raceShape[2]));
       const skinTint={human:0xffffff,elf:0xe9f3df,dark_elf:0xd8c9ed,orc:0xa8c27d,dwarf:0xe7bd99}[race]||0xffffff;
       const tint=new T.Color(skinTint);
+      const classAccent={guerreiro:0x9b4936,cavaleiro:0x7897b8,paladino:0xd5b15a,templario:0x6f82b7,mago:0x7354bd,arquimago:0x9a63db,sacerdote:0xe2c96c,sumo:0x77b9a6,ladino:0x4b5368,assassino:0x713c77,arqueiro:0x568b55,ranger:0x7b9b48}[sv&&sv.job]||0xffffff;
+      const accent=new T.Color(classAccent);
       model.traverse(o=>{
         if(!o.isMesh||!o.material)return;
         const label=((o.name||'')+' '+(o.material.name||'')).toLowerCase();
         if(/skin|face|head|body|arm|leg/.test(label)){
           const tintMat=m=>{if(!m)return m;const c=m.clone();if(c.color)c.color.multiply(tint);c.needsUpdate=true;return c};
           o.material=Array.isArray(o.material)?o.material.map(tintMat):tintMat(o.material);
+        }else if(/armor|armour|cloth|robe|tunic|hood|cape|shirt|pants|trouser|boot|glove|leather|belt/.test(label)){
+          const accentMat=m=>{if(!m)return m;const c=m.clone();if(c.color)c.color.lerp(accent,.2);c.needsUpdate=true;return c};
+          o.material=Array.isArray(o.material)?o.material.map(accentMat):accentMat(o.material);
         }
       });
       // KayKit exports face +Z; the RPG forward direction is -Z.
