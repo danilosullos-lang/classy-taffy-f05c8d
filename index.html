@@ -6975,7 +6975,7 @@ function playLineageCombatAnimation(role,k){try{if(!frog||!frog.userData)return;
 function sendPvp(id,d){if(!room||!id)return;PV.hit[id]=Date.now();PK.out[id]=Date.now();room.emit('pvp',{to:id,d:Math.round(d)}).catch(()=>{})}
 function pvpAoE(r,d){if(room)room.peers().forEach(p=>{const q=p.presence;if(p.isMe||!q||q.mode!=='river'||!q.pvp)return;if(Math.hypot(q.z-st.z,q.d-st.d)<r)sendPvp(p.peer,d)})}
 const rw5=setInterval(()=>{if(room){clearInterval(rw5);try{
-  room.on('pvp',m=>{const d=m.data||{};if(m.isMe||d.to!==myId()||!inPvp())return;const a=room.peers().find(p=>p.peer===m.peer);if(!a||!a.presence||!a.presence.pvp)return;PV.last={id:m.peer,t:Date.now()};PK.in[m.peer]=Date.now();applyPvpDamage(Math.max(1,Math.round(Math.min((+d.d||0)*.35,hpMax()*.12))))});
+  room.on('pvp',m=>{const d=m.data||{};if(m.isMe||d.to!==myId()||!inPvp())return;const a=room.peers().find(p=>p.peer===m.peer),ap=a&&a.presence;if(!ap||ap.mode!=='river'||!ap.pvp||(+ap.lv||0)<PVP_LV||!Number.isFinite(+ap.z)||!Number.isFinite(+ap.d)||Math.hypot(ap.z-st.z,ap.d-st.d)>40)return;PV.last={id:m.peer,t:Date.now()};PK.in[m.peer]=Date.now();applyPvpDamage(Math.max(1,Math.round(Math.min((+d.d||0)*.35,hpMax()*.12))))});
   room.on('pvploot',m=>{const d=m.data||{},it=d.item;if(m.isMe||d.to!==myId()||!it||!RAR[it.r]||!SL[it.s]||!it.st||typeof it.st!=='object')return;if(!PV.hit[m.peer]||Date.now()-PV.hit[m.peer]>15000)return;delete PV.hit[m.peer];it.u=uid++;it.p=+it.p||0;
     if(inv.length>=sv.cap){sv.gold+=price(it);say('Bolsa cheia! Item vendido');return}inv.push(it);save();const e=$('pop');e.innerHTML='🏴‍☠️ ITEM ROUBADO!<br><small>'+esc(it.n)+'</small>';e.style.fontSize='22px';e.style.display='block';popT=3;gain(100)})
 }catch(e){}}},500);
@@ -7047,15 +7047,15 @@ function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t
     if(c.length)items.push(c[Math.floor(Math.random()*c.length)]);
     if(red)inv.filter(i=>i.r>=2&&!i.lock&&!items.includes(i)).sort(()=>Math.random()-.5).forEach(i=>{if(items.length<3&&Math.random()<.35)items.push(i)})}
   inv=inv.filter(x=>!items.includes(x));PV.cd[k.id]=now;save();
-  room.emit('pvpkill',{to:k.id,items,red:myFlag()===1,vn:myName,karma:sv.pk.karma||0}).catch(()=>{})}
+  room.emit('pvpkill',{to:k.id,items,red:myFlag()===1,flag:myFlag(),vn:myName,karma:sv.pk.karma||0}).catch(()=>{})}
 function killRank(){const col=f=>f===1?'#ff4b4b':f===2?'#b980ff':'#fff';
   const rows=[{n:myName+' (você)',k:sv.pk.k,f:myFlag()}].concat(PEERS.filter(p=>!p.isMe&&p.presence&&p.presence.name).map(p=>({n:esc(String(p.presence.name).slice(0,16)),k:pn(p.presence.k),f:pn(p.presence.fl)}))).sort((a,b)=>b.k-a.k).slice(0,10);
   return '<h3 style="margin:12px 0 4px">⚔️ Ranking de Kills</h3><div style="font-size:12px;opacity:.8">Você: '+sv.pk.k+' kills · '+sv.pk.d+' mortes · ☠️ Karma '+(sv.pk.karma||0)+' · 🔴 '+sv.pk.rk+' PKs</div>'+rows.map((r,i)=>'<div class="it"><span style="color:'+col(r.f)+'">'+(i+1)+'. '+r.n+(r.f===1?' 🔴':r.f===2?' 🟣':'')+'</span><b>'+r.k+' kills</b></div>').join('')}
 const rw6=setInterval(()=>{if(room){clearInterval(rw6);try{room.on('pvpkill',m=>{const d=m.data||{};if(m.isMe||d.to!==myId())return;if(!PV.hit[m.peer]||Date.now()-PV.hit[m.peer]>15000)return;delete PV.hit[m.peer];
-  const now=Date.now(),vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1));
+  const now=Date.now(),vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1)),victimFlag=Number.isFinite(+d.flag)?Math.max(0,Math.min(2,+d.flag)):(prov?2:vr?1:0);
   let got=0;(Array.isArray(d.items)?d.items.slice(0,3):[]).forEach(x=>{const it=cleanItem(x);if(!it)return;if(inv.length>=sv.cap){sv.gold+=price(it);return}inv.push(it);got++});
   if(!PK.lk[m.peer]||now-PK.lk[m.peer]>120000){PK.lk[m.peer]=now;sv.pk.k++}
-  if(!prov&&!vr){sv.pk.karma=Math.min(999,(+sv.pk.karma||0)+1);sv.pk.rk++;say('🔴 PK! Karma +1')}else say('🟣 Kill contada!');
+  if(victimFlag===0){sv.pk.karma=Math.min(999,(+sv.pk.karma||0)+1);sv.pk.rk++;say('🔴 PK! Karma +1')}else say(victimFlag===1?'☠️ PK abatido!':'🟣 PvP justo!');
   const e=$('pop');e.innerHTML='🏴‍☠️ '+(got?got+' ITEM(S) ROUBADO(S)!':'KILL!')+'<br><small>'+esc(vn)+'</small>';e.style.fontSize='22px';e.style.display='block';popT=3;gain(100);save();
   const t=myName+' derrotou '+vn;addChat('⚔️ PvP',t,'g',0,true);room.emit('chat',{n:'⚔️ PvP',t,ch:'g',lv:0}).catch(()=>{})})}catch(e){}}},500);
 
