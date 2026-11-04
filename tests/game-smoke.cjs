@@ -27,12 +27,14 @@ const { chromium } = require('playwright');
       skeletonUtils: !!(window.THREE && THREE.SkeletonUtils),
       postprocessing: !!(window.THREE && THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass),
       combatCore: !!window.AetheriaCombatCore,
-      monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80)
+      monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
+      vfxAssets: !!window.__rpgVfxAssetsDebug
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.monsterProgression) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
 
+    await page.waitForFunction(() => window.__rpgVfxAssetsDebug && window.__rpgVfxAssetsDebug.loaded.length >= 8, { timeout: 20000 });
     const canvas = await page.locator('canvas').first();
     await canvas.waitFor({ state: 'attached', timeout: 15000 });
     const canvasSize = await canvas.evaluate(el => ({ width: el.width, height: el.height }));
