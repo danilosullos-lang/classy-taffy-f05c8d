@@ -33,3 +33,6 @@ assets/weapons/kaykit-fantasy-weapons-bits/**/*.gltf -filter -diff -merge -text
 
 # KayKit CC0 Rig_Medium animation clips are served directly to Three.js.
 assets/animations/kaykit/**/*.glb -filter -diff -merge -text
+
+# Quaternius CC0 animation GLBs must be stored as real files for browser delivery.
+assets/animations/quaternius/**/*.glb -filter -diff -merge -text
