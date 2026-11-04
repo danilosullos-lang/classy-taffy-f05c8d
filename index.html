@@ -5906,20 +5906,29 @@ function _safeKayKitClip(clip,root){
  return tracks.length?new THREE.AnimationClip(clip.name,clip.duration,tracks):null;
 }
 function _mapKayKitPlayerClips(clips,role){
- const find=(re)=>clips.find(c=>re.test(String(c&&c.name||'')))||null;
+ const name=c=>String(c&&c.name||'');
+ const find=re=>clips.find(c=>re.test(name(c)))||null;
+ const findAction=re=>clips.find(c=>re.test(name(c))&&!/^(?:idle|walk|walking|run|running|sprint|jog)\\b/i.test(name(c))&&!/holding.?bow|bow.?hold/i.test(name(c)))||null;
  _externalFrogClips.idle=find(/idle/i)||_externalFrogClips.idle;
  _externalFrogClips.walk=find(/walk|walking/i)||_externalFrogClips.walk;
  _externalFrogClips.run=find(/run|running|sprint/i)||_externalFrogClips.run||_externalFrogClips.walk;
- _externalFrogClips.jump=find(/jump|hop/i)||_externalFrogClips.jump;
- _externalFrogClips.slash=find(/attack|melee|sword|slash|combo/i)&&!find(/bow|shoot|ranged/i)?find(/attack|melee|sword|slash|combo/i):_externalFrogClips.slash;
- _externalFrogClips.shoot=find(/bow|archery/i)||find(/shoot/i)||_externalFrogClips.shoot;
+ // Never reuse a melee strike as a jump. If this rig has no take-off clip,
+ // use its landing cycle, then a safe locomotion pose as a final fallback.
+ _externalFrogClips.jump=find(/jump|hop|leap|take.?off/i)||find(/land|landing/i)||_externalFrogClips.land||_externalFrogClips.walk||_externalFrogClips.idle;
+ const melee=findAction(/attack|melee|sword|slash|combo/i)&&!/(bow|shoot|ranged|archery|arrow)/i.test(name(findAction(/attack|melee|sword|slash|combo/i)))?findAction(/attack|melee|sword|slash|combo/i):null;
+ _externalFrogClips.slash=melee||_externalFrogClips.slash;
+ // Prefer an actual ranged action, not a locomotion clip whose name merely contains "Bow".
+ const bowAction=findAction(/(?:bow|archery|arrow|ranged).*(?:shoot|attack|release|fire|aim|draw)|(?:shoot|attack|release|fire|aim|draw).*(?:bow|archery|arrow|ranged)/i)
+  ||findAction(/shoot|fire.?arrow|arrow.?fire|ranged.?attack/i)
+  ||findAction(/archery|bow|arrow/i);
+ _externalFrogClips.shoot=role==='archer'?(bowAction||null):(bowAction||_externalFrogClips.shoot);
  _externalFrogClips.cast=find(/spell|cast|magic|heal|staff/i)||_externalFrogClips.cast;
  _externalFrogClips.block=find(/block|parry|guard/i)||_externalFrogClips.block;
  _externalFrogClips.hit=find(/hit|hurt|damage|react/i)||_externalFrogClips.hit;
  _externalFrogClips.roll=find(/roll|dodge|evade|dash/i)||_externalFrogClips.roll;
  _externalFrogClips.land=find(/land|landing/i)||_externalFrogClips.land;
  _externalFrogClips.death=find(/death|defeat|die/i)||_externalFrogClips.death;
- _externalFrogClips.attack=role==='archer'?(_externalFrogClips.shoot||_externalFrogClips.slash):
+ _externalFrogClips.attack=role==='archer'?_externalFrogClips.shoot:
   (['mage','healer','support'].includes(role)?(_externalFrogClips.cast||_externalFrogClips.slash):_externalFrogClips.slash);
 }
 async function _loadKayKitPlayerAnimations(model,scene,request,role){
