@@ -33,6 +33,8 @@ const { chromium } = require('playwright');
     if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
+    const bossLevelAudit=await page.evaluate(()=>({first:bossAt(0).lv,late:bossAt(100).lv}));
+    if(bossLevelAudit.first<1||bossLevelAudit.late!==80)throw new Error('Níveis dos chefes não respeitam o teto 80: '+JSON.stringify(bossLevelAudit));
 
     await page.waitForFunction(() => window.__rpgVfxAssetsDebug && window.__rpgVfxAssetsDebug.loaded.length >= 8, { timeout: 20000 });
     const canvas = await page.locator('canvas').first();
