@@ -4155,7 +4155,7 @@ const START_CLASS_INFO={
  sacerdote:'Cura, regeneração e proteção. Evolui para Sumo Sacerdote.'
 };
 const CLASS_SKIN_PREVIEWS={
- guerreiro:{name:'Bárbaro — KayKit',desc:'Visual robusto de guerreiro para a classe inicial.',url:'/skins/classes/Barbarian.glb'},
+ guerreiro:{name:'Guerreiro — KayKit',desc:'Visual robusto de guerreiro para a classe inicial (modelo-base Barbarian).',url:'/skins/classes/Barbarian.glb'},
  mago:{name:'Mago — KayKit',desc:'Aparência arcana para magos e arquimagos.',url:'/skins/classes/Mage.glb'},
  arqueiro:{name:'Arqueira — KayKit',desc:'Modelo humanoide KayKit leve, com arco equipado e animações de tiro compatíveis.',url:'/skins/classes/Rogue_Hooded.glb'},
  ladino:{name:'Ladino encapuzado — KayKit',desc:'Visual furtivo para ladinos e assassinos.',url:'/skins/classes/Rogue_Hooded.glb'},
@@ -4265,7 +4265,7 @@ $('cpGrid').addEventListener('click',e=>{
 });
 $('cpConfirm').onclick=confirmStartClass;
 $('cpBack').onclick=()=>{$('charpick').style.display='none'};
-function startLabels(){const c=sv.cp;$('go').textContent=c?'⚰️ Continuar ('+Math.floor(-c.z)+' m)':'Jogar';$('go0').style.display=c?'':'none'}
+function startLabels(){const c=sv&&sv.cp;const z=c&&Number(c.z);const distance=Number.isFinite(z)?Math.max(0,Math.floor(-z))+' m':'posição salva';$('go').textContent=c?'⚰️ Continuar ('+distance+')':'Jogar';$('go0').style.display=c?'':'none'}
 function launchGame(){$('ov').style.display='none';reset();daily();musicOn(true);if(!sv.seen){sv.seen=1;save();openMenu('help')}}
 function startGame(){
   // Só classes jogáveis podem entrar no mundo; saves antigos "Aprendiz/Fighter" recebem o seletor sem perder progresso.
