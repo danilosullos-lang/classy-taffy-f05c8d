@@ -440,6 +440,14 @@ if (!gameSource.includes("rpgWorldLoad('starterRealm','https://cdn.3dassets.dev/
 
     // Exercise real movement input: an animation library is not enough unless the
     // playable character switches clips while walking and sprinting.
+    // Keep the movement/animation assertion deterministic on the live server:
+    // distant world loading can leave starter enemies active long enough to kill
+    // the smoke-test character before the keyboard assertions finish.
+    await page.evaluate(()=>{
+      if(st){st.hp=hpMax();st.run=true;st.pause=false;st.frozen=0;st.vy=0;st.lock=false;}
+      if(typeof EN!=='undefined')EN.forEach(e=>{e.dead=true;if(e.m)e.m.visible=false;});
+    });
+    await page.waitForFunction(()=>window.__rpgPlayerAnimationDebug&&window.__rpgPlayerAnimationDebug.gameRunning===true,{timeout:5000});
     await page.keyboard.down('ArrowDown');
     await page.waitForTimeout(3500);
     const backwardWorldState = await page.evaluate(() => ({...window.__rpgWorldDebug}));
