@@ -32,3 +32,14 @@ Medieval Castle Construction: 149 modular GLBs plus an assembled castle courtyar
 
 The game imports only the listed GLB files. Source attribution is retained here
 for provenance even where CC0 does not require attribution.
+
+
+Medieval MMO Starter Realm (região inicial):
+- Starter scene: https://cdn.3dassets.dev/assets/28840/v1/model.glb
+- Pack page: https://3dassets.dev/packs/medieval-mmo-starter-realm
+- Manifest: https://3dassets.dev/api/v1/packs/medieval-mmo-starter-realm
+- License: CC0 1.0 Universal; no attribution required.
+- Complete composed scene: 76.7 × 80.0 m, 106,276 triangles, 498 meshes, approximately 4.8 MB.
+- Includes walled town, market, services, farms, river crossings, bridges, forest, mine and goblin camp.
+- Loaded by Three.js GLTFLoader from the permanent CORS-enabled CDN URL. The game's existing generated region remains available as fallback if the asset cannot load.
+- The asset supplies visuals only; game collision/navigation are still handled separately by Aetheria.
