@@ -2953,8 +2953,7 @@ function lineageSkill(k,fromCast=false){
  if(!fromCast&&st.mp<mpCost){say('💧 MP insuficiente para '+def[1]);return}
  if(!fromCast){
    const caster=['mage','healer','support'].includes(role);
-   const castTimes=caster?{q:.25,e:.85,c:1.05,f:0,g:.9,h:1.35,t:.45,v:2.1}:{archer:{q:.12,e:.35,h:.5,v:.9}[k]||0};
-   const castSeconds=typeof castTimes==='number'?castTimes:0;
+   const castSeconds=caster?({q:.25,e:.85,c:1.05,f:0,g:.9,h:1.35,t:.45,v:2.1}[k]||0):(role==='archer'?({q:.12,e:.35,h:.5,v:.9}[k]||0):0);
    st.mp=Math.max(0,st.mp-mpCost);
    cd[k]=CD[k]*rgCdMul();
    if(castSeconds>0){
