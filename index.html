@@ -4244,7 +4244,7 @@ function confirmStartClass(){
   sv.race=START_RACE;sv.lineageRace=START_RACE;sv.lineageBaseClass=id==='mago'?'mystic':'fighter';
   sv.lineageClass=(INTERLUDE_CLASS_LABELS[START_RACE]||INTERLUDE_CLASS_LABELS.human)[id]||id;
   sv.lineageClassId=START_RACE+'_'+sv.lineageBaseClass;sv.lineageStage=0;sv.lineageFirstClass=null;sv.lineageSecondClass=null;sv.lineageThirdClass=null;
-  sv.lineageRole=id==='mago'?'mage':'fighter';
+  sv.lineageRole=({mago:'mage',arquimago:'mage',arqueiro:'archer',ranger:'archer',ladino:'dagger',assassino:'dagger',sacerdote:'healer',sumo:'healer'})[id]||'fighter';
   const rb=INTERLUDE_RACE_BONUS[START_RACE]||INTERLUDE_RACE_BONUS.human;
   sv.bs=sv.bs||{str:1,agi:1,vit:1,int:1,dex:1,luk:1};
   Object.keys(rb).forEach(k=>{sv.bs[k]=Math.max(1,(sv.bs[k]||1)+rb[k])});
