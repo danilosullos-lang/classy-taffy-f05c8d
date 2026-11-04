@@ -2979,6 +2979,7 @@ function lineageSkill(k,fromCast=false){
      const _state=window.__aetheriaCombatState||(window.__aetheriaCombatState=_core.createCombatState());
      _core.beginSkillCast(_state,k,null,castSeconds*1000,now);
      st.cast={key:k,endsAt,startedAt:now,duration:castSeconds*1000,mpCost};
+     if(typeof playLineageCombatAnimation==='function')playLineageCombatAnimation(role,k);
      const panel=$('castPanel'),name=$('castName');if(panel)panel.style.display='block';if(name)name.textContent='✨ '+def[1];
      say('✨ Conjurando '+def[1]+'…');return;
    }
@@ -3021,8 +3022,13 @@ function lineageSkill(k,fromCast=false){
    if(target||bossNear){
      const amount=deal(target,role==='mage'||role==='healer'?1.3:1);
      if(role==='archer'){const p=target?target.m.position:heron.position;spawnBowArrow(new T.Vector3(p.x,p.y+(target?(target.hh||1)*.6:2),p.z),0xffd36a)}
-     else{visual(role==='mage'?0x8b83ff:role==='healer'?0xffe7a1:0xffb45a,1.8)}
+     else if(role==='mage'){const p=target?target.m.position:heron.position;fxFireProjectile(new T.Vector3(p.x,p.y+(target?(target.hh||1)*.58:2),p.z),{scale:1.08,duration:.38,impactRadius:2.1})}
+     else{visual(role==='healer'?0xffe7a1:0xffb45a,1.8)}
      message+=' · -'+amount;
+   }else if(role==='mage'){
+     const forward=new T.Vector3(0,0,-1).applyQuaternion(frog.quaternion);
+     fxFireProjectile(frog.position.clone().addScaledVector(forward,9).setY(1.1),{scale:.9,duration:.42});
+     message+=' · sem alvo';
    }else{visual(0xffd36a,1.2);message+=' · sem alvo'}
  }
  if(k==='e'){
@@ -3058,10 +3064,15 @@ function lineageSkill(k,fromCast=false){
    visual(0xffd36a,4);
  }
  if(k==='v'){
+   if(role==='mage'){
+     const meteorPoints=targets.map(e=>e.m.position.clone().add(new T.Vector3(0,(e.hh||1)*.35,0)));
+     if(bossNear)meteorPoints.push(heron.position.clone().add(new T.Vector3(0,1.2,0)));
+     fxMeteorShower(meteorPoints);
+   }
    targets.forEach(e=>deal(e,2.1));
    if(bossNear)deal(null,2.3);
    if(role==='healer'){const heal=hpMax()*.4;st.hp=Math.min(hpMax(),st.hp+heal)}
-   visual(role==='mage'?0x9a76ff:role==='healer'?0xffe6a3:0xff8b42,10);
+   if(role!=='mage')visual(role==='healer'?0xffe6a3:0xff8b42,10);
    shake(.22,.3);
  }
  const hostile=role==='healer'?['q','c','h'].includes(k):['q','e','c','h','v'].includes(k);
@@ -4463,6 +4474,52 @@ function fxBurst(x,y,z,col,n,sp,life,up,textureKey){const g=new T.BufferGeometry
 function fxBeam(a,b,col,w,life){const d=new T.Vector3().subVectors(b,a),L=d.length(),m=new T.Mesh(new T.CylinderGeometry(w,w,1,8),new T.MeshBasicMaterial({color:col,transparent:true,opacity:.9,depthWrite:false,blending:T.AdditiveBlending}));m.position.copy(a).addScaledVector(d,.5);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.clone().normalize());m.scale.set(1,L,1);fxAdd(m,life,(f,k)=>{f.m.material.opacity=.9*(1-k);const s=1-k*.7;f.m.scale.set(s,L,s)})}
 function fxPillar(x,y,z,col,h,r,life){const m=new T.Mesh(new T.CylinderGeometry(r,r*1.3,h,14,1,true),new T.MeshBasicMaterial({color:col,transparent:true,opacity:.7,side:2,depthWrite:false,blending:T.AdditiveBlending}));m.position.set(x,y+h/2,z);fxAdd(m,life,(f,k)=>{f.m.material.opacity=.7*(1-k);const s=1-k*.6;f.m.scale.set(s,1,s)})}
 function fxOrb(x,y,z,col,R,life){const m=new T.Mesh(new T.SphereGeometry(1,12,10),new T.MeshBasicMaterial({color:col,transparent:true,opacity:.8,depthWrite:false,blending:T.AdditiveBlending}));m.position.set(x,y,z);fxAdd(m,life,(f,k)=>{f.m.scale.setScalar(.3+R*Math.sin(k*Math.PI/2));f.m.material.opacity=.8*(1-k)})}
+const MAGE_FIRE_VFX_DEBUG=window.__rpgMageFireVfxDebug={fireballs:0,meteors:0,impacts:0,last:null};
+function fxFireProjectile(target,options={}){
+ const end=target&&target.isVector3?target.clone():new T.Vector3(frog.position.x,1.1,frog.position.z-8);
+ const start=options.from&&options.from.isVector3?options.from.clone():new T.Vector3(frog.position.x+.24,frog.position.y+1.18,frog.position.z-.22);
+ const life=Math.max(.22,Math.min(1.4,options.duration||.42)),size=Math.max(.55,Math.min(3.2,options.scale||1.05));
+ const group=new T.Group();
+ const fireMap=KENNEY_VFX_TEXTURES.fireball||KENNEY_VFX_TEXTURES.fire||dotTex;
+ const flameMap=KENNEY_VFX_TEXTURES.fire||fireMap;
+ const core=new T.Sprite(new T.SpriteMaterial({map:fireMap,color:0xffa12b,transparent:true,opacity:.98,depthWrite:false,blending:T.AdditiveBlending}));
+ core.scale.set(size*1.25,size*1.25,1);
+ const flame=new T.Sprite(new T.SpriteMaterial({map:flameMap,color:0xff4a16,transparent:true,opacity:.9,depthWrite:false,blending:T.AdditiveBlending}));
+ flame.scale.set(size*1.9,size*1.9,1);
+ const glow=new T.Sprite(new T.SpriteMaterial({map:KENNEY_VFX_TEXTURES.magic||dotTex,color:0xffd36a,transparent:true,opacity:.48,depthWrite:false,blending:T.AdditiveBlending}));
+ glow.scale.set(size*2.35,size*2.35,1);
+ group.add(glow,flame,core);group.position.copy(start);S.add(group);
+ const effect=fxAdd(group,life,(f,k,dt)=>{
+   group.position.lerpVectors(start,end,k);
+   group.position.y+=Math.sin(k*Math.PI)*(options.arc==null?.28:options.arc);
+   group.rotation.z+=dt*(options.spin||5);
+   core.material.rotation-=dt*2.8;flame.material.rotation+=dt*3.4;
+   f.trailTimer=(f.trailTimer||0)+dt;
+   if(f.trailTimer>.085&&k<.94){f.trailTimer=0;fxBurst(group.position.x,group.position.y,group.position.z,0xff7a24,5,1.15,.22,true,'fire')}
+   if(k>.94&&!f.impacted){
+     f.impacted=true;MAGE_FIRE_VFX_DEBUG.impacts++;
+     fxBurst(end.x,end.y,end.z,0xff9a32,22,4.8,.62,true,'spark');
+     fxBurst(end.x,end.y,end.z,0xff4a18,14,2.6,.48,true,'fire');
+     fxRing(end.x,.08,end.z,0xff6a20,options.impactRadius||2.8,.48);
+     fxPillar(end.x,.08,end.z,0xff7b24,1.6,.48,.34);
+     flash('rgba(255,105,28,.18)',.16);
+   }
+ });
+ effect.keep=false;
+ if(options.kind==='meteor')MAGE_FIRE_VFX_DEBUG.meteors++;else MAGE_FIRE_VFX_DEBUG.fireballs++;
+ MAGE_FIRE_VFX_DEBUG.last={kind:options.kind||'fireball',from:start.toArray(),to:end.toArray(),life,size};
+ return effect;
+}
+function fxMeteorShower(points){
+ const list=(Array.isArray(points)?points:[]).filter(p=>p&&p.isVector3).slice(0,6);
+ if(!list.length){const forward=new T.Vector3(0,0,-1).applyQuaternion(frog.quaternion);list.push(frog.position.clone().addScaledVector(forward,10).setY(.25))}
+ list.forEach((point,i)=>{
+   const target=point.clone();target.y=Math.max(.15,target.y+.25);
+   const from=target.clone().add(new T.Vector3((i%3-1)*1.15,8.5+(i%2)*1.3,((i*7)%3-1)*1.1));
+   fxFireProjectile(target,{from,kind:'meteor',scale:1.85,duration:.52+i*.045,arc:.12,spin:3,impactRadius:3.8});
+ });
+ return list.length;
+}
 function fxTick(dt){for(let i=FX.length-1;i>=0;i--){const f=FX[i];f.t+=dt;const k=f.t/f.life;if(k>=1){S.remove(f.m);if(f.keep)f.m.traverse(x=>{if(x.material&&x.material.dispose)x.material.dispose()});else disp(f.m);FX.splice(i,1)}else if(f.upd)f.upd(f,k,dt)}}
 function snd(f0,f1,d,ty,v){if(!sv.opt.snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime;o.type=ty||'sine';o.frequency.setValueAtTime(f0,n);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),n+d);g.gain.setValueAtTime((v||.07)*(sv.opt.sfxv==null?1:sv.opt.sfxv)+1e-4,n);g.gain.exponentialRampToValueAtTime(1e-4,n+d);o.connect(g);g.connect(AC.destination);o.start(n);o.stop(n+d+.05)}catch(e){}}
 const frogP=()=>({x:frog.position.x,y:frog.position.y,z:frog.position.z});
