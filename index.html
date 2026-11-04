@@ -4286,6 +4286,8 @@ function migrateLegacyPlayableCharacter(){
     rogue:'ladino',thief:'ladino',assassin:'assassino',priest:'sacerdote',healer:'sacerdote',
     tank:'cavaleiro',knight:'cavaleiro',paladin:'paladino'};
   const current=String(sv&&sv.job||'').trim().toLowerCase();
+  // Aprendiz/Novice é estado pré-classe: precisa abrir o seletor em vez de virar Guerreiro automaticamente.
+  if(current==='novice'||current==='apprentice')return false;
   if(current&&Object.prototype.hasOwnProperty.call(PLAYABLE_CLASS_SKINS,current))return true;
   const hasSavedCharacter=!!(sv&&(sv.charCreated||sv.charClass||current||sv.cp||
     Number(sv.lv)>1||Number(sv.xp)>0||(Array.isArray(inv)&&inv.length>0)));
