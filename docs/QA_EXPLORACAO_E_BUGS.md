@@ -80,3 +80,14 @@ A automação conseguiu entrar no mundo e inspecionar a região inicial, mas nã
 - Pontos de interesse também são gerados por região: vilarejos, ruínas e totens; totens descobertos alimentam a viagem rápida.
 - Há água/lagos/rios e elevações no gerador de terreno, mas sua colisão e travessia ainda precisam ser verificadas em execução.
 - Consequência para QA: a validação correta deve cobrir rotas representativas e cada bioma/POI gerado, não afirmar que um mundo procedural potencialmente ilimitado foi totalmente percorrido.
+
+
+### QA-009 — Modelos-base compartilhados entre classes
+Severidade: média/alta (identidade visual das classes).
+Evidência por inspeção do catálogo local: há quatro modelos de personagem na pasta skins/classes (Barbarian, Knight, Mage e Rogue_Hooded). A tabela PLAYABLE_CLASS_SKINS reutiliza Mage para Mago/Sacerdote, Rogue_Hooded para Ladino/Arqueiro e Knight para Cavaleiro/Paladino/Templário. As classes podem variar por arma, animação e tintura, mas não têm um GLB exclusivo cada uma.
+Status: confirmado por inspeção de arquivos/código; precisa de modelos distintos ou de variações visuais substanciais antes de considerar as classes visualmente finalizadas.
+
+### QA-010 — Efeitos de habilidades ainda genéricos
+Severidade: média (polimento visual; mecânica de classe já tem roteamento próprio).
+Evidência por inspeção do código: lineageSkill() seleciona conjuntos de habilidades por papel (fighter, tank, archer, dagger, mage, healer, support, crafter), porém grande parte usa o mesmo helper genérico de anel + explosão (fxRing/fxBurst). Isso não prova ausência de partículas, mas indica pouca diferenciação visual entre fogo, flechas, veneno, cura, escudo, gelo/raio e ultimates.
+Status: pendente de teste visual por classe e de VFX específicos por habilidade.
