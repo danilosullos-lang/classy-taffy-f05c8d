@@ -628,7 +628,7 @@ const LOW_MEM=!!(MOBILE_DEVICE||(navigator.deviceMemory&&navigator.deviceMemory<
 window.__rpgLowMemoryMode=LOW_MEM;
 const R=new T.WebGLRenderer({antialias:false,powerPreference:'low-power',alpha:false,depth:true,stencil:false,preserveDrawingBuffer:false});
 R.setSize(innerWidth,innerHeight);
-R.setPixelRatio(Math.min(devicePixelRatio||1,LOW_MEM?.72:1.25));
+R.setPixelRatio(Math.min(devicePixelRatio||1,LOW_MEM?.65:1.25));
 R.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();window.__rpgWebGLStatus='context-lost';console.error('WebGL context perdido; perfil de memória:',LOW_MEM?'leve':'normal')},{passive:false});
 R.domElement.addEventListener('webglcontextrestored',()=>{window.__rpgWebGLStatus='restored';console.warn('WebGL context restaurado')});
 R.shadowMap.enabled=!LOW_MEM;
@@ -2002,7 +2002,7 @@ function clearRpgDungeonGuardians(entry){
   for(let i=EN.length-1;i>=0;i--){
     const enemy=EN[i];
     if(enemy.rpgDungeonGuardian&&(!entry||enemy.rpgDungeonIndex===entry.index)){
-      S.remove(enemy.m,enemy.bar,enemy.nameTag);disp(enemy.m);EN.splice(i,1);
+      S.remove(enemy.m,enemy.bar,enemy.nameTag);disp(enemy.m);disposeMonsterNameTag(enemy.nameTag);EN.splice(i,1);
     }
   }
   RPG_DUNGEON.guardiansRemaining=0;
@@ -2838,14 +2838,15 @@ function attachMonsterAsset(enemy){
     enemy.m.userData.monsterAssetUrl=url;
   }).catch(err=>console.warn('Não foi possível carregar monstro '+enemy.t+':',err));
 }
+function disposeMonsterNameTag(tag){if(!tag)return;if(tag.material&&tag.material.map)tag.material.map.dispose();if(tag.material)tag.material.dispose()}
 function makeMonsterNameTag(e){
-  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=80;
+  const canvas=document.createElement('canvas');canvas.width=256;canvas.height=48;
   const ctx=canvas.getContext('2d');
   const label=(e.elite?'ELITE · ':'')+String(e.n||'Monstro')+'  Nv. '+e.level;
-  ctx.fillStyle='rgba(8,12,20,.78)';ctx.beginPath();ctx.roundRect(8,8,496,64,14);ctx.fill();
-  ctx.font='bold 30px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(8,12,20,.78)';ctx.beginPath();ctx.roundRect(4,4,248,40,8);ctx.fill();
+  ctx.font='bold 16px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
   const gap=(Number(sv&&sv.lv)||1)-e.level;
-  ctx.fillStyle=e.elite?'#ffd45e':gap<=-6?'#ff7777':gap<=-3?'#ffb35c':gap>=6?'#a9a9a9':'#f2f5ff';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(label,256,41,476);
+  ctx.fillStyle=e.elite?'#ffd45e':gap<=-6?'#ff7777':gap<=-3?'#ffb35c':gap>=6?'#a9a9a9':'#f2f5ff';ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillText(label,128,25,238);
   const texture=new T.CanvasTexture(canvas);if('colorSpace' in texture&&T.SRGBColorSpace)texture.colorSpace=T.SRGBColorSpace;
   const sprite=new T.Sprite(new T.SpriteMaterial({map:texture,transparent:true,depthWrite:false,depthTest:false,fog:false}));
   sprite.scale.set(Math.max(2.6,Math.min(5.2,2.3+label.length*.045)),.42,1);sprite.renderOrder=20;sprite.frustumCulled=false;
@@ -3950,7 +3951,7 @@ $('missions').onclick=()=>{openAr('missions')};
 /* ---------- Boot ---------- */
 function reset(){
   things.forEach(t=>S.remove(t.m));things.length=0;
-  EN.forEach(e=>(S.remove(e.m,e.bar,e.nameTag),disp(e.m)));EN.length=0;
+  EN.forEach(e=>(S.remove(e.m,e.bar,e.nameTag),disp(e.m),disposeMonsterNameTag(e.nameTag)));EN.length=0;
   LD={};boss=null;heron.visible=false;heron.scale.setScalar(1);heron.rotation.set(0,0,0);hRock.visible=false;HR.mode=0;HR.perch=0;
   $('alert').style.display=$('boss').style.display='none';
   st={hp:hpMax(),mp:mpMax(),z:0,d:0,y:0,vy:0,bub:0,run:true,pause:false,
@@ -4029,7 +4030,7 @@ $('inv').onclick=()=>{
 };
 let HQ=!LOW_MEM&&!(navigator.deviceMemory&&navigator.deviceMemory<=2)&&!(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4);
 const QP={l:[LOW_MEM?.78:.85,false],m:[1.2,true],h:[Math.min(devicePixelRatio||1,1.6),true]};
-function applyQ(){try{DRS=1}catch(e){}const requested=sv.opt.q||'h',q=LOW_MEM?'l':requested,p=QP[q]||QP.l;sv.opt.q=q;HQ=!LOW_MEM&&q!=='l';R.setPixelRatio(Math.min(devicePixelRatio||1,p[0],LOW_MEM?.72:1.25));R.setSize(innerWidth,innerHeight);
+function applyQ(){try{DRS=1}catch(e){}const requested=sv.opt.q||'h',q=LOW_MEM?'l':requested,p=QP[q]||QP.l;sv.opt.q=q;HQ=!LOW_MEM&&q!=='l';R.setPixelRatio(Math.min(devicePixelRatio||1,p[0],LOW_MEM?.65:1.25));R.setSize(innerWidth,innerHeight);
   const shadows=!LOW_MEM&&!!p[1];if(R.shadowMap.enabled!==shadows){R.shadowMap.enabled=shadows;S.traverse(o=>{if(o.material)o.material.needsUpdate=true})}
   if(composer)composer.setSize(innerWidth,innerHeight);
   if(bloomPass)bloomPass.enabled=!LOW_MEM&&q!=='l';
@@ -6915,7 +6916,7 @@ function enemies(dt,now){
   }
   for(let i=EN.length-1;i>=0;i--){
     const e=EN[i];if(e.m&&e.m.userData.monsterMixer)e.m.userData.monsterMixer.update(dt);
-    if((e.dead&&(e.deadAt==null||now-e.deadAt>=950))||Math.hypot(e.z-st.z,e.d-st.d)>85){(S.remove(e.m,e.bar,e.nameTag),disp(e.m));EN.splice(i,1);continue}
+    if((e.dead&&(e.deadAt==null||now-e.deadAt>=950))||Math.hypot(e.z-st.z,e.d-st.d)>85){(S.remove(e.m,e.bar,e.nameTag),disp(e.m),disposeMonsterNameTag(e.nameTag));EN.splice(i,1);continue}
     if(e.dead){if(e.bar)e.bar.visible=false;continue}
     const dz=st.z-e.z,dd=st.d-e.d,dist=Math.hypot(dz,dd)||1;
     if(dist>20&&dist<30&&(!e._idleSoundAt||now-e._idleSoundAt>rnd(14000,22000))){sfx('monsterIdle',dist,e);e._idleSoundAt=now}
@@ -8200,7 +8201,7 @@ function fldEnemies(dt,now){
   for(let i=EN.length-1;i>=0;i--){
     const e=EN[i];if(e.m&&e.m.userData.monsterMixer)e.m.userData.monsterMixer.update(dt);
     if(e.dead&&e.elite&&!e.lt){e.lt=1;fldEliteLoot(e)}
-    if(e.dead||Math.hypot(e.z-st.z,e.d-st.d)>95){S.remove(e.m,e.bar,e.nameTag);disp(e.m);EN.splice(i,1);continue}
+    if(e.dead||Math.hypot(e.z-st.z,e.d-st.d)>95){S.remove(e.m,e.bar,e.nameTag);disp(e.m);disposeMonsterNameTag(e.nameTag);EN.splice(i,1);continue}
     const dz=st.z-e.z,dd=st.d-e.d,dist=Math.hypot(dz,dd)||1,spd=(e.stun>0?0:e.sp)*dt;
     if(dist<32&&!(e.slam&&e.ph===1)){e.z+=dz/dist*spd;e.d+=dd/dist*spd}
     else if(!(e.slam&&e.ph===1)){e.wt-=dt;if(e.wt<=0){e.wt=rnd(2,4);e.wa=Math.random()*6.28}e.d+=Math.cos(e.wa)*spd*.4;e.z+=Math.sin(e.wa)*spd*.4}
