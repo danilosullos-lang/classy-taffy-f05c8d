@@ -462,6 +462,9 @@ const { chromium } = require('playwright');
         return false;
       };
       try{
+        sv.job='guerreiro';sv.lineageRole='fighter';
+        spawnBowArrow(new THREE.Vector3(frog.position.x,frog.position.y+1,frog.position.z-4),0xffffff);
+        const warriorArrowBlocked={...(window.__rpgCombatVisualDebug||{})};
         sv.race='elf';sv.lineageRace='elf';sv.lineageRole='archer';sv.job='arqueiro';
         sv.lineageClass='Elven Scout';sv.lineageClassId='elven_scout';sv.lineageBaseClass='fighter';
         sv.lineageStage=1;sv.lv=20;sv.jlv=1;sv.frog=sv.frog||{};
@@ -479,7 +482,7 @@ const { chromium } = require('playwright');
         const clipMap={...(window.__rpgPlayerAnimationDebug.clipMap||{})};
         return {ok:skinReady&&weaponReady,role:window.__rpgPlayerAnimationDebug.role,
           skin:window.__rpgPlayerAnimationDebug.skin,clips:window.__rpgAnimationAssetDebug.clips,
-          clipMap,weapon,projectile};
+          clipMap,weapon,projectile,warriorArrowBlocked};
       }finally{
         Object.keys(sv).forEach(k=>delete sv[k]);Object.assign(sv,snapshot);
         inv.splice(0,inv.length,...inventorySnapshot);uid=uidSnapshot;save(true);
@@ -490,7 +493,8 @@ const { chromium } = require('playwright');
     if(!archerRuntime.ok||archerRuntime.role!=='archer'||archerRuntime.skin!=='/skins/classes/Rogue_Hooded.glb'||
       archerRuntime.weapon.family!=='bow'||archerRuntime.projectile.blocked||
       !['bow-grip','right-hand','weapon-rig'].includes(archerRuntime.projectile.originSource)||
-      archerRuntime.projectile.origin[1]-archerRuntime.projectile.playerY<.65){
+      archerRuntime.projectile.origin[1]-archerRuntime.projectile.playerY<.65||
+      archerRuntime.warriorArrowBlocked.blocked!==true){
       throw new Error('Skin, animação, arco ou origem do projétil do Arqueiro incorretos: '+JSON.stringify(archerRuntime));
     }
 
