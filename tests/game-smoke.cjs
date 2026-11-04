@@ -433,13 +433,21 @@ const { chromium } = require('playwright');
         // GLB request that could race with restoration of the isolated smoke profile.
         loadExternalFrogSkin=()=>{};
         sv.race='elf';sv.lineageRace='elf';sv.lineageBaseClass='fighter';sv.lineageStage=0;
-        sv.lineageMarks={first:true};sv.lv=20;sv.job='guerreiro';sv.lineageClass='Elven Fighter';
+        sv.lineageMarks={first:true,second:true,third:true};sv.lv=20;sv.job='guerreiro';sv.lineageClass='Elven Fighter';
         sv.lineageRole='fighter';sv.lineageFirstClass=null;sv.frog=sv.frog||{};
         const options=lineageOptions(),scout=options.find(x=>x.id==='elven_scout');
         if(!scout||scout.role!=='archer'||scout.job!=='arqueiro')return {ok:false,options};
-        const selected=selectLineageClass('elven_scout');
-        return {ok:selected===true,job:sv.job,role:sv.lineageRole,classId:sv.lineageClassId,
-          skin:sv.frog.externalSkin,options:options.map(x=>x.id)};
+        const firstSelected=selectLineageClass('elven_scout');
+        const first={selected:firstSelected,job:sv.job,role:sv.lineageRole,classId:sv.lineageClassId,skin:sv.frog.externalSkin};
+        sv.lv=40;const secondOptions=lineageOptions(),ranger=secondOptions.find(x=>x.id==='silver_ranger');
+        if(!ranger||ranger.role!=='archer'||ranger.job!=='arqueiro')return {ok:false,first,secondOptions};
+        const secondSelected=selectLineageClass('silver_ranger');
+        sv.lv=76;const thirdOptions=lineageOptions(),sentinel=thirdOptions.find(x=>x.id==='moonlight_sentinel');
+        if(!sentinel||sentinel.role!=='archer'||sentinel.job!=='ranger')return {ok:false,first,secondOptions,thirdOptions};
+        const thirdSelected=selectLineageClass('moonlight_sentinel');
+        return {ok:firstSelected&&secondSelected&&thirdSelected,first,second:{selected:secondSelected,classId:sv.lineageSecondClass},
+          third:{selected:thirdSelected,classId:sv.lineageThirdClass,job:sv.job,role:sv.lineageRole,skin:sv.frog.externalSkin},
+          options:options.map(x=>x.id)};
       }finally{
         loadExternalFrogSkin=originalSkinLoader;
         Object.keys(sv).forEach(k=>delete sv[k]);
@@ -447,8 +455,12 @@ const { chromium } = require('playwright');
         save(true);
       }
     });
-    if(!elfArcherTransfer.ok||elfArcherTransfer.job!=='arqueiro'||elfArcherTransfer.role!=='archer'||
-      elfArcherTransfer.classId!=='elven_scout'||elfArcherTransfer.skin!=='/skins/classes/Rogue_Hooded.glb'){
+    if(!elfArcherTransfer.ok||elfArcherTransfer.first.classId!=='elven_scout'||
+      elfArcherTransfer.first.job!=='arqueiro'||elfArcherTransfer.first.role!=='archer'||
+      elfArcherTransfer.second.classId!=='silver_ranger'||
+      elfArcherTransfer.third.classId!=='moonlight_sentinel'||
+      elfArcherTransfer.third.job!=='ranger'||elfArcherTransfer.third.role!=='archer'||
+      elfArcherTransfer.third.skin!=='/skins/classes/Rogue_Hooded.glb'){
       throw new Error('A transferência Elven Scout não ativa a classe Arqueiro corretamente: '+JSON.stringify(elfArcherTransfer));
     }
 
