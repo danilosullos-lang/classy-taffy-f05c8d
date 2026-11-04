@@ -108,16 +108,20 @@ const { chromium } = require('playwright');
       const d=window.__rpgPlayerAnimationDebug;
       return !!(d&&d.active&&typeof d.skin==='string'&&/\.glb(?:[?#].*)?$/i.test(d.skin));
     }, { timeout: 30000 });
+    await page.waitForFunction(() => window.__rpgAnimationAssetDebug && window.__rpgAnimationAssetDebug.clips >= 40, { timeout: 45000 });
     const mappedPlayerClips=await page.evaluate(()=>window.__rpgPlayerAnimationDebug.clipMap||{});
     for(const [key,pattern] of Object.entries({
-      idle:/UAL1_Idle_Loop/i,walk:/UAL1_Walk_Loop/i,run:/UAL1_Sprint_Loop/i,
-      jump:/UAL1_Jump_Loop/i,attack:/UAL1_Sword_Attack/i,
-      cast:/UAL1_Spell_Simple_Shoot/i,block:/UAL2_Sword_Block/i,
-      hit:/UAL1_Hit_Chest/i,death:/UAL1_Death01/i
+      idle:/idle/i,walk:/walk/i,run:/run|sprint/i,jump:/jump|hop/i,
+      attack:/attack|melee|sword|slash|combo/i,block:/block|parry|guard/i,
+      hit:/hit|hurt|damage|react/i,death:/death|defeat|die/i
     })){
       if(!pattern.test(String(mappedPlayerClips[key]||''))){
-        throw new Error('O clip CC0 retargetizado não foi ativado para '+key+': '+JSON.stringify(mappedPlayerClips));
+        throw new Error('O clip KayKit retargetizado não foi ativado para '+key+': '+JSON.stringify(mappedPlayerClips));
       }
+    }
+    const importedAnimationSets=await page.evaluate(()=>window.__rpgAnimationAssetDebug);
+    if(importedAnimationSets.loadedSets.length<6||importedAnimationSets.clips<40){
+      throw new Error('Biblioteca de animações KayKit incompleta: '+JSON.stringify(importedAnimationSets));
     }
     await page.waitForFunction(() => window.__rpgPlayerAnimationDebug.gameRunning === true, { timeout: 10000 });
 
@@ -319,10 +323,10 @@ const { chromium } = require('playwright');
       archmage: playableClassSkin('arquimago'), assassin: playableClassSkin('assassino'), ranger: playableClassSkin('ranger')
     }));
     if (classSkinMap.warrior !== '/skins/classes/Barbarian.glb' || classSkinMap.mage !== '/skins/classes/Mage.glb' ||
-        classSkinMap.archer !== (classSkinMap.lowMemory ? '/skins/classes/Rogue_Hooded.glb' : '/skins/lyra-archer-animated.glb') || classSkinMap.rogue !== '/skins/classes/Rogue_Hooded.glb' ||
+        classSkinMap.archer !== '/skins/classes/Rogue_Hooded.glb' || classSkinMap.rogue !== '/skins/classes/Rogue_Hooded.glb' ||
         classSkinMap.priest !== '/skins/classes/Mage.glb' || classSkinMap.knight !== '/skins/classes/Knight.glb' ||
         classSkinMap.paladin !== '/skins/classes/Knight.glb' || classSkinMap.archmage !== '/skins/classes/Mage.glb' ||
-        classSkinMap.assassin !== '/skins/classes/Rogue_Hooded.glb' || classSkinMap.ranger !== (classSkinMap.lowMemory ? '/skins/classes/Rogue_Hooded.glb' : '/skins/lyra-archer-animated.glb')) {
+        classSkinMap.assassin !== '/skins/classes/Rogue_Hooded.glb' || classSkinMap.ranger !== '/skins/classes/Rogue_Hooded.glb') {
       throw new Error('O mapeamento de skins por classe está incorreto: '+JSON.stringify(classSkinMap));
     }
 
