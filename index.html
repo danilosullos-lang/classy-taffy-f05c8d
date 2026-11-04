@@ -3086,6 +3086,7 @@ function lineageSkill(k,fromCast=false){
      message+=' · PvP: '+playerTarget.name;
    }
  }
+ fxClassSkillVfx(role,k,targets,bossNear);
  say(message);sfx(k==='g'?'cast':'sword');
 }
 skill=function(k){if(sv&&sv.charCreated&&sv.lineageClass){lineageSkill(k);return}_legacyFrogSkill(k)};
@@ -4525,6 +4526,36 @@ function fxFireProjectile(target,options={}){
  MAGE_FIRE_VFX_DEBUG.last={kind:options.kind||'fireball',from:start.toArray(),to:end.toArray(),life,size,originSource:castOrigin.source};
  if(options.kind!=='meteor')MAGE_FIRE_VFX_DEBUG.lastFireballOrigin={position:start.toArray(),playerY:frog.position.y,source:castOrigin.source};
  return effect;
+}
+const RPG_CLASS_VFX={
+ fighter:{color:0xffb35b,texture:'slash',kind:'melee'},
+ tank:{color:0x78c8ff,texture:'holy',kind:'melee'},
+ archer:{color:0x78eaff,texture:'trail',kind:'ranged'},
+ dagger:{color:0xb68aff,texture:'slash',kind:'melee'},
+ mage:{color:0x9b83ff,texture:'magic',kind:'arcane'},
+ healer:{color:0xffe6a0,texture:'holy',kind:'holy'},
+ support:{color:0x78e8c8,texture:'magic',kind:'arcane'},
+ crafter:{color:0xffc078,texture:'spark',kind:'melee'}
+};
+window.__rpgClassVfxDebug={casts:{}};
+function fxClassSkillVfx(role,key,targets=[],bossNear=false){
+ if(role==='mage'&&(key==='q'||key==='v'))return; // fogo e meteoros têm VFX próprios
+ const cfg=RPG_CLASS_VFX[role]||RPG_CLASS_VFX.fighter;
+ const origin=rpgSpellCastOrigin().position;
+ const enemy=Array.isArray(targets)?targets.find(e=>e&&!e.dead):null;
+ let end;
+ if(enemy&&enemy.m&&enemy.m.position)end=enemy.m.position.clone().add(new T.Vector3(0,Math.max(.45,(enemy.hh||1)*.48),0));
+ else if(bossNear&&heron&&heron.position)end=heron.position.clone().add(new T.Vector3(0,1.1,0));
+ else end=origin.clone().add(new T.Vector3(0,0,-1).applyQuaternion(frog.quaternion).multiplyScalar(key==='v'?8:5));
+ const ranged=cfg.kind!=='melee';
+ const tex=KENNEY_VFX_TEXTURES[cfg.texture]||fxSoft;
+ if(ranged)fxBeam(origin,end,cfg.color,role==='archer'?.045:.075,.22);
+ else fxFlashSpr(tex,cfg.color,end.x,end.y,end.z,.42,1.8,.28,.95);
+ fxFlashSpr(tex,cfg.color,origin.x,origin.y,origin.z,.32,.9,.18,.75);
+ fxBurst(end.x,end.y,end.z,cfg.color,role==='tank'?12:8,role==='fighter'?2.2:1.6,.32,true,cfg.texture==='slash'?'spark':cfg.texture);
+ if(key==='c'||key==='h'||key==='v'||key==='e')fxRing(end.x,.08,end.z,cfg.color,key==='v'?3.2:1.8,.32);
+ const count=window.__rpgClassVfxDebug.casts;
+ count[role]=(count[role]||0)+1;
 }
 function fxMeteorShower(points){
  const list=(Array.isArray(points)?points:[]).filter(p=>p&&p.isVector3).slice(0,6);
