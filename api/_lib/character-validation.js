@@ -1,11 +1,11 @@
-const RACES = new Set(['human','elf','dark_elf','orc','dwarf']);
-const CLASSES = new Set(['novice','guerreiro','mago','arqueiro','tanque','anão','dwarf_fighter']);
+const RACES = new Set(['human','elf','dark_elf','darkelf','orc','dwarf']);
+const CLASSES = new Set(['novice','fighter','guerreiro','warrior','mago','mage','mystic','arquimago','arqueiro','archer','ranger','ladino','rogue','assassino','assassin','dagger','tanque','tank','cavaleiro','knight','paladino','paladin','templario','templar','sacerdote','priest','healer','sumo','support','anão','anao','dwarf','dwarf_fighter','crafter']);
 const safeName = value => typeof value === 'string' && /^[\p{L}\p{N}_ -]{3,20}$/u.test(value.trim());
 const invalid = (message,status=400) => Object.assign(new Error(message),{status});
 export function validateCharacter(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw invalid('invalid_character');
   if (!safeName(input.name) || !RACES.has(input.race) || !CLASSES.has(input.classId)) throw invalid('invalid_character_identity');
-  if(input.race==='dwarf'&&!['anão','dwarf_fighter','novice'].includes(input.classId))throw invalid('class_not_available_for_race');
+  if(input.race==='dwarf'&&!['anão','anao','dwarf','dwarf_fighter','novice','fighter','guerreiro','crafter'].includes(input.classId))throw invalid('class_not_available_for_race');
   const level = Number(input.level ?? 1);
   if (!Number.isInteger(level) || level < 1 || level > 80) throw invalid('invalid_level');
   const slot = Number(input.slot);

@@ -1,5 +1,6 @@
 const assert=require('node:assert/strict');
-const Engine=require('../assets/engine/aetheria-engine.js');
+require('../assets/engine/aetheria-engine.js');
+const Engine=globalThis.AetheriaEngine;
 {
  const bus=new Engine.EventBus();let seen=0;const off=bus.on('spawn',()=>seen++);bus.emit('spawn');off();bus.emit('spawn');assert.equal(seen,1);assert.equal(bus.listenerCount('spawn'),0);
 }
