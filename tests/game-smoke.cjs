@@ -184,7 +184,7 @@ const { chromium } = require('playwright');
     if(!collisionAudit||collisionAudit.solidCount<47||!collisionAudit.houseWallBlocked||
       !collisionAudit.doorwayClear||!collisionAudit.watchtowerBlocked||
       !collisionAudit.wellBlocked||!collisionAudit.stallBlocked){
-      throw new Error('Colisões da vila incompletas ou porta bloqueada: '+JSON.stringify(collisionAudit));
+      throw new Error('Colisões da vila incompletas ou porta bloqueada: '+JSON.stringify({audit:collisionAudit,debug:window.__rpgCollisionDebug||null,player:window.__rpgWorldDebug?{d:window.__rpgWorldDebug.playerX,z:window.__rpgWorldDebug.playerZ}:null}));
     }
     if(townWorldState.waterVisible||!townWorldState.groundLoaded)throw new Error('O mundo aberto ainda está usando o antigo canal de água: '+JSON.stringify(townWorldState));
     await page.waitForFunction(()=>window.__rpgWorldDebug&&window.__rpgWorldDebug.treeAssetsLoaded>=5,{timeout:30000});
