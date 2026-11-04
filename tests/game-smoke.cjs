@@ -124,6 +124,13 @@ const { chromium } = require('playwright');
       throw new Error('Biblioteca de animações KayKit incompleta: '+JSON.stringify(importedAnimationSets));
     }
     await page.waitForFunction(() => window.__rpgPlayerAnimationDebug.gameRunning === true, { timeout: 10000 });
+    const initialBossState=await page.evaluate(()=>({
+      active:!!boss,visible:!!heron.visible,scale:heron.scale.toArray(),
+      maxScale:Math.max(heron.scale.x,heron.scale.y,heron.scale.z)
+    }));
+    if(initialBossState.active||initialBossState.visible||initialBossState.maxScale>1.25){
+      throw new Error('Um chefe gigante foi exibido ao iniciar o mundo: '+JSON.stringify(initialBossState));
+    }
 
     await page.waitForFunction(() => {
       const d=window.__rpgPlayerAnimationDebug;
@@ -584,6 +591,7 @@ const { chromium } = require('playwright');
       runningState,
       idleState,
       jumpingState,
+      initialBossState,
       playerVisibility,
       playerAnimationCheck,
       cameraRuntime,
