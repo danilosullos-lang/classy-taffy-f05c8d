@@ -620,7 +620,7 @@ const MOBILE_DEVICE=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');
 // Telefones usam sempre o perfil leve para evitar picos de GPU ao mover a câmera.
 const LOW_MEM=!!(MOBILE_DEVICE||(navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4));
 window.__rpgLowMemoryMode=LOW_MEM;
-const R=new T.WebGLRenderer({antialias:!LOW_MEM,powerPreference:LOW_MEM?'low-power':'high-performance'});
+const R=new T.WebGLRenderer({antialias:false,powerPreference:'low-power',alpha:false,depth:true,stencil:false,preserveDrawingBuffer:false});
 R.setSize(innerWidth,innerHeight);
 R.setPixelRatio(Math.min(devicePixelRatio||1,LOW_MEM?.55:1.25));
 R.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();window.__rpgWebGLStatus='context-lost';console.error('WebGL context perdido; perfil de memória:',LOW_MEM?'leve':'normal')},{passive:false});
@@ -1203,7 +1203,7 @@ function rpgPbrTexture(id,channel){
   if(LOW_MEM&&channel!=='diffuse')return null;
   const asset=rpgPbrResolve(id),key=id+':'+channel;if(RPG_PBR.cache[key])return RPG_PBR.cache[key];
   const ext=(RPG_PBR.extensions[asset]||{})[channel]||(channel==='diffuse'||channel==='roughness'?'jpg':'png');
-  const tex=RPG_PBR.loader.load('/assets/textures/polyhaven/'+asset+'/'+channel+'.'+ext,()=>{if(LOW_MEM&&tex.image&&tex.image.width>512){const scale=512/Math.max(tex.image.width,tex.image.height),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(tex.image.width*scale));canvas.height=Math.max(1,Math.round(tex.image.height*scale));canvas.getContext('2d').drawImage(tex.image,0,0,canvas.width,canvas.height);tex.image=canvas}tex.needsUpdate=true},undefined,()=>{delete RPG_PBR.cache[key];if(channel==='diffuse'){const c=document.createElement('canvas');c.width=c.height=4;const x=c.getContext('2d');x.fillStyle='#8f9a82';x.fillRect(0,0,4,4);tex.image=c;tex.needsUpdate=true}});
+  const tex=RPG_PBR.loader.load('/assets/textures/polyhaven/'+asset+'/'+channel+'.'+ext,()=>{if(LOW_MEM&&tex.image&&tex.image.width>512){const scale=(LOW_MEM?256:512)/Math.max(tex.image.width,tex.image.height),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(tex.image.width*scale));canvas.height=Math.max(1,Math.round(tex.image.height*scale));canvas.getContext('2d').drawImage(tex.image,0,0,canvas.width,canvas.height);tex.image=canvas}tex.needsUpdate=true},undefined,()=>{delete RPG_PBR.cache[key];if(channel==='diffuse'){const c=document.createElement('canvas');c.width=c.height=4;const x=c.getContext('2d');x.fillStyle='#8f9a82';x.fillRect(0,0,4,4);tex.image=c;tex.needsUpdate=true}});
   tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.repeat.set(2,2);tex.anisotropy=LOW_MEM?1:4;
   if(channel==='diffuse')tex.encoding=T.sRGBEncoding;
   tex.userData=tex.userData||{};tex.userData.rpgPbrRole=id&&id[0]==='@'?id:null;
@@ -6287,6 +6287,7 @@ if(sv){
 let vfxLast=performance.now();
 (function vfxLoop(now){
   requestAnimationFrame(vfxLoop);
+  if(document.hidden)return;
   const dt=Math.min((now-vfxLast)/1000,.05);
   vfxLast=now;
   if(!st)return;
@@ -6327,8 +6328,13 @@ dmg=function(d){const was=boss,p=heron.position.clone(),sc=heron.scale.y;_dmgB(d
 function bossDeathFx(p,sc){shake(1,1.2);flash('#ffffff',.6);[0,.2,.4,.6].forEach((d,i)=>fxRing(p.x,0,p.z,i%2?0xffd24a:0xff6a3a,16+i*4,1,d));fxPillar(p.x,0,p.z,0xfff0a0,45,3,1.4);fxOrb(p.x,3*sc,p.z,0xffffff,8*sc,.9);
   for(let i=0;i<4;i++)setTimeout(()=>fxBurst(p.x+rnd(-3,3),2+rnd(0,4),p.z+rnd(-3,3),[0xffd24a,0xff6a3a,0xffffff][i%3],40,12,1.2,true),i*180);snd(110,30,1.4,'sawtooth',.16)}
 
+let _mobileFrameAt=0;
 function tick(now){
   requestAnimationFrame(tick);
+  if(document.hidden){last=now;return;}
+  // Limita a simulação/renderização completa a 30 FPS em celulares.
+  if(LOW_MEM&&now-_mobileFrameAt<32)return;
+  _mobileFrameAt=now;
   let dt=Math.min((now-last)/1000,.05);last=now;
   rpgMusicUpdate();
   if(hitstop>0){hitstop-=dt;dt*=0.15;}
@@ -6966,7 +6972,7 @@ setInterval(()=>{if(!st)return;if(st.run&&Math.abs(st.d)>14)sv.landed=1;for(cons
 /* ===== Controles gamepad ===== */
 const GP={prev:[],held:{}};
 function gpSet(c,on){if(on){keys[c]=1;GP.held[c]=1}else if(GP.held[c]){keys[c]=0;delete GP.held[c]}}
-(function gpLoop(){requestAnimationFrame(gpLoop);const pads=navigator.getGamepads?navigator.getGamepads():[];let p=null;for(const x of pads)if(x&&x.connected){p=x;break}if(!p)return;
+(function gpLoop(){requestAnimationFrame(gpLoop);if(document.hidden)return;const pads=navigator.getGamepads?navigator.getGamepads():[];let p=null;for(const x of pads)if(x&&x.connected){p=x;break}if(!p)return;
   const ax=p.axes[0]||0,ay=p.axes[1]||0,dz=.3,b=p.buttons.map(x=>x.pressed),e=i=>b[i]&&!GP.prev[i];
   gpSet('ArrowLeft',ax<-dz);gpSet('ArrowRight',ax>dz);gpSet('ArrowUp',ay<-dz);gpSet('ArrowDown',ay>dz);
   if(st&&st.run&&!st.pause){if(e(0))jump();if(b[2])skill('q');if(e(1))skill('e');if(e(3))skill('c');if(e(7))skill('f');if(e(6))skill('h');if(e(5))skill('w');if(e(4))useCons('hp');if(e(12))skill('g');if(e(15))skill('t');if(e(13))skill('v')}
@@ -6976,7 +6982,7 @@ function gpSet(c,on){if(on){keys[c]=1;GP.held[c]=1}else if(GP.held[c]){keys[c]=0
 
 /* ===== FPS ===== */
 let fpsN=0,fpsT=performance.now(),lowC=0;
-(function fpsLoop(now){requestAnimationFrame(fpsLoop);fpsN++;if(now-fpsT>=3000){const fps=fpsN*1000/(now-fpsT);fpsN=0;fpsT=now;
+(function fpsLoop(now){requestAnimationFrame(fpsLoop);if(document.hidden){fpsT=now;fpsN=0;return}fpsN++;if(now-fpsT>=3000){const fps=fpsN*1000/(now-fpsT);fpsN=0;fpsT=now;
   if(st&&st.run&&!st.pause&&sv.opt.auto!==false&&!document.hidden){if(fps<28){if(++lowC>=2){lowC=0;const q=sv.opt.q||'h';if(q!=='l'){setQ(q==='h'?'m':'l');say('⚡ Qualidade reduzida')}}}else lowC=0}}})(performance.now());
 
 function applyUI(){const z=sv.opt.ui||1;document.querySelectorAll('.p,#ctl,#bag,#mn,#pot,#cbtn,#ptt').forEach(e=>{
@@ -7045,7 +7051,7 @@ gen=function(k){_gen0(k);const n0=things.length;Math.random=mul(k*104729+7);
     const j=Math.floor(((k+1)*CHK)/500);if(j>=1&&500*j>k*CHK&&500*j<=(k+1)*CHK)totem(500*j)}
   finally{Math.random=R0}
   for(let i=n0;i<things.length;i++)things[i].ch=k};
-(function poiTick(){requestAnimationFrame(poiTick);if(!st||!st.run||st.pause)return;const fx=frog.position.x,fz=st.z;
+(function poiTick(){requestAnimationFrame(poiTick);if(document.hidden||!st||!st.run||st.pause)return;const fx=frog.position.x,fz=st.z;
   for(const t of things){if(t.dead)continue;const p=t.m.position;
     if(t.k==='c'&&Math.hypot(p.x-fx,p.z-fz)<2.8){t.dead=1;sv.chests[t.id]=Date.now();if(room)room.emit('chestOpen',{id:String(t.id).slice(0,100)}).catch(()=>{});sv.chestN=(sv.chestN||0)+1;{const dk=new Date().toDateString();sv.dq2=sv.dq2&&sv.dq2.d===dk?sv.dq2:{d:dk,pu:0,ch:0};sv.dq2.ch++;updateDailyProgress('chests',sv.dq2.ch)}const dp=rgDepth(),g=Math.round(rnd(80,200)*(1+dp*.2));sv.gold+=g;pick(mkItem(roll(2.5)));if(Math.random()<.5)dropCons();gain(30+dp*5);say('🎁 Baú aberto! +🪙'+g);rgBanner('🎁 Baú aberto!','+🪙'+g+' e itens','#ffd24a');save()}
     else if(t.k==='w'){const near=Math.hypot(p.x-fx,p.z-fz)<7;if(near&&!sv.wp[t.mark]){sv.wp[t.mark]=1;t.orb.material.color.setHex(0x7fe3ff);say('★ Totem descoberto: '+t.mark+' m');save()}
@@ -8511,13 +8517,13 @@ if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventList
     lastW=w;lastH=h;
     // Limita o framebuffer a ~1,1 milhão de pixels em aparelhos móveis.
     const area=w*h;
-    const pixelCap=LOW_MEM?0.48:1.0;
-    const areaCap=LOW_MEM?1100000:2200000;
+    const pixelCap=LOW_MEM?0.42:1.0;
+    const areaCap=LOW_MEM?700000:2200000;
     const ratio=Math.max(0.38,Math.min(pixelCap,Math.sqrt(areaCap/Math.max(1,area)),window.devicePixelRatio||1));
     try{
       R.setPixelRatio(ratio);
       R.setSize(w,h,false);
-      canvas.style.width='100vw';canvas.style.height='100dvh';
+      canvas.style.width='100vw';canvas.style.height='100vh';
       C.aspect=w/h;C.fov=C.aspect<1?56+Math.min(4,(1-C.aspect)*8):60;
       C.updateProjectionMatrix();
       if(composer){composer.setPixelRatio(ratio);composer.setSize(w,h)}
@@ -8543,7 +8549,7 @@ if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventList
     window.__rpgWebGLStatus='restored';queueResize();
     const note=document.getElementById('webglRecoveryNotice');if(note)note.remove();
   });
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueResize()});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){last=performance.now();vfxLast=last;queueResize()}});
   queueResize();
   setTimeout(queueResize,250);setTimeout(queueResize,900);
 })();
