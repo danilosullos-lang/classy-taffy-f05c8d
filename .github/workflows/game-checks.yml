@@ -101,7 +101,7 @@ jobs:
       - name: Checkout validated assets
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.sha }}
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -124,6 +124,7 @@ jobs:
           GAME_URL: http://127.0.0.1:4173
         run: node tests/game-smoke.cjs
       - name: Wait for Render deployment
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           for attempt in $(seq 1 90); do
             if curl --fail --silent --show-error "https://classy-taffy-f05c8d.onrender.com/?ci=${GITHUB_SHA}" -o /tmp/aetheria-live.html 2>/dev/null &&
@@ -137,6 +138,7 @@ jobs:
           echo "Render não confirmou a versão atualizada dentro do prazo."
           exit 1
       - name: Run full browser smoke tests against Render
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GAME_URL: https://classy-taffy-f05c8d.onrender.com
         run: node tests/game-smoke.cjs
