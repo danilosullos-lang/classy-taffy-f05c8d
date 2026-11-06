@@ -131,10 +131,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Install Playwright
-        run: |
-          npm install --no-save playwright
-          npx playwright install --with-deps chromium
+      - name: Cache headless Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-1.55.0-chromium-headless
+      - name: Install pinned Playwright package
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund playwright@1.55.0
+        timeout-minutes: 3
+      - name: Install headless Chromium only
+        run: npx playwright install chromium --only-shell
+        timeout-minutes: 8
       - name: Start local game server
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/aetheria-http.log 2>&1 &
