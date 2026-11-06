@@ -470,11 +470,20 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       if(typeof EN!=='undefined')EN.forEach(e=>{e.dead=true;if(e.m)e.m.visible=false;});
     });
     await page.waitForFunction(()=>window.__rpgPlayerAnimationDebug&&window.__rpgPlayerAnimationDebug.gameRunning===true,{timeout:5000});
+    await page.waitForFunction(()=>window.__rpgFieldSpawnDebug&&window.__rpgFieldSpawnDebug.safe===true,{timeout:10000});
+    const fieldSpawnAudit=await page.evaluate(()=>({
+      ...window.__rpgFieldSpawnDebug,
+      blocked:rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55),
+      position:{x:FLD.x,z:FLD.z}
+    }));
+    if(!fieldSpawnAudit.safe||fieldSpawnAudit.blocked){
+      throw new Error('O personagem iniciou dentro de uma colisão da vila: '+JSON.stringify(fieldSpawnAudit));
+    }
     await page.keyboard.down('ArrowDown');
     await page.waitForTimeout(3500);
     const backwardWorldState = await page.evaluate(() => ({...window.__rpgWorldDebug,fieldPosition:typeof FLD!=='undefined'?{x:FLD.x,z:FLD.z}:null,blockedAtPlayer:typeof rpgStarterRealmBlockedAt==='function'?rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55):null,deltaFromSpawn:typeof FLD!=='undefined'?FLD.z-20000:null}));
     await page.keyboard.up('ArrowDown');
-    if (!backwardWorldState.freeRoam || backwardWorldState.waterVisible || !backwardWorldState.groundLoaded || backwardWorldState.playerZ <= 20008) {
+    if (!backwardWorldState.freeRoam || backwardWorldState.waterVisible || !backwardWorldState.groundLoaded || backwardWorldState.playerZ <= 20008 || backwardWorldState.blockedAtPlayer) {
       throw new Error('A exploração livre/terreno sólido não foi ativada: '+JSON.stringify(backwardWorldState));
     }
     await page.keyboard.down('ArrowUp');
