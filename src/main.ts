@@ -71,11 +71,11 @@ joystickEl.addEventListener("pointerdown", (event) => {
   joystickEl.setPointerCapture(event.pointerId);
   moveStick(event);
 });
-joystick.addEventListener("pointermove", (event) => {
+joystickEl.addEventListener("pointermove", (event) => {
   if (event.pointerId === activePointer) moveStick(event);
 });
-joystick.addEventListener("pointerup", resetStick);
-joystick.addEventListener("pointercancel", resetStick);
+joystickEl.addEventListener("pointerup", resetStick);
+joystickEl.addEventListener("pointercancel", resetStick);
 function moveStick(event: PointerEvent) {
   const rect = joystickEl.getBoundingClientRect();
   const dx = event.clientX - (rect.left + rect.width / 2);
@@ -86,7 +86,7 @@ function moveStick(event: PointerEvent) {
   const x = dx * scale, y = dy * scale;
   stickX = x / max;
   stickY = y / max;
-  stick.style.transform = `translate(${x}px, ${y}px)`;
+  stickEl.style.transform = `translate(${x}px, ${y}px)`;
 }
 
 let verticalVelocity = 0;
