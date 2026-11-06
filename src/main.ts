@@ -1,5 +1,5 @@
 import "./style.css";
-import { Engine, Scene, Vector3, HemisphericLight, DirectionalLight, MeshBuilder, StandardMaterial, Color3, FollowCamera, type AbstractMesh } from "@babylonjs/core";
+import { Engine, Scene, Vector3, HemisphericLight, DirectionalLight, MeshBuilder, StandardMaterial, Color3, FollowCamera } from "@babylonjs/core";
 import "@babylonjs/loaders";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#renderCanvas");
@@ -45,10 +45,11 @@ camera.cameraAcceleration = 0.06;
 camera.maxCameraSpeed = 12;
 camera.lowerRadiusLimit = 4;
 camera.upperRadiusLimit = 13;
-camera.attachControl(canvas, true);
+camera.attachControl(true);
 camera.inputs.removeByType("FollowCameraKeyboardMoveInput");
-camera.checkCollisions = true;
-camera.collisionRadius = new Vector3(0.35, 0.35, 0.35);
+
+const joystickEl = joystick as HTMLElement;
+const stickEl = stick as HTMLElement;
 
 const keys = new Set<string>();
 const keyDown = (event: KeyboardEvent) => keys.add(event.key.toLowerCase());
@@ -62,12 +63,12 @@ let stickY = 0;
 let activePointer: number | null = null;
 const resetStick = () => {
   stickX = 0; stickY = 0;
-  stick.style.transform = "translate(0px, 0px)";
+  stickEl.style.transform = "translate(0px, 0px)";
   activePointer = null;
 };
-joystick.addEventListener("pointerdown", (event) => {
+joystickEl.addEventListener("pointerdown", (event) => {
   activePointer = event.pointerId;
-  joystick.setPointerCapture(event.pointerId);
+  joystickEl.setPointerCapture(event.pointerId);
   moveStick(event);
 });
 joystick.addEventListener("pointermove", (event) => {
@@ -76,7 +77,7 @@ joystick.addEventListener("pointermove", (event) => {
 joystick.addEventListener("pointerup", resetStick);
 joystick.addEventListener("pointercancel", resetStick);
 function moveStick(event: PointerEvent) {
-  const rect = joystick.getBoundingClientRect();
+  const rect = joystickEl.getBoundingClientRect();
   const dx = event.clientX - (rect.left + rect.width / 2);
   const dy = event.clientY - (rect.top + rect.height / 2);
   const max = 34;
