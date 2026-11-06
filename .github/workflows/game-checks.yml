@@ -1,0 +1,142 @@
+name: Aetheria RPG - game checks
+
+concurrency:
+  group: aetheria-game-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Sync and validate compact KayKit CC0 skins and animations
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: bash scripts/sync-kaykit-assets.sh
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Restore verified Quaternius CC0 animation libraries
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          python scripts/import_quaternius_animations.py
+          python scripts/import_kenney_particles.py
+          mkdir -p /tmp/aetheria-quaternius /tmp/aetheria-particles
+          cp -a assets/animations/quaternius/. /tmp/aetheria-quaternius/
+          cp -a assets/effects/kenney-particle-pack/. /tmp/aetheria-particles/
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p assets/animations/quaternius assets/effects/kenney-particle-pack
+          cp -a /tmp/aetheria-quaternius/. assets/animations/quaternius/
+          cp -a /tmp/aetheria-particles/. assets/effects/kenney-particle-pack/
+          grep -qF 'assets/animations/quaternius/**/*.glb -filter -diff -merge -text' .gitattributes
+          grep -qF 'assets/effects/**/*.png -filter -diff -merge -text' .gitattributes
+          git add assets/animations/quaternius assets/effects/kenney-particle-pack
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Restore verified Quaternius animation GLB assets"
+            git push origin HEAD:main
+          fi
+      - name: Check game integrity
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Install account API dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Check inline JavaScript syntax
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          class Scripts(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.parts=[]
+                  self.active=False
+              def handle_starttag(self, tag, attrs):
+                  if tag == "script" and not dict(attrs).get("src"):
+                      self.active=True
+              def handle_endtag(self, tag):
+                  if tag == "script":
+                      self.active=False
+              def handle_data(self, data):
+                  if self.active:
+                      self.parts.append(data)
+          p=Scripts()
+          p.feed(Path("index.html").read_text(encoding="utf-8"))
+          Path("/tmp/aetheria-inline.js").write_text("\n".join(p.parts), encoding="utf-8")
+          PY
+          node --check /tmp/aetheria-inline.js
+          node --check assets/combat/nj-mmo-combat-core.js
+          node --check assets/engine/aetheria-engine.js
+          node --check assets/engine/account-client.js
+          node --check assets/engine/account-ui.js
+          node --check server.js
+          node tests/engine-foundation.cjs
+          node tests/account-client.cjs
+          node tests/auth-core.mjs
+          node tests/character-validation.mjs
+      - name: Test imported combat engine
+        run: node tests/combat-core.cjs
+      - name: Test monster progression
+        run: |
+          node --check assets/monsters/progression.js
+          node tests/monster-progression.cjs
+
+  browser-smoke:
+    needs: integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout validated assets
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start local game server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/aetheria-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/aetheria-http.log
+          exit 1
+      - name: Run full browser smoke tests
+        env:
+          GAME_URL: http://127.0.0.1:4173
+        run: node tests/game-smoke.cjs
+      - name: Wait for Render deployment
+        run: |
+          for attempt in $(seq 1 90); do
+            if curl --fail --silent --show-error "https://classy-taffy-f05c8d.onrender.com/?ci=${GITHUB_SHA}" -o /tmp/aetheria-live.html 2>/dev/null &&
+              grep -q "assets/monsters/progression.js" /tmp/aetheria-live.html &&
+              curl --fail --silent --show-error "https://classy-taffy-f05c8d.onrender.com/assets/effects/kenney-particle-pack/flame_04.png" -o /dev/null 2>/dev/null; then
+              echo "Render está servindo a versão com o fluxo de classes atualizado."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Render não confirmou a versão atualizada dentro do prazo."
+          exit 1
+      - name: Run full browser smoke tests against Render
+        env:
+          GAME_URL: https://classy-taffy-f05c8d.onrender.com
+        run: node tests/game-smoke.cjs

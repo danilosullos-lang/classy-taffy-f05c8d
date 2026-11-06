@@ -1,0 +1,2247 @@
+{
+  "pack": "Quaternius Medieval Village MegaKit — Standard glTF mirror",
+  "source": "https://github.com/J-Ponzo/gltf-medieval-village-megakit",
+  "officialSource": "https://quaternius.itch.io/medieval-village-megakit",
+  "license": "CC0-1.0",
+  "models": [
+    {
+      "name": "Balcony_Cross_Corner",
+      "path": "/assets/world/village-megakit/glTF/Balcony_Cross_Corner.gltf",
+      "dependencies": [
+        "Balcony_Cross_Corner.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2231
+    },
+    {
+      "name": "Balcony_Cross_Straight",
+      "path": "/assets/world/village-megakit/glTF/Balcony_Cross_Straight.gltf",
+      "dependencies": [
+        "Balcony_Cross_Straight.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2230
+    },
+    {
+      "name": "Balcony_Simple_Corner",
+      "path": "/assets/world/village-megakit/glTF/Balcony_Simple_Corner.gltf",
+      "dependencies": [
+        "Balcony_Simple_Corner.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2244
+    },
+    {
+      "name": "Balcony_Simple_Straight",
+      "path": "/assets/world/village-megakit/glTF/Balcony_Simple_Straight.gltf",
+      "dependencies": [
+        "Balcony_Simple_Straight.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2227
+    },
+    {
+      "name": "Corner_ExteriorWide_Brick",
+      "path": "/assets/world/village-megakit/glTF/Corner_ExteriorWide_Brick.gltf",
+      "dependencies": [
+        "Corner_ExteriorWide_Brick.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2227
+    },
+    {
+      "name": "Corner_ExteriorWide_Wood",
+      "path": "/assets/world/village-megakit/glTF/Corner_ExteriorWide_Wood.gltf",
+      "dependencies": [
+        "Corner_ExteriorWide_Wood.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2233
+    },
+    {
+      "name": "Corner_Exterior_Brick",
+      "path": "/assets/world/village-megakit/glTF/Corner_Exterior_Brick.gltf",
+      "dependencies": [
+        "Corner_Exterior_Brick.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2225
+    },
+    {
+      "name": "Corner_Exterior_TopDown",
+      "path": "/assets/world/village-megakit/glTF/Corner_Exterior_TopDown.gltf",
+      "dependencies": [
+        "Corner_Exterior_TopDown.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2225
+    },
+    {
+      "name": "Corner_Exterior_TopOnly",
+      "path": "/assets/world/village-megakit/glTF/Corner_Exterior_TopOnly.gltf",
+      "dependencies": [
+        "Corner_Exterior_TopOnly.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2225
+    },
+    {
+      "name": "Corner_Exterior_Wood",
+      "path": "/assets/world/village-megakit/glTF/Corner_Exterior_Wood.gltf",
+      "dependencies": [
+        "Corner_Exterior_Wood.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2221
+    },
+    {
+      "name": "Corner_Interior_Big",
+      "path": "/assets/world/village-megakit/glTF/Corner_Interior_Big.gltf",
+      "dependencies": [
+        "Corner_Interior_Big.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2222
+    },
+    {
+      "name": "Corner_Interior_Small",
+      "path": "/assets/world/village-megakit/glTF/Corner_Interior_Small.gltf",
+      "dependencies": [
+        "Corner_Interior_Small.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2223
+    },
+    {
+      "name": "DoorFrame_Flat_Brick",
+      "path": "/assets/world/village-megakit/glTF/DoorFrame_Flat_Brick.gltf",
+      "dependencies": [
+        "DoorFrame_Flat_Brick.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2222
+    },
+    {
+      "name": "DoorFrame_Flat_WoodDark",
+      "path": "/assets/world/village-megakit/glTF/DoorFrame_Flat_WoodDark.gltf",
+      "dependencies": [
+        "DoorFrame_Flat_WoodDark.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2235
+    },
+    {
+      "name": "DoorFrame_Round_Brick",
+      "path": "/assets/world/village-megakit/glTF/DoorFrame_Round_Brick.gltf",
+      "dependencies": [
+        "DoorFrame_Round_Brick.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2223
+    },
+    {
+      "name": "DoorFrame_Round_WoodDark",
+      "path": "/assets/world/village-megakit/glTF/DoorFrame_Round_WoodDark.gltf",
+      "dependencies": [
+        "DoorFrame_Round_WoodDark.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2235
+    },
+    {
+      "name": "Door_1_Flat",
+      "path": "/assets/world/village-megakit/glTF/Door_1_Flat.gltf",
+      "dependencies": [
+        "Door_1_Flat.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3895
+    },
+    {
+      "name": "Door_1_Round",
+      "path": "/assets/world/village-megakit/glTF/Door_1_Round.gltf",
+      "dependencies": [
+        "Door_1_Round.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3901
+    },
+    {
+      "name": "Door_2_Flat",
+      "path": "/assets/world/village-megakit/glTF/Door_2_Flat.gltf",
+      "dependencies": [
+        "Door_2_Flat.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4148
+    },
+    {
+      "name": "Door_2_Round",
+      "path": "/assets/world/village-megakit/glTF/Door_2_Round.gltf",
+      "dependencies": [
+        "Door_2_Round.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4149
+    },
+    {
+      "name": "Door_4_Flat",
+      "path": "/assets/world/village-megakit/glTF/Door_4_Flat.gltf",
+      "dependencies": [
+        "Door_4_Flat.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4134
+    },
+    {
+      "name": "Door_4_Round",
+      "path": "/assets/world/village-megakit/glTF/Door_4_Round.gltf",
+      "dependencies": [
+        "Door_4_Round.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4140
+    },
+    {
+      "name": "Door_8_Flat",
+      "path": "/assets/world/village-megakit/glTF/Door_8_Flat.gltf",
+      "dependencies": [
+        "Door_8_Flat.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4131
+    },
+    {
+      "name": "Door_8_Round",
+      "path": "/assets/world/village-megakit/glTF/Door_8_Round.gltf",
+      "dependencies": [
+        "Door_8_Round.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4138
+    },
+    {
+      "name": "Floor_Brick",
+      "path": "/assets/world/village-megakit/glTF/Floor_Brick.gltf",
+      "dependencies": [
+        "Floor_Brick.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png"
+      ],
+      "bytes": 2105
+    },
+    {
+      "name": "Floor_RedBrick",
+      "path": "/assets/world/village-megakit/glTF/Floor_RedBrick.gltf",
+      "dependencies": [
+        "Floor_RedBrick.bin",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RedBrick_BaseColor.png"
+      ],
+      "bytes": 2120
+    },
+    {
+      "name": "Floor_UnevenBrick",
+      "path": "/assets/world/village-megakit/glTF/Floor_UnevenBrick.gltf",
+      "dependencies": [
+        "Floor_UnevenBrick.bin",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png"
+      ],
+      "bytes": 2159
+    },
+    {
+      "name": "Floor_WoodDark",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodDark.gltf",
+      "dependencies": [
+        "Floor_WoodDark.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2143
+    },
+    {
+      "name": "Floor_WoodDark_Half1",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodDark_Half1.gltf",
+      "dependencies": [
+        "Floor_WoodDark_Half1.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2155
+    },
+    {
+      "name": "Floor_WoodDark_Half2",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodDark_Half2.gltf",
+      "dependencies": [
+        "Floor_WoodDark_Half2.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2154
+    },
+    {
+      "name": "Floor_WoodDark_Half3",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodDark_Half3.gltf",
+      "dependencies": [
+        "Floor_WoodDark_Half3.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2174
+    },
+    {
+      "name": "Floor_WoodDark_OverhangCorner",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodDark_OverhangCorner.gltf",
+      "dependencies": [
+        "Floor_WoodDark_OverhangCorner.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2210
+    },
+    {
+      "name": "Floor_WoodDark_OverhangCorner2",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodDark_OverhangCorner2.gltf",
+      "dependencies": [
+        "Floor_WoodDark_OverhangCorner2.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2198
+    },
+    {
+      "name": "Floor_WoodLight",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodLight.gltf",
+      "dependencies": [
+        "Floor_WoodLight.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2145
+    },
+    {
+      "name": "Floor_WoodLight_OverhangCorner",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodLight_OverhangCorner.gltf",
+      "dependencies": [
+        "Floor_WoodLight_OverhangCorner.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2212
+    },
+    {
+      "name": "Floor_WoodLight_OverhangCorner2",
+      "path": "/assets/world/village-megakit/glTF/Floor_WoodLight_OverhangCorner2.gltf",
+      "dependencies": [
+        "Floor_WoodLight_OverhangCorner2.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2200
+    },
+    {
+      "name": "HoleCover_90Angle",
+      "path": "/assets/world/village-megakit/glTF/HoleCover_90Angle.gltf",
+      "dependencies": [
+        "HoleCover_90Angle.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2211
+    },
+    {
+      "name": "HoleCover_90Half",
+      "path": "/assets/world/village-megakit/glTF/HoleCover_90Half.gltf",
+      "dependencies": [
+        "HoleCover_90Half.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2215
+    },
+    {
+      "name": "HoleCover_90Stairs",
+      "path": "/assets/world/village-megakit/glTF/HoleCover_90Stairs.gltf",
+      "dependencies": [
+        "HoleCover_90Stairs.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2212
+    },
+    {
+      "name": "HoleCover_Straight",
+      "path": "/assets/world/village-megakit/glTF/HoleCover_Straight.gltf",
+      "dependencies": [
+        "HoleCover_Straight.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2195
+    },
+    {
+      "name": "HoleCover_StraightHalf",
+      "path": "/assets/world/village-megakit/glTF/HoleCover_StraightHalf.gltf",
+      "dependencies": [
+        "HoleCover_StraightHalf.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2189
+    },
+    {
+      "name": "Overhang_Plaster_Corner",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Plaster_Corner.gltf",
+      "dependencies": [
+        "Overhang_Plaster_Corner.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3793
+    },
+    {
+      "name": "Overhang_Plaster_Corner_Front",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Plaster_Corner_Front.gltf",
+      "dependencies": [
+        "Overhang_Plaster_Corner_Front.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3797
+    },
+    {
+      "name": "Overhang_Plaster_Long",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Plaster_Long.gltf",
+      "dependencies": [
+        "Overhang_Plaster_Long.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4155
+    },
+    {
+      "name": "Overhang_Plaster_Short",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Plaster_Short.gltf",
+      "dependencies": [
+        "Overhang_Plaster_Short.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4191
+    },
+    {
+      "name": "Overhang_RoofIncline_Plaster",
+      "path": "/assets/world/village-megakit/glTF/Overhang_RoofIncline_Plaster.gltf",
+      "dependencies": [
+        "Overhang_RoofIncline_Plaster.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3786
+    },
+    {
+      "name": "Overhang_RoofIncline_UnevenBricks",
+      "path": "/assets/world/village-megakit/glTF/Overhang_RoofIncline_UnevenBricks.gltf",
+      "dependencies": [
+        "Overhang_RoofIncline_UnevenBricks.bin",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3860
+    },
+    {
+      "name": "Overhang_Roof_Plaster",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Roof_Plaster.gltf",
+      "dependencies": [
+        "Overhang_Roof_Plaster.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3736
+    },
+    {
+      "name": "Overhang_Roof_UnevenBricks",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Roof_UnevenBricks.gltf",
+      "dependencies": [
+        "Overhang_Roof_UnevenBricks.bin",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3810
+    },
+    {
+      "name": "Overhang_Side_Plaster_Long_L",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Side_Plaster_Long_L.gltf",
+      "dependencies": [
+        "Overhang_Side_Plaster_Long_L.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4246
+    },
+    {
+      "name": "Overhang_Side_Plaster_Long_R",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Side_Plaster_Long_R.gltf",
+      "dependencies": [
+        "Overhang_Side_Plaster_Long_R.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4243
+    },
+    {
+      "name": "Overhang_Side_Plaster_Short_L",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Side_Plaster_Short_L.gltf",
+      "dependencies": [
+        "Overhang_Side_Plaster_Short_L.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4266
+    },
+    {
+      "name": "Overhang_Side_Plaster_Short_R",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Side_Plaster_Short_R.gltf",
+      "dependencies": [
+        "Overhang_Side_Plaster_Short_R.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4263
+    },
+    {
+      "name": "Overhang_Side_UnevenBrick_Long_L",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Side_UnevenBrick_Long_L.gltf",
+      "dependencies": [
+        "Overhang_Side_UnevenBrick_Long_L.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 6133
+    },
+    {
+      "name": "Overhang_Side_UnevenBrick_Long_R",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Side_UnevenBrick_Long_R.gltf",
+      "dependencies": [
+        "Overhang_Side_UnevenBrick_Long_R.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 6126
+    },
+    {
+      "name": "Overhang_Side_UnevenBrick_Short_L",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Side_UnevenBrick_Short_L.gltf",
+      "dependencies": [
+        "Overhang_Side_UnevenBrick_Short_L.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 6168
+    },
+    {
+      "name": "Overhang_Side_UnevenBrick_Short_R",
+      "path": "/assets/world/village-megakit/glTF/Overhang_Side_UnevenBrick_Short_R.gltf",
+      "dependencies": [
+        "Overhang_Side_UnevenBrick_Short_R.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 6163
+    },
+    {
+      "name": "Overhang_UnevenBrick_Corner",
+      "path": "/assets/world/village-megakit/glTF/Overhang_UnevenBrick_Corner.gltf",
+      "dependencies": [
+        "Overhang_UnevenBrick_Corner.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 5455
+    },
+    {
+      "name": "Overhang_UnevenBrick_Corner_Front",
+      "path": "/assets/world/village-megakit/glTF/Overhang_UnevenBrick_Corner_Front.gltf",
+      "dependencies": [
+        "Overhang_UnevenBrick_Corner_Front.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 5478
+    },
+    {
+      "name": "Overhang_UnevenBrick_Long",
+      "path": "/assets/world/village-megakit/glTF/Overhang_UnevenBrick_Long.gltf",
+      "dependencies": [
+        "Overhang_UnevenBrick_Long.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 5995
+    },
+    {
+      "name": "Overhang_UnevenBrick_Short",
+      "path": "/assets/world/village-megakit/glTF/Overhang_UnevenBrick_Short.gltf",
+      "dependencies": [
+        "Overhang_UnevenBrick_Short.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 6033
+    },
+    {
+      "name": "Prop_Brick1",
+      "path": "/assets/world/village-megakit/glTF/Prop_Brick1.gltf",
+      "dependencies": [
+        "Prop_Brick1.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2184
+    },
+    {
+      "name": "Prop_Brick2",
+      "path": "/assets/world/village-megakit/glTF/Prop_Brick2.gltf",
+      "dependencies": [
+        "Prop_Brick2.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2185
+    },
+    {
+      "name": "Prop_Brick3",
+      "path": "/assets/world/village-megakit/glTF/Prop_Brick3.gltf",
+      "dependencies": [
+        "Prop_Brick3.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2189
+    },
+    {
+      "name": "Prop_Brick4",
+      "path": "/assets/world/village-megakit/glTF/Prop_Brick4.gltf",
+      "dependencies": [
+        "Prop_Brick4.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2187
+    },
+    {
+      "name": "Prop_Chimney",
+      "path": "/assets/world/village-megakit/glTF/Prop_Chimney.gltf",
+      "dependencies": [
+        "Prop_Chimney.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3843
+    },
+    {
+      "name": "Prop_Chimney2",
+      "path": "/assets/world/village-megakit/glTF/Prop_Chimney2.gltf",
+      "dependencies": [
+        "Prop_Chimney2.bin",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png"
+      ],
+      "bytes": 2233
+    },
+    {
+      "name": "Prop_Crate",
+      "path": "/assets/world/village-megakit/glTF/Prop_Crate.gltf",
+      "dependencies": [
+        "Prop_Crate.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2211
+    },
+    {
+      "name": "Prop_ExteriorBorder_Corner",
+      "path": "/assets/world/village-megakit/glTF/Prop_ExteriorBorder_Corner.gltf",
+      "dependencies": [
+        "Prop_ExteriorBorder_Corner.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2201
+    },
+    {
+      "name": "Prop_ExteriorBorder_Straight1",
+      "path": "/assets/world/village-megakit/glTF/Prop_ExteriorBorder_Straight1.gltf",
+      "dependencies": [
+        "Prop_ExteriorBorder_Straight1.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2180
+    },
+    {
+      "name": "Prop_ExteriorBorder_Straight2",
+      "path": "/assets/world/village-megakit/glTF/Prop_ExteriorBorder_Straight2.gltf",
+      "dependencies": [
+        "Prop_ExteriorBorder_Straight2.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2180
+    },
+    {
+      "name": "Prop_MetalFence_Ornament",
+      "path": "/assets/world/village-megakit/glTF/Prop_MetalFence_Ornament.gltf",
+      "dependencies": [
+        "Prop_MetalFence_Ornament.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png"
+      ],
+      "bytes": 2083
+    },
+    {
+      "name": "Prop_MetalFence_Simple",
+      "path": "/assets/world/village-megakit/glTF/Prop_MetalFence_Simple.gltf",
+      "dependencies": [
+        "Prop_MetalFence_Simple.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png"
+      ],
+      "bytes": 2077
+    },
+    {
+      "name": "Prop_Support",
+      "path": "/assets/world/village-megakit/glTF/Prop_Support.gltf",
+      "dependencies": [
+        "Prop_Support.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2202
+    },
+    {
+      "name": "Prop_Vine1",
+      "path": "/assets/world/village-megakit/glTF/Prop_Vine1.gltf",
+      "dependencies": [
+        "Prop_Vine1.bin",
+        "T_VineLeaf_png.png"
+      ],
+      "bytes": 1979
+    },
+    {
+      "name": "Prop_Vine2",
+      "path": "/assets/world/village-megakit/glTF/Prop_Vine2.gltf",
+      "dependencies": [
+        "Prop_Vine2.bin",
+        "T_VineLeaf_png.png"
+      ],
+      "bytes": 1978
+    },
+    {
+      "name": "Prop_Vine4",
+      "path": "/assets/world/village-megakit/glTF/Prop_Vine4.gltf",
+      "dependencies": [
+        "Prop_Vine4.bin",
+        "T_VineLeaf_png.png"
+      ],
+      "bytes": 1974
+    },
+    {
+      "name": "Prop_Vine5",
+      "path": "/assets/world/village-megakit/glTF/Prop_Vine5.gltf",
+      "dependencies": [
+        "Prop_Vine5.bin",
+        "T_VineLeaf_png.png"
+      ],
+      "bytes": 1978
+    },
+    {
+      "name": "Prop_Vine6",
+      "path": "/assets/world/village-megakit/glTF/Prop_Vine6.gltf",
+      "dependencies": [
+        "Prop_Vine6.bin",
+        "T_VineLeaf_png.png"
+      ],
+      "bytes": 1978
+    },
+    {
+      "name": "Prop_Vine9",
+      "path": "/assets/world/village-megakit/glTF/Prop_Vine9.gltf",
+      "dependencies": [
+        "Prop_Vine9.bin",
+        "T_VineLeaf_png.png"
+      ],
+      "bytes": 1972
+    },
+    {
+      "name": "Prop_Wagon",
+      "path": "/assets/world/village-megakit/glTF/Prop_Wagon.gltf",
+      "dependencies": [
+        "Prop_Wagon.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2422
+    },
+    {
+      "name": "Prop_WoodenFence_Extension1",
+      "path": "/assets/world/village-megakit/glTF/Prop_WoodenFence_Extension1.gltf",
+      "dependencies": [
+        "Prop_WoodenFence_Extension1.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2236
+    },
+    {
+      "name": "Prop_WoodenFence_Extension2",
+      "path": "/assets/world/village-megakit/glTF/Prop_WoodenFence_Extension2.gltf",
+      "dependencies": [
+        "Prop_WoodenFence_Extension2.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2236
+    },
+    {
+      "name": "Prop_WoodenFence_Single",
+      "path": "/assets/world/village-megakit/glTF/Prop_WoodenFence_Single.gltf",
+      "dependencies": [
+        "Prop_WoodenFence_Single.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2230
+    },
+    {
+      "name": "Roof_2x4_RoundTile",
+      "path": "/assets/world/village-megakit/glTF/Roof_2x4_RoundTile.gltf",
+      "dependencies": [
+        "Roof_2x4_RoundTile.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4324
+    },
+    {
+      "name": "Roof_Dormer_RoundTile",
+      "path": "/assets/world/village-megakit/glTF/Roof_Dormer_RoundTile.gltf",
+      "dependencies": [
+        "Roof_Dormer_RoundTile.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 7682
+    },
+    {
+      "name": "Roof_FrontSupports",
+      "path": "/assets/world/village-megakit/glTF/Roof_FrontSupports.gltf",
+      "dependencies": [
+        "Roof_FrontSupports.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2225
+    },
+    {
+      "name": "Roof_Front_Brick2",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick2.gltf",
+      "dependencies": [
+        "Roof_Front_Brick2.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3865
+    },
+    {
+      "name": "Roof_Front_Brick4",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick4.gltf",
+      "dependencies": [
+        "Roof_Front_Brick4.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3868
+    },
+    {
+      "name": "Roof_Front_Brick4_Half_L",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick4_Half_L.gltf",
+      "dependencies": [
+        "Roof_Front_Brick4_Half_L.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3883
+    },
+    {
+      "name": "Roof_Front_Brick4_Half_R",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick4_Half_R.gltf",
+      "dependencies": [
+        "Roof_Front_Brick4_Half_R.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3883
+    },
+    {
+      "name": "Roof_Front_Brick6",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick6.gltf",
+      "dependencies": [
+        "Roof_Front_Brick6.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3869
+    },
+    {
+      "name": "Roof_Front_Brick6_Half_L",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick6_Half_L.gltf",
+      "dependencies": [
+        "Roof_Front_Brick6_Half_L.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3887
+    },
+    {
+      "name": "Roof_Front_Brick6_Half_R",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick6_Half_R.gltf",
+      "dependencies": [
+        "Roof_Front_Brick6_Half_R.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3887
+    },
+    {
+      "name": "Roof_Front_Brick8",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick8.gltf",
+      "dependencies": [
+        "Roof_Front_Brick8.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3870
+    },
+    {
+      "name": "Roof_Front_Brick8_Half_L",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick8_Half_L.gltf",
+      "dependencies": [
+        "Roof_Front_Brick8_Half_L.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3889
+    },
+    {
+      "name": "Roof_Front_Brick8_Half_R",
+      "path": "/assets/world/village-megakit/glTF/Roof_Front_Brick8_Half_R.gltf",
+      "dependencies": [
+        "Roof_Front_Brick8_Half_R.bin",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3890
+    },
+    {
+      "name": "Roof_Log",
+      "path": "/assets/world/village-megakit/glTF/Roof_Log.gltf",
+      "dependencies": [
+        "Roof_Log.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2197
+    },
+    {
+      "name": "Roof_Modular_RoundTiles",
+      "path": "/assets/world/village-megakit/glTF/Roof_Modular_RoundTiles.gltf",
+      "dependencies": [
+        "Roof_Modular_RoundTiles.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png"
+      ],
+      "bytes": 2441
+    },
+    {
+      "name": "Roof_RoundTile_2x1",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTile_2x1.gltf",
+      "dependencies": [
+        "Roof_RoundTile_2x1.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4329
+    },
+    {
+      "name": "Roof_RoundTile_2x1_Long",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTile_2x1_Long.gltf",
+      "dependencies": [
+        "Roof_RoundTile_2x1_Long.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4333
+    },
+    {
+      "name": "Roof_RoundTiles_4x4",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_4x4.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_4x4.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4337
+    },
+    {
+      "name": "Roof_RoundTiles_4x6",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_4x6.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_4x6.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4341
+    },
+    {
+      "name": "Roof_RoundTiles_4x8",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_4x8.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_4x8.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4343
+    },
+    {
+      "name": "Roof_RoundTiles_6x10",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_6x10.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_6x10.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4344
+    },
+    {
+      "name": "Roof_RoundTiles_6x12",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_6x12.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_6x12.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4345
+    },
+    {
+      "name": "Roof_RoundTiles_6x14",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_6x14.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_6x14.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4342
+    },
+    {
+      "name": "Roof_RoundTiles_6x4",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_6x4.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_6x4.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4340
+    },
+    {
+      "name": "Roof_RoundTiles_6x6",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_6x6.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_6x6.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4343
+    },
+    {
+      "name": "Roof_RoundTiles_6x8",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_6x8.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_6x8.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4342
+    },
+    {
+      "name": "Roof_RoundTiles_8x10",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_8x10.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_8x10.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4344
+    },
+    {
+      "name": "Roof_RoundTiles_8x12",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_8x12.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_8x12.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4346
+    },
+    {
+      "name": "Roof_RoundTiles_8x14",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_8x14.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_8x14.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4456
+    },
+    {
+      "name": "Roof_RoundTiles_8x8",
+      "path": "/assets/world/village-megakit/glTF/Roof_RoundTiles_8x8.gltf",
+      "dependencies": [
+        "Roof_RoundTiles_8x8.bin",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 4342
+    },
+    {
+      "name": "Roof_Support2",
+      "path": "/assets/world/village-megakit/glTF/Roof_Support2.gltf",
+      "dependencies": [
+        "Roof_Support2.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2216
+    },
+    {
+      "name": "Roof_Tower_RoundTiles",
+      "path": "/assets/world/village-megakit/glTF/Roof_Tower_RoundTiles.gltf",
+      "dependencies": [
+        "Roof_Tower_RoundTiles.bin",
+        "T_MetalOrnaments_BaseColor.png",
+        "T_MetalOrnaments_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png",
+        "T_RoundTiles_BaseColor.png",
+        "T_RoundTiles_Normal.png",
+        "T_RoundTiles_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 7933
+    },
+    {
+      "name": "Roof_Wooden_2x1",
+      "path": "/assets/world/village-megakit/glTF/Roof_Wooden_2x1.gltf",
+      "dependencies": [
+        "Roof_Wooden_2x1.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3985
+    },
+    {
+      "name": "Roof_Wooden_2x1_Center",
+      "path": "/assets/world/village-megakit/glTF/Roof_Wooden_2x1_Center.gltf",
+      "dependencies": [
+        "Roof_Wooden_2x1_Center.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3937
+    },
+    {
+      "name": "Roof_Wooden_2x1_Center_Mirror",
+      "path": "/assets/world/village-megakit/glTF/Roof_Wooden_2x1_Center_Mirror.gltf",
+      "dependencies": [
+        "Roof_Wooden_2x1_Center_Mirror.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3951
+    },
+    {
+      "name": "Roof_Wooden_2x1_Corner",
+      "path": "/assets/world/village-megakit/glTF/Roof_Wooden_2x1_Corner.gltf",
+      "dependencies": [
+        "Roof_Wooden_2x1_Corner.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3975
+    },
+    {
+      "name": "Roof_Wooden_2x1_L",
+      "path": "/assets/world/village-megakit/glTF/Roof_Wooden_2x1_L.gltf",
+      "dependencies": [
+        "Roof_Wooden_2x1_L.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3969
+    },
+    {
+      "name": "Roof_Wooden_2x1_Middle",
+      "path": "/assets/world/village-megakit/glTF/Roof_Wooden_2x1_Middle.gltf",
+      "dependencies": [
+        "Roof_Wooden_2x1_Middle.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2367
+    },
+    {
+      "name": "Roof_Wooden_2x1_R",
+      "path": "/assets/world/village-megakit/glTF/Roof_Wooden_2x1_R.gltf",
+      "dependencies": [
+        "Roof_Wooden_2x1_R.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 3969
+    },
+    {
+      "name": "Stair_Interior_Rails",
+      "path": "/assets/world/village-megakit/glTF/Stair_Interior_Rails.gltf",
+      "dependencies": [
+        "Stair_Interior_Rails.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2240
+    },
+    {
+      "name": "Stair_Interior_Simple",
+      "path": "/assets/world/village-megakit/glTF/Stair_Interior_Simple.gltf",
+      "dependencies": [
+        "Stair_Interior_Simple.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2231
+    },
+    {
+      "name": "Stair_Interior_Solid",
+      "path": "/assets/world/village-megakit/glTF/Stair_Interior_Solid.gltf",
+      "dependencies": [
+        "Stair_Interior_Solid.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2232
+    },
+    {
+      "name": "Stair_Interior_SolidExtended",
+      "path": "/assets/world/village-megakit/glTF/Stair_Interior_SolidExtended.gltf",
+      "dependencies": [
+        "Stair_Interior_SolidExtended.bin",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png"
+      ],
+      "bytes": 2248
+    },
+    {
+      "name": "Stairs_Exterior_NoFirstStep",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_NoFirstStep.gltf",
+      "dependencies": [
+        "Stairs_Exterior_NoFirstStep.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3826
+    },
+    {
+      "name": "Stairs_Exterior_Platform",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Platform.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Platform.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3792
+    },
+    {
+      "name": "Stairs_Exterior_Platform45",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Platform45.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Platform45.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3801
+    },
+    {
+      "name": "Stairs_Exterior_Platform45Clean",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Platform45Clean.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Platform45Clean.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3810
+    },
+    {
+      "name": "Stairs_Exterior_PlatformU",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_PlatformU.gltf",
+      "dependencies": [
+        "Stairs_Exterior_PlatformU.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3816
+    },
+    {
+      "name": "Stairs_Exterior_SidePlatform",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_SidePlatform.gltf",
+      "dependencies": [
+        "Stairs_Exterior_SidePlatform.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3804
+    },
+    {
+      "name": "Stairs_Exterior_Sides",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Sides.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Sides.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png"
+      ],
+      "bytes": 2147
+    },
+    {
+      "name": "Stairs_Exterior_Sides45",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Sides45.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Sides45.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png"
+      ],
+      "bytes": 2188
+    },
+    {
+      "name": "Stairs_Exterior_SidesU",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_SidesU.gltf",
+      "dependencies": [
+        "Stairs_Exterior_SidesU.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png"
+      ],
+      "bytes": 2171
+    },
+    {
+      "name": "Stairs_Exterior_SingleSide",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_SingleSide.gltf",
+      "dependencies": [
+        "Stairs_Exterior_SingleSide.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png"
+      ],
+      "bytes": 2136
+    },
+    {
+      "name": "Stairs_Exterior_SingleSideThick",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_SingleSideThick.gltf",
+      "dependencies": [
+        "Stairs_Exterior_SingleSideThick.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png"
+      ],
+      "bytes": 2148
+    },
+    {
+      "name": "Stairs_Exterior_Straight",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Straight.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Straight.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3820
+    },
+    {
+      "name": "Stairs_Exterior_Straight_Center",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Straight_Center.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Straight_Center.bin",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 2189
+    },
+    {
+      "name": "Stairs_Exterior_Straight_L",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Straight_L.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Straight_L.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3825
+    },
+    {
+      "name": "Stairs_Exterior_Straight_R",
+      "path": "/assets/world/village-megakit/glTF/Stairs_Exterior_Straight_R.gltf",
+      "dependencies": [
+        "Stairs_Exterior_Straight_R.bin",
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png"
+      ],
+      "bytes": 3823
+    },
+    {
+      "name": "Wall_Arch",
+      "path": "/assets/world/village-megakit/glTF/Wall_Arch.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Arch.bin"
+      ],
+      "bytes": 2163
+    },
+    {
+      "name": "Wall_BottomCover",
+      "path": "/assets/world/village-megakit/glTF/Wall_BottomCover.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_BottomCover.bin"
+      ],
+      "bytes": 2197
+    },
+    {
+      "name": "Wall_Plaster_Door_Flat",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Door_Flat.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Door_Flat.bin"
+      ],
+      "bytes": 5942
+    },
+    {
+      "name": "Wall_Plaster_Door_Round",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Door_Round.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Door_Round.bin"
+      ],
+      "bytes": 5946
+    },
+    {
+      "name": "Wall_Plaster_Door_RoundInset",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Door_RoundInset.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_RockTrim_BaseColor.png",
+        "T_RockTrim_Normal.png",
+        "T_RockTrim_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Door_RoundInset.bin"
+      ],
+      "bytes": 5986
+    },
+    {
+      "name": "Wall_Plaster_Straight",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Straight.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Straight.bin"
+      ],
+      "bytes": 4169
+    },
+    {
+      "name": "Wall_Plaster_Straight_Base",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Straight_Base.gltf",
+      "dependencies": [
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Straight_Base.bin"
+      ],
+      "bytes": 5948
+    },
+    {
+      "name": "Wall_Plaster_Straight_L",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Straight_L.gltf",
+      "dependencies": [
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Straight_L.bin"
+      ],
+      "bytes": 5962
+    },
+    {
+      "name": "Wall_Plaster_Straight_R",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Straight_R.gltf",
+      "dependencies": [
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Straight_R.bin"
+      ],
+      "bytes": 5945
+    },
+    {
+      "name": "Wall_Plaster_Window_Thin_Round",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Window_Thin_Round.gltf",
+      "dependencies": [
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Window_Thin_Round.bin"
+      ],
+      "bytes": 5986
+    },
+    {
+      "name": "Wall_Plaster_Window_Wide_Flat",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Window_Wide_Flat.gltf",
+      "dependencies": [
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Window_Wide_Flat.bin"
+      ],
+      "bytes": 5964
+    },
+    {
+      "name": "Wall_Plaster_Window_Wide_Flat2",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Window_Wide_Flat2.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Window_Wide_Flat2.bin"
+      ],
+      "bytes": 4192
+    },
+    {
+      "name": "Wall_Plaster_Window_Wide_Round",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_Window_Wide_Round.gltf",
+      "dependencies": [
+        "T_Brick_BaseColor.png",
+        "T_Brick_Normal.png",
+        "T_Brick_Roughness.png",
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_Window_Wide_Round.bin"
+      ],
+      "bytes": 5967
+    },
+    {
+      "name": "Wall_Plaster_WoodGrid",
+      "path": "/assets/world/village-megakit/glTF/Wall_Plaster_WoodGrid.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_Plaster_WoodGrid.bin"
+      ],
+      "bytes": 4201
+    },
+    {
+      "name": "Wall_UnevenBrick_Door_Flat",
+      "path": "/assets/world/village-megakit/glTF/Wall_UnevenBrick_Door_Flat.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_UnevenBrick_Door_Flat.bin"
+      ],
+      "bytes": 5406
+    },
+    {
+      "name": "Wall_UnevenBrick_Door_Round",
+      "path": "/assets/world/village-megakit/glTF/Wall_UnevenBrick_Door_Round.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_UnevenBrick_Door_Round.bin"
+      ],
+      "bytes": 5413
+    },
+    {
+      "name": "Wall_UnevenBrick_Straight",
+      "path": "/assets/world/village-megakit/glTF/Wall_UnevenBrick_Straight.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_UnevenBrick_Straight.bin"
+      ],
+      "bytes": 5392
+    },
+    {
+      "name": "Wall_UnevenBrick_Window_Thin_Round",
+      "path": "/assets/world/village-megakit/glTF/Wall_UnevenBrick_Window_Thin_Round.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_UnevenBrick_Window_Thin_Round.bin"
+      ],
+      "bytes": 6009
+    },
+    {
+      "name": "Wall_UnevenBrick_Window_Wide_Flat",
+      "path": "/assets/world/village-megakit/glTF/Wall_UnevenBrick_Window_Wide_Flat.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_UnevenBrick_Window_Wide_Flat.bin"
+      ],
+      "bytes": 6004
+    },
+    {
+      "name": "Wall_UnevenBrick_Window_Wide_Round",
+      "path": "/assets/world/village-megakit/glTF/Wall_UnevenBrick_Window_Wide_Round.gltf",
+      "dependencies": [
+        "T_Plaster_BaseColor.png",
+        "T_Plaster_Normal.png",
+        "T_Plaster_ORM.png",
+        "T_UnevenBrick_BaseColor.png",
+        "T_UnevenBrick_Normal.png",
+        "T_UnevenBrick_Roughness.png",
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Wall_UnevenBrick_Window_Wide_Round.bin"
+      ],
+      "bytes": 6008
+    },
+    {
+      "name": "WindowShutters_Thin_Flat_Closed",
+      "path": "/assets/world/village-megakit/glTF/WindowShutters_Thin_Flat_Closed.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "WindowShutters_Thin_Flat_Closed.bin"
+      ],
+      "bytes": 2443
+    },
+    {
+      "name": "WindowShutters_Thin_Flat_Open",
+      "path": "/assets/world/village-megakit/glTF/WindowShutters_Thin_Flat_Open.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "WindowShutters_Thin_Flat_Open.bin"
+      ],
+      "bytes": 2442
+    },
+    {
+      "name": "WindowShutters_Thin_Round_Closed",
+      "path": "/assets/world/village-megakit/glTF/WindowShutters_Thin_Round_Closed.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "WindowShutters_Thin_Round_Closed.bin"
+      ],
+      "bytes": 2446
+    },
+    {
+      "name": "WindowShutters_Thin_Round_Open",
+      "path": "/assets/world/village-megakit/glTF/WindowShutters_Thin_Round_Open.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "WindowShutters_Thin_Round_Open.bin"
+      ],
+      "bytes": 2445
+    },
+    {
+      "name": "WindowShutters_Wide_Flat_Closed",
+      "path": "/assets/world/village-megakit/glTF/WindowShutters_Wide_Flat_Closed.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "WindowShutters_Wide_Flat_Closed.bin"
+      ],
+      "bytes": 2444
+    },
+    {
+      "name": "WindowShutters_Wide_Flat_Open",
+      "path": "/assets/world/village-megakit/glTF/WindowShutters_Wide_Flat_Open.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "WindowShutters_Wide_Flat_Open.bin"
+      ],
+      "bytes": 2441
+    },
+    {
+      "name": "WindowShutters_Wide_Round_Closed",
+      "path": "/assets/world/village-megakit/glTF/WindowShutters_Wide_Round_Closed.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "WindowShutters_Wide_Round_Closed.bin"
+      ],
+      "bytes": 2448
+    },
+    {
+      "name": "WindowShutters_Wide_Round_Open",
+      "path": "/assets/world/village-megakit/glTF/WindowShutters_Wide_Round_Open.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "WindowShutters_Wide_Round_Open.bin"
+      ],
+      "bytes": 2442
+    },
+    {
+      "name": "Window_Roof_Thin",
+      "path": "/assets/world/village-megakit/glTF/Window_Roof_Thin.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Window_Roof_Thin.bin"
+      ],
+      "bytes": 3967
+    },
+    {
+      "name": "Window_Roof_Wide",
+      "path": "/assets/world/village-megakit/glTF/Window_Roof_Wide.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Window_Roof_Wide.bin"
+      ],
+      "bytes": 3971
+    },
+    {
+      "name": "Window_Thin_Flat1",
+      "path": "/assets/world/village-megakit/glTF/Window_Thin_Flat1.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Window_Thin_Flat1.bin"
+      ],
+      "bytes": 3514
+    },
+    {
+      "name": "Window_Thin_Round1",
+      "path": "/assets/world/village-megakit/glTF/Window_Thin_Round1.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Window_Thin_Round1.bin"
+      ],
+      "bytes": 3925
+    },
+    {
+      "name": "Window_Wide_Flat1",
+      "path": "/assets/world/village-megakit/glTF/Window_Wide_Flat1.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Window_Wide_Flat1.bin"
+      ],
+      "bytes": 3516
+    },
+    {
+      "name": "Window_Wide_Round1",
+      "path": "/assets/world/village-megakit/glTF/Window_Wide_Round1.gltf",
+      "dependencies": [
+        "T_WoodTrim_BaseColor.png",
+        "T_WoodTrim_Normal.png",
+        "T_WoodTrim_Roughness.png",
+        "Window_Wide_Round1.bin"
+      ],
+      "bytes": 3919
+    }
+  ]
+}
