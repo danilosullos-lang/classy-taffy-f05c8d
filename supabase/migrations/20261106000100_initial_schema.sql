@@ -106,6 +106,7 @@ create policy "Owners can delete their characters"
 
 -- Explicit grants: no browser-side UPDATE of character progression.
 revoke all on public.profiles from anon, authenticated;
-grant select, update on public.profiles to authenticated;
+grant select on public.profiles to authenticated;
+grant update (display_name) on public.profiles to authenticated;
 revoke all on public.characters from anon, authenticated;
 grant select, insert, delete on public.characters to authenticated;
