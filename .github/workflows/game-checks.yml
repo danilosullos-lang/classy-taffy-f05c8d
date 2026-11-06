@@ -51,6 +51,8 @@ jobs:
           fi
       - name: Check game integrity
         run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Validate safe reverse-engineering toolkit downloader
+        run: python tools/lineage2-reference/download_tools.py --self-test
       - name: Install account API dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
       - name: Check inline JavaScript syntax
