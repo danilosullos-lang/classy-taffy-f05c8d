@@ -7091,10 +7091,9 @@ function tick(now){
 }
 
 // Three.js considera -Z a frente local. Para apontar esse eixo ao vetor
-// (dx,dz), o sinal de X precisa ser invertido na conversão para yaw.
-// A fórmula anterior espelhava a direção horizontal e fazia os monstros
-// encararem para o lado oposto quando perseguiam o jogador em diagonal.
-function rpgMonsterFacingYaw(dx,dz){return Math.atan2(-dx,-dz)}
+// (dx,dz), o yaw usa dx diretamente: direita = +PI/2 e esquerda = -PI/2.
+// Manter esta convenção evita que monstros persigam o jogador de costas.
+function rpgMonsterFacingYaw(dx,dz){return Math.atan2(dx,-dz)}
 function enemies(dt,now){
   if(tongue.visible){tongue.userData.t-=dt;if(tongue.userData.t<=0)tongue.visible=false}
   if(!st.run||st.pause)return;
