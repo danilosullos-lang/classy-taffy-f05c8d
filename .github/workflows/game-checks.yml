@@ -53,6 +53,21 @@ jobs:
         run: python -m unittest discover -s tests -p "test_*.py" -v
       - name: Validate safe reverse-engineering toolkit downloader
         run: python tools/lineage2-reference/download_tools.py --self-test
+      - name: Download, verify and extract source-only Lineage II research kits
+        run: |
+          python tools/lineage2-reference/download_tools.py core bsp npc --extract
+          python - <<'PY'
+          from pathlib import Path
+          root = Path("tools/lineage2-reference/vendor")
+          files = sorted(p for p in root.rglob("*") if p.is_file())
+          if not files:
+              raise SystemExit("No research-tool source files were extracted")
+          print(f"Extracted {len(files)} source files from verified archives")
+          for path in files[:100]:
+              print(path)
+          if len(files) > 100:
+              print(f"... and {len(files)-100} more")
+          PY
       - name: Install account API dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
       - name: Check inline JavaScript syntax
