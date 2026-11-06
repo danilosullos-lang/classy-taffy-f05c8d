@@ -1492,10 +1492,9 @@ const RPG_TOWN_NPC_CLIPS={};
 const RPG_TOWN_SOLIDS=new Map();
 const RPG_STARTER_REALM_SOLIDS=new Map();
 function rpgStarterRealmBlockedAt(x,z,radius=.55){
-  // A malha GLB da vila inicial possui colisores automáticos imprecisos:
-  // eles fecham portas e corredores. Até existir colisão por portas validada,
-  // o cenário inicial fica sem colisão de cenário para garantir a saída.
-  if(z>=19850&&z<=20150)return false;
+  // Colisão AABB por mesh do GLB: manter a vila bloqueável, mas permitir
+  // que rpgStarterRealmCanEscape libere o personagem caso o spawn coincida
+  // com uma caixa de colisão importada.
   for(const solids of RPG_STARTER_REALM_SOLIDS.values())for(const b of solids){
     const px=Math.max(b.minX,Math.min(x,b.maxX)),pz=Math.max(b.minZ,Math.min(z,b.maxZ));
     const dx=x-px,dz=z-pz;
@@ -1525,9 +1524,9 @@ function rpgStarterRealmCanEscape(fromX,fromZ,toX,toZ,radius=.55){
 }
 function rpgTownBlocked(d,z){
   const radius=.78;
-  // Não aplicar caixas de colisão aproximadas dentro da vila inicial:
-  // o GLB não fornece aberturas confiáveis e estava prendendo o jogador.
-  if(z>=19850&&z<=20150)return false;
+  // Aplicar os colliders do GLB também na vila inicial. A rotina de
+  // movimento usa rpgTownCanMove/rpgTownCanEscape para evitar aprisionamento
+  // caso o ponto inicial intercepte uma caixa importada.
   for(const solids of RPG_TOWN_SOLIDS.values())for(const r of solids){
     if(Math.abs(d-r.d)<=r.halfD+radius&&Math.abs(z-r.z)<=r.halfZ+radius)return true;
   }
