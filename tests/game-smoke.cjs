@@ -479,11 +479,30 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if(!fieldSpawnAudit.safe||fieldSpawnAudit.blocked){
       throw new Error('O personagem iniciou dentro de uma colisão da vila: '+JSON.stringify(fieldSpawnAudit));
     }
-    await page.keyboard.down('ArrowDown');
+    const movementKey=await page.evaluate(()=>{
+      CAMV.yaw=0;CAMV.pitch=0;
+      const directions=[['ArrowDown',0,1],['ArrowUp',0,-1],['ArrowRight',1,0],['ArrowLeft',-1,0]];
+      for(const [key,dx,dz] of directions){
+        let clear=true;
+        for(let distance=.5;distance<=10;distance+=.5){
+          if(rpgStarterRealmBlockedAt(FLD.x+dx*distance,FLD.z+dz*distance,.55)){clear=false;break;}
+        }
+        if(clear)return key;
+      }
+      return null;
+    });
+    if(!movementKey)throw new Error('O spawn livre não oferece corredor de caminhada de 10m: '+JSON.stringify(fieldSpawnAudit));
+    await page.keyboard.down(movementKey);
     await page.waitForTimeout(3500);
-    const backwardWorldState = await page.evaluate(() => ({...window.__rpgWorldDebug,fieldPosition:typeof FLD!=='undefined'?{x:FLD.x,z:FLD.z}:null,blockedAtPlayer:typeof rpgStarterRealmBlockedAt==='function'?rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55):null,deltaFromSpawn:typeof FLD!=='undefined'?FLD.z-20000:null}));
-    await page.keyboard.up('ArrowDown');
-    if (!backwardWorldState.freeRoam || backwardWorldState.waterVisible || !backwardWorldState.groundLoaded || backwardWorldState.playerZ <= 20008 || backwardWorldState.blockedAtPlayer) {
+    const backwardWorldState = await page.evaluate(({spawnX,spawnZ,key}) => ({
+      ...window.__rpgWorldDebug,
+      movementKey:key,
+      fieldPosition:typeof FLD!=='undefined'?{x:FLD.x,z:FLD.z}:null,
+      blockedAtPlayer:typeof rpgStarterRealmBlockedAt==='function'?rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55):null,
+      deltaFromSpawn:typeof FLD!=='undefined'?Math.hypot(FLD.x-spawnX,FLD.z-spawnZ):null
+    }),{spawnX:fieldSpawnAudit.position.x,spawnZ:fieldSpawnAudit.position.z,key:movementKey});
+    await page.keyboard.up(movementKey);
+    if (!backwardWorldState.freeRoam || backwardWorldState.waterVisible || !backwardWorldState.groundLoaded || backwardWorldState.deltaFromSpawn <= 8 || backwardWorldState.blockedAtPlayer) {
       throw new Error('A exploração livre/terreno sólido não foi ativada: '+JSON.stringify(backwardWorldState));
     }
     await page.keyboard.down('ArrowUp');
