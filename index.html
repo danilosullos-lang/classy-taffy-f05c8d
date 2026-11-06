@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#101820" />
+    <meta name="description" content="Aetheria RPG — MMORPG 3D para navegador e dispositivos móveis." />
+    <title>Aetheria RPG</title>
+  </head>
+  <body>
+    <main id="game-root">
+      <canvas id="renderCanvas" aria-label="Mundo 3D de Aetheria"></canvas>
+      <section id="hud" aria-live="polite">
+        <div class="brand">AETHERIA <span>RPG</span></div>
+        <div class="hint" id="hint">WASD / setas para mover · arraste para girar a câmera</div>
+        <div id="status">Carregando mundo…</div>
+      </section>
+      <div id="joystick" aria-label="Controle virtual de movimento">
+        <div id="stick"></div>
+      </div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
