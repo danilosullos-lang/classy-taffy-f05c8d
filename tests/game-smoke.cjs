@@ -551,6 +551,16 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if (!backwardWorldState.freeRoam || backwardWorldState.waterVisible || !backwardWorldState.groundLoaded || backwardWorldState.deltaFromSpawn <= 8 || backwardWorldState.blockedAtPlayer) {
       throw new Error('A exploração livre/terreno sólido não foi ativada: '+JSON.stringify(backwardWorldState));
     }
+    // The 10m corridor assertion can move beyond its audited segment. Reset to
+    // the verified safe spawn before checking walk/run animation state.
+    await page.evaluate(({x,z})=>{
+      FLD.x=x;FLD.z=z;FLD.vx=FLD.vz=0;FLD.h=0;FLD.cy=0;FLD.faceT=0;
+      st.d=x;st.z=z;st.vz=0;st.vy=0;st.y=0;st.gy=fieldH(x,z);
+      st.frozen=0;st.dash=0;st.rolT=0;st.sprinting=false;st.hp=hpMax();
+      CAMV.yaw=0;hitstop=0;
+      EN.forEach(e=>{e.dead=true;if(e.m)e.m.visible=false;});
+      FLD.spT=Number.POSITIVE_INFINITY;
+    },{x:fieldSpawnAudit.position.x,z:fieldSpawnAudit.position.z});
     await page.keyboard.down('ArrowUp');
     await page.waitForTimeout(1500);
     const walkingState = await page.evaluate(() => ({...window.__rpgPlayerAnimationDebug}));
