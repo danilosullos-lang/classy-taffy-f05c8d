@@ -478,6 +478,12 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       if(typeof FLD!=='undefined'&&FLD)FLD.spT=Number.POSITIVE_INFINITY;
       if(typeof hitstop!=='undefined')hitstop=0;
     });
+    await page.bringToFront();
+    await page.evaluate(()=>{
+      const originalFieldFrame=fieldFrame;
+      window.__rpgSmokeFieldFrameCount=0;
+      fieldFrame=function(now){window.__rpgSmokeFieldFrameCount++;return originalFieldFrame(now);};
+    });
     const fieldSpawnAudit=await page.evaluate(()=>({
       ...window.__rpgFieldSpawnDebug,
       blocked:rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55),
@@ -511,8 +517,18 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const yaw=FLD.cy||0,dx=Math.sin(yaw)*input[1]+Math.cos(yaw)*input[0],dz=-Math.cos(yaw)*input[1]+Math.sin(yaw)*input[0];
       const ahead={x:FLD.x+dx*.5,z:FLD.z+dz*.5},resolved=fldColAt(ahead.x,ahead.z,.55,st.y);
       const ground=fieldH(FLD.x,FLD.z),aheadGround=fieldH(ahead.x,ahead.z);
+      let firstBlock=null,previousGround=fieldH(spawnX,spawnZ);
+      for(let distance=.25;distance<=10;distance+=.25){
+        const x=spawnX+dx*distance,z=spawnZ+dz*distance,h=fieldH(x,z),q=fldColAt(x,z,.55,0);
+        const blocked=rpgStarterRealmBlockedAt(x,z,.55),proceduralDelta=Math.hypot(q[0]-x,q[1]-z);
+        const steep=!Number.isFinite(h)||Math.abs(h-previousGround)>1.3*.25+.025;
+        if(blocked||proceduralDelta>.02||steep){firstBlock={distance,x,z,blocked,proceduralDelta,slope:(h-previousGround)/.25,ground:h};break;}
+        previousGround=h;
+      }
       return {
         ...window.__rpgWorldDebug,
+        fieldFrameCount:window.__rpgSmokeFieldFrameCount||0,
+        firstBlockFromSpawn:firstBlock,
         movementKey:key,
         spawn:window.__rpgFieldSpawnDebug||null,
         fieldPosition:{x:FLD.x,z:FLD.z},
