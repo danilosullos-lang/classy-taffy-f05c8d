@@ -1,0 +1,996 @@
+{
+  "schemaVersion": 1,
+  "project": "Aventura RPG — original Lineage II Interlude-inspired MMORPG systems",
+  "compatibility": "Original implementation and CC0 assets only; no proprietary Lineage II client files, models, maps, sounds, text or code.",
+  "referenceChronicle": "Interlude",
+  "races": [
+    {
+      "id": "human",
+      "name": "Humano",
+      "lore": "Versátil e equilibrado; adapta-se a qualquer estilo.",
+      "bonus": {
+        "str": 1,
+        "vit": 1
+      },
+      "classes": [
+        "gladiator",
+        "warlord",
+        "paladin",
+        "dark_avenger",
+        "treasure_hunter",
+        "hawkeye",
+        "sorcerer",
+        "necromancer",
+        "warlock",
+        "bishop",
+        "prophet"
+      ]
+    },
+    {
+      "id": "elf",
+      "name": "Elfo",
+      "lore": "Ágil e preciso, com afinidade pela magia e pela natureza.",
+      "bonus": {
+        "agi": 2,
+        "dex": 1
+      },
+      "classes": [
+        "temple_knight",
+        "swordsinger",
+        "plains_walker",
+        "silver_ranger",
+        "spellsinger",
+        "elemental_summoner",
+        "elven_elder"
+      ]
+    },
+    {
+      "id": "dark_elf",
+      "name": "Elfo Negro",
+      "lore": "Poder ofensivo elevado, magia sombria e ataques letais.",
+      "bonus": {
+        "str": 1,
+        "int": 2,
+        "luk": 1
+      },
+      "classes": [
+        "shillien_knight",
+        "bladedancer",
+        "abyss_walker",
+        "phantom_ranger",
+        "spellhowler",
+        "phantom_summoner",
+        "shillien_elder"
+      ]
+    },
+    {
+      "id": "orc",
+      "name": "Orc",
+      "lore": "Resistência e força física; mestres do combate brutal e dos cânticos.",
+      "bonus": {
+        "str": 2,
+        "vit": 2
+      },
+      "classes": [
+        "destroyer",
+        "tyrant",
+        "overlord",
+        "warcryer"
+      ]
+    },
+    {
+      "id": "dwarf",
+      "name": "Anão",
+      "lore": "Artesãos e caçadores de tesouros, especialistas em criação e coleta.",
+      "bonus": {
+        "vit": 2,
+        "luk": 2
+      },
+      "classes": [
+        "bounty_hunter",
+        "warsmith"
+      ]
+    }
+  ],
+  "classPaths": [
+    {
+      "id": "gladiator",
+      "race": "human",
+      "role": "fighter",
+      "tier": 2,
+      "name": "Gladiator",
+      "advancesTo": "duelist",
+      "skillStyle": "dual-sword"
+    },
+    {
+      "id": "warlord",
+      "race": "human",
+      "role": "fighter",
+      "tier": 2,
+      "name": "Warlord",
+      "advancesTo": "dreadnought",
+      "skillStyle": "polearm"
+    },
+    {
+      "id": "paladin",
+      "race": "human",
+      "role": "tank",
+      "tier": 2,
+      "name": "Paladin",
+      "advancesTo": "phoenix_knight",
+      "skillStyle": "sword-shield"
+    },
+    {
+      "id": "dark_avenger",
+      "race": "human",
+      "role": "tank",
+      "tier": 2,
+      "name": "Dark Avenger",
+      "advancesTo": "hell_knight",
+      "skillStyle": "dark-shield"
+    },
+    {
+      "id": "treasure_hunter",
+      "race": "human",
+      "role": "dagger",
+      "tier": 2,
+      "name": "Treasure Hunter",
+      "advancesTo": "adventurer",
+      "skillStyle": "dagger"
+    },
+    {
+      "id": "hawkeye",
+      "race": "human",
+      "role": "archer",
+      "tier": 2,
+      "name": "Hawkeye",
+      "advancesTo": "sagittarius",
+      "skillStyle": "bow"
+    },
+    {
+      "id": "sorcerer",
+      "race": "human",
+      "role": "mage",
+      "tier": 2,
+      "name": "Sorcerer",
+      "advancesTo": "archmage",
+      "skillStyle": "fire-magic"
+    },
+    {
+      "id": "necromancer",
+      "race": "human",
+      "role": "mage",
+      "tier": 2,
+      "name": "Necromancer",
+      "advancesTo": "soultaker",
+      "skillStyle": "dark-magic"
+    },
+    {
+      "id": "warlock",
+      "race": "human",
+      "role": "summoner",
+      "tier": 2,
+      "name": "Warlock",
+      "advancesTo": "arcana_lord",
+      "skillStyle": "summon"
+    },
+    {
+      "id": "bishop",
+      "race": "human",
+      "role": "healer",
+      "tier": 2,
+      "name": "Bishop",
+      "advancesTo": "cardinal",
+      "skillStyle": "holy-heal"
+    },
+    {
+      "id": "prophet",
+      "race": "human",
+      "role": "support",
+      "tier": 2,
+      "name": "Prophet",
+      "advancesTo": "hierophant",
+      "skillStyle": "buff"
+    },
+    {
+      "id": "temple_knight",
+      "race": "elf",
+      "role": "tank",
+      "tier": 2,
+      "name": "Temple Knight",
+      "advancesTo": "evas_templar",
+      "skillStyle": "sword-shield"
+    },
+    {
+      "id": "swordsinger",
+      "race": "elf",
+      "role": "support",
+      "tier": 2,
+      "name": "Swordsinger",
+      "advancesTo": "sword_muse",
+      "skillStyle": "song"
+    },
+    {
+      "id": "plains_walker",
+      "race": "elf",
+      "role": "dagger",
+      "tier": 2,
+      "name": "Plains Walker",
+      "advancesTo": "wind_rider",
+      "skillStyle": "dagger"
+    },
+    {
+      "id": "silver_ranger",
+      "race": "elf",
+      "role": "archer",
+      "tier": 2,
+      "name": "Silver Ranger",
+      "advancesTo": "moonlight_sentinel",
+      "skillStyle": "bow"
+    },
+    {
+      "id": "spellsinger",
+      "race": "elf",
+      "role": "mage",
+      "tier": 2,
+      "name": "Spellsinger",
+      "advancesTo": "mystic_muse",
+      "skillStyle": "water-magic"
+    },
+    {
+      "id": "elemental_summoner",
+      "race": "elf",
+      "role": "summoner",
+      "tier": 2,
+      "name": "Elemental Summoner",
+      "advancesTo": "elemental_master",
+      "skillStyle": "summon"
+    },
+    {
+      "id": "elven_elder",
+      "race": "elf",
+      "role": "healer",
+      "tier": 2,
+      "name": "Elven Elder",
+      "advancesTo": "evas_saint",
+      "skillStyle": "holy-support"
+    },
+    {
+      "id": "shillien_knight",
+      "race": "dark_elf",
+      "role": "tank",
+      "tier": 2,
+      "name": "Shillien Knight",
+      "advancesTo": "shillien_templar",
+      "skillStyle": "dark-sword-shield"
+    },
+    {
+      "id": "bladedancer",
+      "race": "dark_elf",
+      "role": "support",
+      "tier": 2,
+      "name": "Blade Dancer",
+      "advancesTo": "spectral_dancer",
+      "skillStyle": "dance"
+    },
+    {
+      "id": "abyss_walker",
+      "race": "dark_elf",
+      "role": "dagger",
+      "tier": 2,
+      "name": "Abyss Walker",
+      "advancesTo": "ghost_hunter",
+      "skillStyle": "dagger"
+    },
+    {
+      "id": "phantom_ranger",
+      "race": "dark_elf",
+      "role": "archer",
+      "tier": 2,
+      "name": "Phantom Ranger",
+      "advancesTo": "ghost_sentinel",
+      "skillStyle": "bow"
+    },
+    {
+      "id": "spellhowler",
+      "race": "dark_elf",
+      "role": "mage",
+      "tier": 2,
+      "name": "Spellhowler",
+      "advancesTo": "storm_screamer",
+      "skillStyle": "wind-dark-magic"
+    },
+    {
+      "id": "phantom_summoner",
+      "race": "dark_elf",
+      "role": "summoner",
+      "tier": 2,
+      "name": "Phantom Summoner",
+      "advancesTo": "spectral_master",
+      "skillStyle": "summon"
+    },
+    {
+      "id": "shillien_elder",
+      "race": "dark_elf",
+      "role": "healer",
+      "tier": 2,
+      "name": "Shillien Elder",
+      "advancesTo": "shillien_saint",
+      "skillStyle": "dark-support"
+    },
+    {
+      "id": "destroyer",
+      "race": "orc",
+      "role": "fighter",
+      "tier": 2,
+      "name": "Destroyer",
+      "advancesTo": "titan",
+      "skillStyle": "two-handed"
+    },
+    {
+      "id": "tyrant",
+      "race": "orc",
+      "role": "fighter",
+      "tier": 2,
+      "name": "Tyrant",
+      "advancesTo": "grand_khavatari",
+      "skillStyle": "fist"
+    },
+    {
+      "id": "overlord",
+      "race": "orc",
+      "role": "support",
+      "tier": 2,
+      "name": "Overlord",
+      "advancesTo": "dominator",
+      "skillStyle": "clan-debuff"
+    },
+    {
+      "id": "warcryer",
+      "race": "orc",
+      "role": "support",
+      "tier": 2,
+      "name": "Warcryer",
+      "advancesTo": "doomcryer",
+      "skillStyle": "war-chant"
+    },
+    {
+      "id": "bounty_hunter",
+      "race": "dwarf",
+      "role": "crafter",
+      "tier": 2,
+      "name": "Bounty Hunter",
+      "advancesTo": "fortune_seeker",
+      "skillStyle": "spoil"
+    },
+    {
+      "id": "warsmith",
+      "race": "dwarf",
+      "role": "crafter",
+      "tier": 2,
+      "name": "Warsmith",
+      "advancesTo": "maestro",
+      "skillStyle": "craft"
+    }
+  ],
+  "thirdClasses": [
+    "Duelist",
+    "Dreadnought",
+    "Phoenix Knight",
+    "Hell Knight",
+    "Adventurer",
+    "Sagittarius",
+    "Archmage",
+    "Soultaker",
+    "Arcana Lord",
+    "Cardinal",
+    "Hierophant",
+    "Eva's Templar",
+    "Sword Muse",
+    "Wind Rider",
+    "Moonlight Sentinel",
+    "Mystic Muse",
+    "Elemental Master",
+    "Eva's Saint",
+    "Shillien Templar",
+    "Spectral Dancer",
+    "Ghost Hunter",
+    "Ghost Sentinel",
+    "Storm Screamer",
+    "Spectral Master",
+    "Shillien Saint",
+    "Titan",
+    "Grand Khavatari",
+    "Dominator",
+    "Doomcryer",
+    "Fortune Seeker",
+    "Maestro"
+  ],
+  "weaponGrades": [
+    "No Grade",
+    "D",
+    "C",
+    "B",
+    "A",
+    "S"
+  ],
+  "armorGrades": [
+    "No Grade",
+    "D",
+    "C",
+    "B",
+    "A",
+    "S"
+  ],
+  "zones": [
+    {
+      "id": "talking_island",
+      "name": "Ilha Falante",
+      "level": [
+        1,
+        20
+      ],
+      "biome": "coastal-grassland",
+      "hub": "village"
+    },
+    {
+      "id": "elven_forest",
+      "name": "Floresta Élfica",
+      "level": [
+        10,
+        30
+      ],
+      "biome": "ancient-forest",
+      "hub": "elven-village"
+    },
+    {
+      "id": "dark_forest",
+      "name": "Floresta Sombria",
+      "level": [
+        15,
+        35
+      ],
+      "biome": "dark-forest",
+      "hub": "dark-village"
+    },
+    {
+      "id": "orc_highlands",
+      "name": "Terras Altas dos Orcs",
+      "level": [
+        20,
+        40
+      ],
+      "biome": "volcanic-highland",
+      "hub": "orc-village"
+    },
+    {
+      "id": "dwarven_mountains",
+      "name": "Montanhas dos Anões",
+      "level": [
+        20,
+        45
+      ],
+      "biome": "snow-mountain",
+      "hub": "dwarven-village"
+    },
+    {
+      "id": "giran",
+      "name": "Território de Giran",
+      "level": [
+        35,
+        55
+      ],
+      "biome": "temperate-plains",
+      "hub": "castle-town"
+    },
+    {
+      "id": "hunters_valley",
+      "name": "Vale dos Caçadores",
+      "level": [
+        50,
+        65
+      ],
+      "biome": "forest-valley",
+      "hub": "outpost"
+    },
+    {
+      "id": "dragon_valley",
+      "name": "Vale dos Dragões",
+      "level": [
+        60,
+        75
+      ],
+      "biome": "rocky-dragonland",
+      "hub": "raid-camp"
+    },
+    {
+      "id": "forge_of_gods",
+      "name": "Forja dos Deuses",
+      "level": [
+        70,
+        80
+      ],
+      "biome": "lava-volcanic",
+      "hub": "dungeon"
+    },
+    {
+      "id": "primeval_isle",
+      "name": "Ilha Primitiva",
+      "level": [
+        75,
+        80
+      ],
+      "biome": "prehistoric-jungle",
+      "hub": "expedition-camp"
+    }
+  ],
+  "dungeons": [
+    {
+      "id": "cruma_tower",
+      "name": "Torre de Cruma",
+      "level": [
+        40,
+        55
+      ],
+      "type": "multi-floor"
+    },
+    {
+      "id": "devastated_castle",
+      "name": "Castelo Devastado",
+      "level": [
+        55,
+        70
+      ],
+      "type": "fortress"
+    },
+    {
+      "id": "catacombs",
+      "name": "Catacumbas",
+      "level": [
+        45,
+        78
+      ],
+      "type": "instanced-dungeon"
+    },
+    {
+      "id": "necropolis",
+      "name": "Necrópole",
+      "level": [
+        45,
+        78
+      ],
+      "type": "instanced-dungeon"
+    },
+    {
+      "id": "imperial_tomb",
+      "name": "Tumba Imperial",
+      "level": [
+        74,
+        80
+      ],
+      "type": "raid-dungeon"
+    },
+    {
+      "id": "forge_of_gods",
+      "name": "Forja dos Deuses",
+      "level": [
+        70,
+        80
+      ],
+      "type": "lava-dungeon"
+    }
+  ],
+  "raidBosses": [
+    {
+      "id": "queen_ant",
+      "name": "Rainha Formiga",
+      "level": 40,
+      "zone": "ant_nest",
+      "partySize": 9
+    },
+    {
+      "id": "orfen",
+      "name": "Orfen",
+      "level": 50,
+      "zone": "sea_of_spores",
+      "partySize": 9
+    },
+    {
+      "id": "core",
+      "name": "Core",
+      "level": 50,
+      "zone": "cruma_tower",
+      "partySize": 9
+    },
+    {
+      "id": "zaken",
+      "name": "Zaken",
+      "level": 60,
+      "zone": "devil_isle",
+      "partySize": 18
+    },
+    {
+      "id": "baium",
+      "name": "Baium",
+      "level": 75,
+      "zone": "tower_of_insolence",
+      "partySize": 27
+    },
+    {
+      "id": "antharas",
+      "name": "Antharas",
+      "level": 79,
+      "zone": "dragon_valley",
+      "partySize": 27
+    },
+    {
+      "id": "valakas",
+      "name": "Valakas",
+      "level": 79,
+      "zone": "forge_of_gods",
+      "partySize": 27
+    },
+    {
+      "id": "frintezza",
+      "name": "Frintezza",
+      "level": 80,
+      "zone": "imperial_tomb",
+      "partySize": 27
+    }
+  ],
+  "skills": [
+    {
+      "id": "power_strike",
+      "name": "Power Strike",
+      "role": "fighter",
+      "kind": "physical",
+      "target": "single",
+      "cooldown": 6,
+      "mp": 8
+    },
+    {
+      "id": "fatal_strike",
+      "name": "Fatal Strike",
+      "role": "fighter",
+      "kind": "physical",
+      "target": "single",
+      "cooldown": 8,
+      "mp": 12
+    },
+    {
+      "id": "shield_stun",
+      "name": "Shield Stun",
+      "role": "tank",
+      "kind": "stun",
+      "target": "single",
+      "cooldown": 12,
+      "mp": 15
+    },
+    {
+      "id": "aggression",
+      "name": "Aggression",
+      "role": "tank",
+      "kind": "taunt",
+      "target": "single",
+      "cooldown": 5,
+      "mp": 6
+    },
+    {
+      "id": "double_shot",
+      "name": "Double Shot",
+      "role": "archer",
+      "kind": "ranged",
+      "target": "single",
+      "cooldown": 7,
+      "mp": 10
+    },
+    {
+      "id": "stunning_shot",
+      "name": "Stunning Shot",
+      "role": "archer",
+      "kind": "stun",
+      "target": "single",
+      "cooldown": 14,
+      "mp": 18
+    },
+    {
+      "id": "backstab",
+      "name": "Backstab",
+      "role": "dagger",
+      "kind": "physical",
+      "target": "single",
+      "cooldown": 10,
+      "mp": 15
+    },
+    {
+      "id": "deadly_blow",
+      "name": "Deadly Blow",
+      "role": "dagger",
+      "kind": "physical",
+      "target": "single",
+      "cooldown": 8,
+      "mp": 13
+    },
+    {
+      "id": "prominence",
+      "name": "Prominence",
+      "role": "mage",
+      "kind": "fire",
+      "target": "single",
+      "cooldown": 5,
+      "mp": 14
+    },
+    {
+      "id": "hurricane",
+      "name": "Hurricane",
+      "role": "mage",
+      "kind": "wind",
+      "target": "single",
+      "cooldown": 5,
+      "mp": 14
+    },
+    {
+      "id": "vampiric_claw",
+      "name": "Vampiric Claw",
+      "role": "mage",
+      "kind": "dark",
+      "target": "single",
+      "cooldown": 8,
+      "mp": 18
+    },
+    {
+      "id": "sleep",
+      "name": "Sleep",
+      "role": "mage",
+      "kind": "debuff",
+      "target": "single",
+      "cooldown": 18,
+      "mp": 20
+    },
+    {
+      "id": "heal",
+      "name": "Heal",
+      "role": "healer",
+      "kind": "heal",
+      "target": "ally",
+      "cooldown": 4,
+      "mp": 12
+    },
+    {
+      "id": "greater_heal",
+      "name": "Greater Heal",
+      "role": "healer",
+      "kind": "heal",
+      "target": "ally",
+      "cooldown": 8,
+      "mp": 24
+    },
+    {
+      "id": "might",
+      "name": "Might",
+      "role": "support",
+      "kind": "buff",
+      "target": "ally",
+      "cooldown": 30,
+      "mp": 20
+    },
+    {
+      "id": "shield",
+      "name": "Shield",
+      "role": "support",
+      "kind": "buff",
+      "target": "ally",
+      "cooldown": 30,
+      "mp": 20
+    },
+    {
+      "id": "soul_shot",
+      "name": "Soulshot",
+      "role": "all",
+      "kind": "consumable",
+      "target": "self",
+      "cooldown": 0,
+      "mp": 0
+    },
+    {
+      "id": "spirit_shot",
+      "name": "Blessed Spiritshot",
+      "role": "mage",
+      "kind": "consumable",
+      "target": "self",
+      "cooldown": 0,
+      "mp": 0
+    }
+  ],
+  "questArcs": [
+    {
+      "id": "awakening",
+      "name": "O Despertar",
+      "levels": [
+        1,
+        20
+      ],
+      "steps": 8
+    },
+    {
+      "id": "first_class",
+      "name": "Primeira Profissão",
+      "levels": [
+        18,
+        20
+      ],
+      "steps": 3
+    },
+    {
+      "id": "second_class",
+      "name": "Segunda Profissão",
+      "levels": [
+        35,
+        40
+      ],
+      "steps": 3
+    },
+    {
+      "id": "subclass",
+      "name": "Caminho da Subclasse",
+      "levels": [
+        75,
+        75
+      ],
+      "steps": 2
+    },
+    {
+      "id": "noblesse",
+      "name": "O Caminho da Nobreza",
+      "levels": [
+        50,
+        75
+      ],
+      "steps": 4
+    },
+    {
+      "id": "epic_raids",
+      "name": "Caçada aos Chefes Épicos",
+      "levels": [
+        75,
+        80
+      ],
+      "steps": 8
+    }
+  ],
+  "economy": {
+    "currency": "Adena",
+    "enchantMax": 30,
+    "soulCrystalLevels": 13,
+    "weaponAugmentation": true,
+    "crafting": true,
+    "spoiling": true,
+    "dropAndSpoilTables": "original-balanced"
+  },
+  "systems": [
+    "character-creation",
+    "race-bonuses",
+    "class-advancement",
+    "third-class-advancement",
+    "subclass",
+    "noblesse",
+    "party",
+    "clan",
+    "castle-siege",
+    "olympiad",
+    "pvp-karma",
+    "pk",
+    "raid-bosses",
+    "dungeons",
+    "crafting",
+    "spoiling",
+    "soulshots",
+    "spiritshots",
+    "weapon-augmentation",
+    "enchanting",
+    "shops",
+    "teleport-gatekeepers",
+    "quest-chains",
+    "daily-hunts",
+    "drop-tables"
+  ],
+  "firstClassPaths": [
+    {
+      "race": "human",
+      "base": "Fighter",
+      "classes": [
+        "Warrior",
+        "Knight",
+        "Rogue"
+      ]
+    },
+    {
+      "race": "human",
+      "base": "Mystic",
+      "classes": [
+        "Wizard",
+        "Cleric"
+      ]
+    },
+    {
+      "race": "elf",
+      "base": "Elven Fighter",
+      "classes": [
+        "Elven Knight",
+        "Elven Scout"
+      ]
+    },
+    {
+      "race": "elf",
+      "base": "Elven Mystic",
+      "classes": [
+        "Elven Wizard",
+        "Elven Oracle"
+      ]
+    },
+    {
+      "race": "dark_elf",
+      "base": "Dark Fighter",
+      "classes": [
+        "Palus Knight",
+        "Assassin"
+      ]
+    },
+    {
+      "race": "dark_elf",
+      "base": "Dark Mystic",
+      "classes": [
+        "Dark Wizard",
+        "Shillien Oracle"
+      ]
+    },
+    {
+      "race": "orc",
+      "base": "Orc Fighter",
+      "classes": [
+        "Orc Raider",
+        "Orc Monk"
+      ]
+    },
+    {
+      "race": "orc",
+      "base": "Orc Mystic",
+      "classes": [
+        "Orc Shaman"
+      ]
+    },
+    {
+      "race": "dwarf",
+      "base": "Dwarven Fighter",
+      "classes": [
+        "Scavenger",
+        "Artisan"
+      ]
+    }
+  ],
+  "classTransferStages": {
+    "first": 20,
+    "second": 40,
+    "third": 76
+  },
+  "classTransferMarks": [
+    {
+      "stage": 1,
+      "requiredLevel": 20,
+      "questId": "first_hunt",
+      "mark": "first"
+    },
+    {
+      "stage": 2,
+      "requiredLevel": 40,
+      "questId": "cave_explorer",
+      "mark": "second"
+    },
+    {
+      "stage": 3,
+      "requiredLevel": 76,
+      "questId": "raid_hunter",
+      "mark": "third"
+    }
+  ]
+}
