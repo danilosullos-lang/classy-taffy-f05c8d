@@ -499,13 +499,24 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if(!movementKey)throw new Error('O spawn livre não oferece corredor de caminhada de 10m: '+JSON.stringify(fieldSpawnAudit));
     await page.keyboard.down(movementKey);
     await page.waitForTimeout(3500);
-    const backwardWorldState = await page.evaluate(({spawnX,spawnZ,key}) => ({
-      ...window.__rpgWorldDebug,
-      movementKey:key,
-      fieldPosition:typeof FLD!=='undefined'?{x:FLD.x,z:FLD.z}:null,
-      blockedAtPlayer:typeof rpgStarterRealmBlockedAt==='function'?rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55):null,
-      deltaFromSpawn:typeof FLD!=='undefined'?Math.hypot(FLD.x-spawnX,FLD.z-spawnZ):null
-    }),{spawnX:fieldSpawnAudit.position.x,spawnZ:fieldSpawnAudit.position.z,key:movementKey});
+    const backwardWorldState = await page.evaluate(({spawnX,spawnZ,key}) => {
+      const input={ArrowUp:[0,1],ArrowDown:[0,-1],ArrowRight:[1,0],ArrowLeft:[-1,0]}[key]||[0,0];
+      const yaw=FLD.cy||0,dx=Math.sin(yaw)*input[1]+Math.cos(yaw)*input[0],dz=-Math.cos(yaw)*input[1]+Math.sin(yaw)*input[0];
+      const ahead={x:FLD.x+dx*.5,z:FLD.z+dz*.5},resolved=fldColAt(ahead.x,ahead.z,.55,st.y);
+      const ground=fieldH(FLD.x,FLD.z),aheadGround=fieldH(ahead.x,ahead.z);
+      return {
+        ...window.__rpgWorldDebug,
+        movementKey:key,
+        spawn:window.__rpgFieldSpawnDebug||null,
+        fieldPosition:{x:FLD.x,z:FLD.z},
+        blockedAtPlayer:rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55),
+        deltaFromSpawn:Math.hypot(FLD.x-spawnX,FLD.z-spawnZ),
+        controller:{fieldYaw:FLD.cy,cameraYaw:CAMV.yaw,velocity:{x:FLD.vx,z:FLD.vz},frozen:st.frozen||0,wet:st.wet,ground,waterline:FWL},
+        ahead:{...ahead,blocked:rpgStarterRealmBlockedAt(ahead.x,ahead.z,.55),
+          proceduralDelta:Math.hypot(resolved[0]-ahead.x,resolved[1]-ahead.z),
+          slope:(aheadGround-ground)/.5,ground:aheadGround,direction:{x:dx,z:dz}}
+      };
+    },{spawnX:fieldSpawnAudit.position.x,spawnZ:fieldSpawnAudit.position.z,key:movementKey});
     await page.keyboard.up(movementKey);
     if (!backwardWorldState.freeRoam || backwardWorldState.waterVisible || !backwardWorldState.groundLoaded || backwardWorldState.deltaFromSpawn <= 8 || backwardWorldState.blockedAtPlayer) {
       throw new Error('A exploração livre/terreno sólido não foi ativada: '+JSON.stringify(backwardWorldState));
