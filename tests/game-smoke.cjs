@@ -485,7 +485,10 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       for(const [key,dx,dz] of directions){
         let clear=true;
         for(let distance=.5;distance<=10;distance+=.5){
-          if(rpgStarterRealmBlockedAt(FLD.x+dx*distance,FLD.z+dz*distance,.55)){clear=false;break;}
+          const x=FLD.x+dx*distance,z=FLD.z+dz*distance;
+          const resolved=fldColAt(x,z,.55,0);
+          const proceduralBlocked=Math.hypot(resolved[0]-x,resolved[1]-z)>.02;
+          if(rpgStarterRealmBlockedAt(x,z,.55)||proceduralBlocked){clear=false;break;}
         }
         if(clear)return key;
       }
