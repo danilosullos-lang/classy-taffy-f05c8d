@@ -1503,15 +1503,25 @@ function rpgStarterRealmBlockedAt(x,z,radius=.55){
   return false;
 }
 
+function rpgStarterRealmFieldPointClear(x,z,radius=.55){
+  if(rpgStarterRealmBlockedAt(x,z,radius))return false;
+  // O controlador do Campo Aberto também resolve obstáculos procedurais
+  // (árvores, rochas e POIs) por fldColAt; a busca precisa usar o mesmo teste.
+  if(typeof fldColAt==='function'){
+    const adjusted=fldColAt(x,z,radius,0);
+    if(Math.hypot(adjusted[0]-x,adjusted[1]-z)>.02)return false;
+  }
+  return true;
+}
 function rpgStarterRealmHasWalkCorridor(x,z,radius=.55,distance=10){
-  // Um spawn livre precisa permitir que o jogador saia da área inicial.
-  // A mesma amostragem cardinal é usada pelo browser smoke para detectar
-  // corredores bloqueados por paredes/objetos do GLB.
+  // O spawn precisa permitir sair da área inicial sem colidir com o GLB
+  // nem com os obstáculos procedurais usados pelo controlador real.
   const directions=[[0,1],[0,-1],[1,0],[-1,0]],step=.5;
+  if(!rpgStarterRealmFieldPointClear(x,z,radius))return false;
   for(const [dx,dz] of directions){
     let clear=true;
     for(let travel=step;travel<=distance+1e-6;travel+=step){
-      if(rpgStarterRealmBlockedAt(x+dx*travel,z+dz*travel,radius)){clear=false;break;}
+      if(!rpgStarterRealmFieldPointClear(x+dx*travel,z+dz*travel,radius)){clear=false;break;}
     }
     if(clear)return true;
   }
@@ -1526,7 +1536,7 @@ function rpgStarterRealmFindSafeSpawn(originX,originZ,radius=.78,maxDistance=54)
     for(let i=0;i<count;i++){
       const angle=ring===0?0:(i/directions)*Math.PI*2;
       const x=originX+Math.cos(angle)*ring,z=originZ+Math.sin(angle)*ring;
-      if(rpgStarterRealmBlockedAt(x,z,radius))continue;
+      if(rpgStarterRealmBlockedAt(x,z,radius)||!rpgStarterRealmFieldPointClear(x,z,.55))continue;
       const ground=fieldH(x,z);
       if(!Number.isFinite(ground)||ground<FWL+.15)continue;
       const slope=Math.max(
@@ -8531,14 +8541,14 @@ function rpgStarterRealmResolveFieldSpawn(){
   if(now<(FLD.spawnCheckAt||0))return false;
   FLD.spawnCheckAt=now+1000;
   const radius=.78,originX=FLD.ox,originZ=FLD.oz;
-  if(!rpgStarterRealmBlockedAt(originX,originZ,radius)&&rpgStarterRealmHasWalkCorridor(originX,originZ,.55,10)){
+  if(!rpgStarterRealmBlockedAt(originX,originZ,radius)&&rpgStarterRealmFieldPointClear(originX,originZ,.55)&&rpgStarterRealmHasWalkCorridor(originX,originZ,.55,10)){
     FLD.spawnResolved=true;
     window.__rpgFieldSpawnDebug={safe:true,relocated:false,x:originX,z:originZ,blocked:false,corridor:true};
     return true;
   }
   const safe=rpgStarterRealmFindSafeSpawn(originX,originZ,radius,54);
   if(!safe){
-    window.__rpgFieldSpawnDebug={safe:false,relocated:false,x:originX,z:originZ,blocked:rpgStarterRealmBlockedAt(originX,originZ,radius),corridor:false,reason:'Nenhum ponto seco, livre e com corredor de 10m encontrado em 54m'};
+    window.__rpgFieldSpawnDebug={safe:false,relocated:false,x:originX,z:originZ,blocked:rpgStarterRealmBlockedAt(originX,originZ,radius),proceduralBlocked:!rpgStarterRealmFieldPointClear(originX,originZ,.55),corridor:false,reason:'Nenhum ponto seco, livre de obstáculos e com corredor de 10m encontrado em 54m'};
     return false;
   }
   FLD.ox=safe.x;FLD.oz=safe.z;FLD.x=safe.x;FLD.z=safe.z;
@@ -8549,7 +8559,7 @@ function rpgStarterRealmResolveFieldSpawn(){
   FLD.gx=1e9;FLD.gz=1e9;FLD.cellT=0;C._init=false;
   if(FLD.ground){fldGround();fldCells(true);}
   FLD.spawnResolved=true;
-  window.__rpgFieldSpawnDebug={safe:true,relocated:true,x:safe.x,z:safe.z,blocked:false,distance:safe.distance};
+  window.__rpgFieldSpawnDebug={safe:true,relocated:true,x:safe.x,z:safe.z,blocked:false,proceduralClear:true,corridor:true,distance:safe.distance};
   return true;
 }
 /* ---- entrar / sair ---- */
@@ -8568,10 +8578,15 @@ function fldEnter(){
   {const bb=$('baseBtn');if(bb)bb.onclick=()=>{if(st.run)openBag('shop')}}
   FLD.camp={x:FLD.ox,z:FLD.oz+7};fldBuildCamp();fldWeatherInit();fldFireInit();FLD.tipT=0;FLD.puT=6;
   FLD.lk=null;FLD.cols={};FLD.pb={};FLD.pcols=[];FLD.bioT=0;FLD.skyTgt=new T.Color(0x8cc8ff);FLD.topTgt=new T.Color(0x2f74e0);FLD.watTgt=new T.Color(0x3aa8e8);FLD.skyCur=new T.Color(0x8cc8ff);FLD.topCur=new T.Color(0x2f74e0);FLDON=true;FLD.on=true;FLD.x=FLD.ox;FLD.z=FLD.oz;FLD.vx=FLD.vz=0;FLD.h=0;FLD.cy=0;FH=0;FLD.faceT=0;CAMV.yaw=0;CAMV.pitch=0;FLD.spT=.5;
-  rpgStarterRealmResolveFieldSpawn();
-  st.z=FLD.oz;st.d=FLD.ox;st.vz=0;st.y=0;st.gy=fieldH(FLD.ox,FLD.oz);
+  // Primeiro materializa os colliders procedurais próximos; o resolvedor
+  // então escolhe um spawn testando exatamente os obstáculos do controlador.
   S.fog.near=45;S.fog.far=165;
-  fldGround();fldCells(true);C._init=false;
+  fldGround();fldCells(true);
+  const previousSpawnX=FLD.ox,previousSpawnZ=FLD.oz;
+  rpgStarterRealmResolveFieldSpawn();
+  if(FLD.ox!==previousSpawnX||FLD.oz!==previousSpawnZ){fldGround();fldCells(true);}
+  st.z=FLD.oz;st.d=FLD.ox;st.vz=0;st.y=0;st.gy=fieldH(FLD.ox,FLD.oz);
+  C._init=false;
   const b=$('fldBtn');if(b)b.textContent='🏞️ Mundo';
   rgBanner('🌾 Mundo Aberto','Ande para qualquer lado · arraste a tela para girar a câmera','#8fe05a')}
 function fldExit(silent){
