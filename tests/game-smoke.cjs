@@ -483,12 +483,14 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       CAMV.yaw=0;CAMV.pitch=0;
       const directions=[['ArrowDown',0,1],['ArrowUp',0,-1],['ArrowRight',1,0],['ArrowLeft',-1,0]];
       for(const [key,dx,dz] of directions){
-        let clear=true;
-        for(let distance=.5;distance<=10;distance+=.5){
-          const x=FLD.x+dx*distance,z=FLD.z+dz*distance;
+        let clear=true,previousGround=fieldH(FLD.x,FLD.z);
+        for(let distance=.25;distance<=10;distance+=.25){
+          const x=FLD.x+dx*distance,z=FLD.z+dz*distance,ground=fieldH(x,z);
           const resolved=fldColAt(x,z,.55,0);
           const proceduralBlocked=Math.hypot(resolved[0]-x,resolved[1]-z)>.02;
-          if(rpgStarterRealmBlockedAt(x,z,.55)||proceduralBlocked){clear=false;break;}
+          const steep=!Number.isFinite(ground)||Math.abs(ground-previousGround)>1.3*.25+.025;
+          if(rpgStarterRealmBlockedAt(x,z,.55)||proceduralBlocked||steep){clear=false;break;}
+          previousGround=ground;
         }
         if(clear)return key;
       }
