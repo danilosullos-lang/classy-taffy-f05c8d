@@ -1503,10 +1503,23 @@ function rpgStarterRealmBlockedAt(x,z,radius=.55){
   return false;
 }
 
+function rpgStarterRealmHasWalkCorridor(x,z,radius=.55,distance=10){
+  // Um spawn livre precisa permitir que o jogador saia da área inicial.
+  // A mesma amostragem cardinal é usada pelo browser smoke para detectar
+  // corredores bloqueados por paredes/objetos do GLB.
+  const directions=[[0,1],[0,-1],[1,0],[-1,0]],step=.5;
+  for(const [dx,dz] of directions){
+    let clear=true;
+    for(let travel=step;travel<=distance+1e-6;travel+=step){
+      if(rpgStarterRealmBlockedAt(x+dx*travel,z+dz*travel,radius)){clear=false;break;}
+    }
+    if(clear)return true;
+  }
+  return false;
+}
 function rpgStarterRealmFindSafeSpawn(originX,originZ,radius=.78,maxDistance=54){
-  // Busca determinística em anéis para evitar iniciar dentro de uma parede,
-  // coluna ou objeto do GLB. O terreno precisa estar seco e sem inclinação
-  // excessiva para não trocar uma colisão por um spawn submerso/instável.
+  // Busca determinística em anéis. Além de seco, estável e fora das caixas
+  // do GLB, o ponto precisa oferecer ao menos um corredor de 10m para o jogador.
   const directions=48,step=.75;
   for(let ring=0;ring<=maxDistance;ring+=step){
     const count=ring===0?1:directions;
@@ -1520,7 +1533,7 @@ function rpgStarterRealmFindSafeSpawn(originX,originZ,radius=.78,maxDistance=54)
         Math.abs(fieldH(x+1,z)-ground),Math.abs(fieldH(x-1,z)-ground),
         Math.abs(fieldH(x,z+1)-ground),Math.abs(fieldH(x,z-1)-ground)
       );
-      if(slope>1.3)continue;
+      if(slope>1.3||!rpgStarterRealmHasWalkCorridor(x,z,.55,10))continue;
       return {x,z,ground,distance:ring};
     }
   }
@@ -8518,14 +8531,14 @@ function rpgStarterRealmResolveFieldSpawn(){
   if(now<(FLD.spawnCheckAt||0))return false;
   FLD.spawnCheckAt=now+1000;
   const radius=.78,originX=FLD.ox,originZ=FLD.oz;
-  if(!rpgStarterRealmBlockedAt(originX,originZ,radius)){
+  if(!rpgStarterRealmBlockedAt(originX,originZ,radius)&&rpgStarterRealmHasWalkCorridor(originX,originZ,.55,10)){
     FLD.spawnResolved=true;
-    window.__rpgFieldSpawnDebug={safe:true,relocated:false,x:originX,z:originZ,blocked:false};
+    window.__rpgFieldSpawnDebug={safe:true,relocated:false,x:originX,z:originZ,blocked:false,corridor:true};
     return true;
   }
   const safe=rpgStarterRealmFindSafeSpawn(originX,originZ,radius,54);
   if(!safe){
-    window.__rpgFieldSpawnDebug={safe:false,relocated:false,x:originX,z:originZ,blocked:true,reason:'Nenhum ponto seco e livre encontrado em 54m'};
+    window.__rpgFieldSpawnDebug={safe:false,relocated:false,x:originX,z:originZ,blocked:rpgStarterRealmBlockedAt(originX,originZ,radius),corridor:false,reason:'Nenhum ponto seco, livre e com corredor de 10m encontrado em 54m'};
     return false;
   }
   FLD.ox=safe.x;FLD.oz=safe.z;FLD.x=safe.x;FLD.z=safe.z;
