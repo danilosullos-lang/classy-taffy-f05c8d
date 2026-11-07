@@ -8557,7 +8557,7 @@ function rpgStarterRealmResolveFieldSpawn(){
   if(FLD.campG)FLD.campG.position.set(FLD.camp.x,fieldH(FLD.camp.x,FLD.camp.z),FLD.camp.z);
   if(st){st.d=safe.x;st.z=safe.z;st.vz=0;st.y=0;st.vy=0;st.gy=Math.max(fieldH(safe.x,safe.z),FWL-.28);st.coyote=.12;st.jumpBuf=0;}
   FLD.gx=1e9;FLD.gz=1e9;FLD.cellT=0;C._init=false;
-  if(FLD.ground){fldGround();fldCells(true);}
+  // fldEnter reconstrói terreno/células uma única vez após a realocação.
   FLD.spawnResolved=true;
   window.__rpgFieldSpawnDebug={safe:true,relocated:true,x:safe.x,z:safe.z,blocked:false,proceduralClear:true,corridor:true,distance:safe.distance};
   return true;
