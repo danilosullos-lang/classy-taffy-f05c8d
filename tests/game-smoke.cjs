@@ -562,10 +562,18 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       FLD.spT=Number.POSITIVE_INFINITY;
     },{x:fieldSpawnAudit.position.x,z:fieldSpawnAudit.position.z});
     await page.keyboard.down('ArrowUp');
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(600);
     const walkingState = await page.evaluate(() => ({...window.__rpgPlayerAnimationDebug}));
+    await page.keyboard.up('ArrowUp');
+    await page.evaluate(({x,z})=>{
+      FLD.x=x;FLD.z=z;FLD.vx=FLD.vz=0;FLD.h=0;FLD.cy=0;FLD.faceT=0;
+      st.d=x;st.z=z;st.vz=0;st.vy=0;st.y=0;st.gy=fieldH(x,z);
+      st.frozen=0;st.dash=0;st.rolT=0;st.sprinting=false;
+      CAMV.yaw=0;hitstop=0;FLD.spT=Number.POSITIVE_INFINITY;
+    },{x:fieldSpawnAudit.position.x,z:fieldSpawnAudit.position.z});
+    await page.keyboard.down('ArrowUp');
     await page.keyboard.down('Shift');
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(600);
     const runningState = await page.evaluate(() => ({...window.__rpgPlayerAnimationDebug}));
     await page.keyboard.up('Shift');
     await page.keyboard.up('ArrowUp');
