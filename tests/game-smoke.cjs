@@ -483,6 +483,12 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const originalFieldFrame=fieldFrame;
       window.__rpgSmokeFieldFrameCount=0;
       fieldFrame=function(now){window.__rpgSmokeFieldFrameCount++;return originalFieldFrame(now);};
+      // SwiftShader can spend most of the smoke window drawing the full scene.
+      // Isolate movement/physics from GPU throughput; rendering is restored and
+      // tested below by the camera/WebGL checks.
+      window.__rpgSmokeRendererRestore={render:R.render,composerRender:composer&&composer.render};
+      R.render=function(){};
+      if(composer)composer.render=function(){};
     });
     const fieldSpawnAudit=await page.evaluate(()=>({
       ...window.__rpgFieldSpawnDebug,
@@ -576,6 +582,12 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if(jumpingState.state!=='jump'||!/(jump|land)/i.test(jumpingState.clip||'')){
       throw new Error('O salto não acionou um clip de pulo/aterrissagem válido: '+JSON.stringify(jumpingState));
     }
+    await page.evaluate(()=>{
+      const saved=window.__rpgSmokeRendererRestore;
+      if(saved){R.render=saved.render;if(composer&&saved.composerRender)composer.render=saved.composerRender;}
+      delete window.__rpgSmokeRendererRestore;
+      if(typeof queueResize==='function')queueResize();
+    });
     const playerVisibility=await page.evaluate(()=>{
       let meshes=0,visibleMeshes=0;
       if(_externalFrogSkin)_externalFrogSkin.traverse(o=>{if(o.isMesh&&o.geometry){meshes++;if(o.visible)visibleMeshes++}});
