@@ -468,6 +468,10 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     await page.evaluate(()=>{
       if(st){st.hp=hpMax();st.run=true;st.pause=false;st.frozen=0;st.vy=0;st.lock=false;}
       if(typeof EN!=='undefined')EN.forEach(e=>{e.dead=true;if(e.m)e.m.visible=false;});
+      // The open-field loop continuously spawns hostile mobs. Keep this
+      // controls/collision assertion deterministic instead of testing combat AI.
+      if(typeof FLD!=='undefined'&&FLD)FLD.spT=Number.POSITIVE_INFINITY;
+      if(typeof hitstop!=='undefined')hitstop=0;
     });
     await page.waitForFunction(()=>window.__rpgPlayerAnimationDebug&&window.__rpgPlayerAnimationDebug.gameRunning===true,{timeout:5000});
     await page.waitForFunction(()=>window.__rpgFieldSpawnDebug&&window.__rpgFieldSpawnDebug.safe===true,{timeout:10000});
