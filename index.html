@@ -1514,14 +1514,17 @@ function rpgStarterRealmFieldPointClear(x,z,radius=.55){
   return true;
 }
 function rpgStarterRealmHasWalkCorridor(x,z,radius=.55,distance=10){
-  // O spawn precisa permitir sair da área inicial sem colidir com o GLB
-  // nem com os obstáculos procedurais usados pelo controlador real.
-  const directions=[[0,1],[0,-1],[1,0],[-1,0]],step=.5;
+  // O spawn precisa permitir sair da área inicial sem colidir com o GLB,
+  // obstáculos procedurais ou encostas que o controlador não consegue subir.
+  const directions=[[0,1],[0,-1],[1,0],[-1,0]],step=.25;
   if(!rpgStarterRealmFieldPointClear(x,z,radius))return false;
   for(const [dx,dz] of directions){
-    let clear=true;
+    let clear=true,previousGround=fieldH(x,z);
     for(let travel=step;travel<=distance+1e-6;travel+=step){
-      if(!rpgStarterRealmFieldPointClear(x+dx*travel,z+dz*travel,radius)){clear=false;break;}
+      const px=x+dx*travel,pz=z+dz*travel,ground=fieldH(px,pz);
+      if(!Number.isFinite(ground)||Math.abs(ground-previousGround)>1.3*step+.025||
+         !rpgStarterRealmFieldPointClear(px,pz,radius)){clear=false;break;}
+      previousGround=ground;
     }
     if(clear)return true;
   }
