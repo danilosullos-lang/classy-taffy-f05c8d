@@ -467,14 +467,17 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     // the smoke-test character before the keyboard assertions finish.
     await page.evaluate(()=>{
       if(st){st.hp=hpMax();st.run=true;st.pause=false;st.frozen=0;st.vy=0;st.lock=false;}
-      if(typeof EN!=='undefined')EN.forEach(e=>{e.dead=true;if(e.m)e.m.visible=false;});
-      // The open-field loop continuously spawns hostile mobs. Keep this
-      // controls/collision assertion deterministic instead of testing combat AI.
-      if(typeof FLD!=='undefined'&&FLD)FLD.spT=Number.POSITIVE_INFINITY;
-      if(typeof hitstop!=='undefined')hitstop=0;
     });
     await page.waitForFunction(()=>window.__rpgPlayerAnimationDebug&&window.__rpgPlayerAnimationDebug.gameRunning===true,{timeout:5000});
     await page.waitForFunction(()=>window.__rpgFieldSpawnDebug&&window.__rpgFieldSpawnDebug.safe===true,{timeout:10000});
+    // fldEnter() creates the field after st.run becomes true, so disable its
+    // spawn timer only after the safe spawn is confirmed (not before fldEnter).
+    await page.evaluate(()=>{
+      if(st){st.hp=hpMax();st.frozen=0;st.vy=0;}
+      if(typeof EN!=='undefined')EN.forEach(e=>{e.dead=true;if(e.m)e.m.visible=false;});
+      if(typeof FLD!=='undefined'&&FLD)FLD.spT=Number.POSITIVE_INFINITY;
+      if(typeof hitstop!=='undefined')hitstop=0;
+    });
     const fieldSpawnAudit=await page.evaluate(()=>({
       ...window.__rpgFieldSpawnDebug,
       blocked:rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55),
@@ -516,6 +519,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
         blockedAtPlayer:rpgStarterRealmBlockedAt(FLD.x,FLD.z,.55),
         deltaFromSpawn:Math.hypot(FLD.x-spawnX,FLD.z-spawnZ),
         controller:{fieldYaw:FLD.cy,cameraYaw:CAMV.yaw,velocity:{x:FLD.vx,z:FLD.vz},frozen:st.frozen||0,wet:st.wet,ground,waterline:FWL},
+        inputState:{up:!!keys.ArrowUp,down:!!keys.ArrowDown,left:!!keys.ArrowLeft,right:!!keys.ArrowRight,pageHidden:document.hidden,spawnTimerDisabled:FLD.spT===Infinity},
         ahead:{...ahead,blocked:rpgStarterRealmBlockedAt(ahead.x,ahead.z,.55),
           proceduralDelta:Math.hypot(resolved[0]-ahead.x,resolved[1]-ahead.z),
           slope:(aheadGround-ground)/.5,ground:aheadGround,direction:{x:dx,z:dz}}
