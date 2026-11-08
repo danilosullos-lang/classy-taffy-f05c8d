@@ -6,6 +6,7 @@ export function validateCharacter(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw invalid('invalid_character');
   if (!safeName(input.name) || !RACES.has(input.race) || !CLASSES.has(input.classId)) throw invalid('invalid_character_identity');
   if(input.race==='dwarf'&&!['anão','anao','dwarf','dwarf_fighter','novice','fighter','guerreiro','crafter'].includes(input.classId))throw invalid('class_not_available_for_race');
+  if(input.classId==='crafter'&&input.race!=='dwarf')throw invalid('class_not_available_for_race');
   const level = Number(input.level ?? 1);
   if (!Number.isInteger(level) || level < 1 || level > 80) throw invalid('invalid_level');
   const slot = Number(input.slot);
