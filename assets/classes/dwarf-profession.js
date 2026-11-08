@@ -16,7 +16,8 @@
     {id:'arcane_crystal',name:'Cristal arcano',icon:'💎'}
   ]);
   const RECIPES=Object.freeze([
-    {id:'dwarven_hammer',name:'Martelo de Forja',icon:'🔨',slot:0,grade:1,gold:60,materials:{iron_ore:6,hardwood:3,rough_hide:1}},
+    {id:'dwarven_hammer',name:'Martelo de Forja',icon:'🔨',slot:0,grade:1,weaponFamily:'hammer',gold:60,materials:{iron_ore:6,hardwood:3,rough_hide:1}},
+    {id:'dwarven_axe',name:'Machado de Forja',icon:'🪓',slot:0,grade:1,weaponFamily:'axe',gold:55,materials:{iron_ore:5,hardwood:4,rough_hide:2}},
     {id:'reinforced_boots',name:'Botas Reforçadas',icon:'🥾',slot:2,grade:1,gold:35,materials:{rough_hide:5,iron_ore:2}},
     {id:'artisan_helm',name:'Elmo do Artífice',icon:'🪖',slot:1,grade:2,gold:110,materials:{iron_ore:10,rough_hide:4,arcane_crystal:2}},
     {id:'rune_amulet',name:'Amuleto Rúnico',icon:'📿',slot:3,grade:2,gold:90,materials:{arcane_crystal:3,monster_essence:4,hardwood:1}}
@@ -72,7 +73,7 @@
       ok:true,
       materials:next,
       gold:clampInt(gold)-check.recipe.gold,
-      item:{slot:check.recipe.slot,grade:check.recipe.grade,name:check.recipe.name,recipeId:check.recipe.id}
+      item:{slot:check.recipe.slot,grade:check.recipe.grade,name:check.recipe.name,recipeId:check.recipe.id,...(check.recipe.weaponFamily?{weaponFamily:check.recipe.weaponFamily}:{})}
     };
   }
   return Object.freeze({MATERIALS,RECIPES,normalizeMaterials,spoil,sweep,canCraft,craft});
