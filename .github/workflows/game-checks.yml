@@ -111,6 +111,7 @@ jobs:
           node tests/engine-foundation.cjs
           node tests/account-client.cjs
           node tests/auth-core.mjs
+          node tests/rls-transaction.mjs
           node tests/character-validation.mjs
       - name: Test imported combat engine
         run: node tests/combat-core.cjs
