@@ -6,7 +6,7 @@ await import('../assets/classes/dwarf-profession.js');
 const Dwarf=globalThis.AetheriaDwarfProfession;
 assert.ok(Dwarf,'browser-compatible profession module must expose its API to Node smoke tests');
 assert.equal(Dwarf.MATERIALS.length,5);
-assert.equal(Dwarf.RECIPES.length,4);
+assert.equal(Dwarf.RECIPES.length,5);
 assert.deepEqual(Dwarf.normalizeMaterials({iron_ore:'8',rough_hide:-2,unknown:999}),{
   iron_ore:8,rough_hide:0,hardwood:0,monster_essence:0,arcane_crystal:0
 });
@@ -33,9 +33,12 @@ assert.equal(insufficient.ok,false);
 assert.equal(insufficient.reason,'materiais_insuficientes');
 const crafted=Dwarf.craft('dwarven_hammer',{iron_ore:8,hardwood:4,rough_hide:2},100);
 assert.equal(crafted.ok,true);
-assert.deepEqual(crafted.item,{slot:0,grade:1,name:'Martelo de Forja',recipeId:'dwarven_hammer'});
+assert.deepEqual(crafted.item,{slot:0,grade:1,name:'Martelo de Forja',recipeId:'dwarven_hammer',weaponFamily:'hammer'});
 assert.deepEqual(crafted.materials,{iron_ore:2,rough_hide:1,hardwood:1,monster_essence:0,arcane_crystal:0});
 assert.equal(crafted.gold,40);
+const axe=Dwarf.craft('dwarven_axe',{iron_ore:5,hardwood:4,rough_hide:2},100);
+assert.equal(axe.ok,true);
+assert.equal(axe.item.weaponFamily,'axe');
 assert.equal(Dwarf.craft('not-a-recipe',{},100).reason,'receita_inexistente');
 console.log('Dwarven profession: spoil, sweep, materials and crafting passed.');
 })().catch(error=>{console.error(error);process.exitCode=1});
