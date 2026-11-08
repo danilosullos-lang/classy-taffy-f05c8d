@@ -829,17 +829,17 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       throw new Error('Animação ou efeitos de fogo do mago não foram executados: '+JSON.stringify(mageFireVfx));
     }
     const dwarfRuntime=await page.evaluate(()=>{
-      const snapshot=JSON.parse(JSON.stringify(sv)),inventorySnapshot=inv.slice(),uidSnapshot=uid;
+      const snapshot=JSON.parse(JSON.stringify(sv)),inventorySnapshot=inv.slice(),enemySnapshot=EN.slice(),uidSnapshot=uid;
       const stateSnapshot={mp:st.mp,barrier:st.barrier,bub:st.bub,luck:st.luck,dwarfTreasureUntil:st.dwarfTreasureUntil,cast:st.cast,pause:st.pause,run:st.run,mode};
       const cooldownSnapshot={...cd},uiSnapshot={...UI};
-      const fake={dead:false,level:28,n:'Monstro de teste',d:st.d+1,z:st.z-1,
+      const fake={dead:false,level:28,n:'Monstro de teste',d:st.d,z:st.z,
         m:{position:new THREE.Vector3(frog.position.x+1,frog.position.y,frog.position.z-1)}};
       try{
         sv.race='dwarf';sv.job='crafter';sv.charCreated=1;sv.lineageClass='Scavenger';sv.lineageRole='crafter';
         sv.lv=80;sv.jlv=1;sv.gold=500;
         sv.materials={iron_ore:20,rough_hide:20,hardwood:20,monster_essence:20,arcane_crystal:20};
         st.mp=mpMax();st.barrier=0;st.bub=0;st.cast=null;st.pause=false;st.run=true;cd.e=0;cd.c=0;cd.g=0;cd.t=0;
-        EN.push(fake);updateLineageSkillBar();
+        EN.splice(0,EN.length,fake);updateLineageSkillBar();
         const labels={spoil:document.querySelector('#e')?.title||'',sweep:document.querySelector('#c')?.title||'',craft:document.querySelector('#g')?.title||''};
         skill('e');const spoiled=!!fake.rpgSpoiled;
         fake.dead=true;fake.deadAt=performance.now();skill('c');
@@ -854,7 +854,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
         return {labels,activeSkills,spoiled,swept,hardTanning,materialsAfterSweep,craftTab,recipeAvailable:!!recipe,
           crafted:!!item,weaponFamily:item?.weaponFamily||null,weaponModel:item?.weaponModel||null,inventoryDelta:inv.length-before};
       }finally{
-        const index=EN.indexOf(fake);if(index>=0)EN.splice(index,1);
+        EN.splice(0,EN.length,...enemySnapshot);
         Object.keys(sv).forEach(k=>delete sv[k]);Object.assign(sv,snapshot);
         inv.splice(0,inv.length,...inventorySnapshot);uid=uidSnapshot;
         Object.assign(cd,cooldownSnapshot);Object.assign(UI,uiSnapshot);
