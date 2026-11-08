@@ -7,6 +7,9 @@ if ((gameSource.match(/e\.m\.rotation\.y=rpgMonsterFacingYaw\(dd,dz\)/g) || []).
 if (!gameSource.includes('assets/classes/dwarf-profession.js') || !gameSource.includes("dwarfProfessionAction(k,def)")) {
   throw new Error('O módulo de profissão anã não está integrado ao cliente Three.js.');
 }
+if (!gameSource.includes('assets/engine/nav-grid.js') || !gameSource.includes('rpgMonsterNavBlocked') || !gameSource.includes('nav.findPath')) {
+  throw new Error('A* navigation is not connected to land-monster movement.');
+}
 if (gameSource.includes('Math.atan2(-dd,-dz)')) {
   throw new Error('Ainda existe cálculo invertido da direção dos monstros.');
 }
@@ -51,10 +54,11 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       postprocessing: !!(window.THREE && THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass),
       combatCore: !!window.AetheriaCombatCore,
       dwarfProfession: !!window.AetheriaDwarfProfession,
+      navGrid: !!window.AetheriaNavGrid,
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
       vfxAssets: !!window.__rpgVfxAssetsDebug
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.dwarfProfession || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.dwarfProfession || !runtimeLibraries.navGrid || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     const monsterFacingAudit=await page.evaluate(()=>{
@@ -871,6 +875,28 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       !/Create Item/.test(dwarfRuntime.labels.craft)||dwarfRuntime.inventoryDelta!==1){
       throw new Error('Fluxo real de Spoil, Sweep e Crafting do Anão falhou: '+JSON.stringify(dwarfRuntime));
     }
+    const monsterNavigation=await page.evaluate(()=>{
+      const enemySnapshot=EN.slice(),originalBlocked=window.rpgMonsterNavBlocked;
+      const stateSnapshot={run:st.run,pause:st.pause,lock:st.lock,lT:st.lT};
+      const blocked=(d,z)=>Math.abs(d-(st.d-4))<1.1&&Math.abs(z-st.z)<5.1;
+      const fake={dead:false,level:10,n:'Nav Test',d:st.d-10,z:st.z,sp:5,stun:0,cd:999,r:.8,land:true,fly:false,hp:100,mx:100,hh:2,
+        m:new THREE.Group(),bar:new THREE.Object3D(),nameTag:null};
+      try{
+        window.rpgMonsterNavBlocked=blocked;EN.splice(0,EN.length,fake);
+        st.run=true;st.pause=false;st.lock=true;st.lT=999;
+        const direct=window.AetheriaNavGrid.hasClearLine({x:fake.d,z:fake.z},{x:st.d,z:st.z},blocked,.5);
+        enemies(.25,performance.now());
+        const path=fake._navPath||[];
+        return {direct,pathLength:path.length,detour:path.some(p=>Math.abs(p.z-st.z)>=5.5),
+          waypointClear:path.every(p=>!blocked(p.x,p.z)),position:{d:fake.d,z:fake.z}};
+      }finally{
+        EN.splice(0,EN.length,...enemySnapshot);window.rpgMonsterNavBlocked=originalBlocked;
+        st.run=stateSnapshot.run;st.pause=stateSnapshot.pause;st.lock=stateSnapshot.lock;st.lT=stateSnapshot.lT;
+      }
+    });
+    if(monsterNavigation.direct||monsterNavigation.pathLength<1||!monsterNavigation.detour||!monsterNavigation.waypointClear){
+      throw new Error('Land-monster A* collision routing failed: '+JSON.stringify(monsterNavigation));
+    }
     if (pageErrors.length) throw new Error('Erros JavaScript durante a execução:\n' + pageErrors.join('\n'));
 
     console.log(JSON.stringify({
@@ -897,6 +923,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       elfArcherTransfer,
       archerRuntime,
       dwarfRuntime,
+      monsterNavigation,
       runtimeErrors: pageErrors.length
     }, null, 2));
   } catch (error) {
