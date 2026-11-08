@@ -3418,7 +3418,14 @@ function dwarfCraft(recipeId){
  }
  sv.materials=result.materials;sv.gold=result.gold;
  const item=mkItem(result.item.grade,result.item.slot);
- item.n=result.item.name+(item.weaponGrade?' ['+item.weaponGrade+']':'');
+ if(result.item.weaponFamily&&item.s===0){
+   const family=result.item.weaponFamily,grade=Math.max(0,RPG_WEAPON_GRADES.findIndex(g=>g.id===item.weaponGrade));
+   const models=RPG_WEAPON_MODELS[family],names=RPG_WEAPON_NAMES[family];
+   item.weaponFamily=family;item.weaponModel=models[grade]||models[0];item.weaponGrade=RPG_WEAPON_GRADES[grade].id;
+   item.weaponMinLevel=RPG_WEAPON_GRADES[grade].level;
+   item.weaponAllowed=Object.keys(RPG_WEAPON_FAMILIES).filter(job=>RPG_WEAPON_FAMILIES[job].includes(family));
+   item.n=result.item.name+' ['+item.weaponGrade+']';
+ }else item.n=result.item.name+(item.weaponGrade?' ['+item.weaponGrade+']':'');
  item.craftedBy='dwarf';
  pick(item);save(true);UI.note='Fabricado: '+item.n;return true;
 }
