@@ -4,6 +4,9 @@ const gameSource = fs.readFileSync('index.html', 'utf8');
 if ((gameSource.match(/e\.m\.rotation\.y=rpgMonsterFacingYaw\(dd,dz\)/g) || []).length !== 2) {
   throw new Error('A correção de direção precisa estar aplicada no mundo normal e no Mundo Aberto.');
 }
+if (!gameSource.includes('assets/classes/dwarf-profession.js') || !gameSource.includes("dwarfProfessionAction(k,def)")) {
+  throw new Error('O módulo de profissão anã não está integrado ao cliente Three.js.');
+}
 if (gameSource.includes('Math.atan2(-dd,-dz)')) {
   throw new Error('Ainda existe cálculo invertido da direção dos monstros.');
 }
@@ -47,10 +50,11 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       skeletonUtils: !!(window.THREE && THREE.SkeletonUtils),
       postprocessing: !!(window.THREE && THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass),
       combatCore: !!window.AetheriaCombatCore,
+      dwarfProfession: !!window.AetheriaDwarfProfession,
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
       vfxAssets: !!window.__rpgVfxAssetsDebug
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.dwarfProfession || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     const monsterFacingAudit=await page.evaluate(()=>{
@@ -824,6 +828,47 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       !['fighter','tank','archer','dagger','mage','healer','support','crafter'].every(role=>(mageFireVfx.classVfx[role]||0)>=1)){
       throw new Error('Animação ou efeitos de fogo do mago não foram executados: '+JSON.stringify(mageFireVfx));
     }
+    const dwarfRuntime=await page.evaluate(()=>{
+      const snapshot=JSON.parse(JSON.stringify(sv)),inventorySnapshot=inv.slice(),uidSnapshot=uid;
+      const stateSnapshot={mp:st.mp,pause:st.pause,run:st.run,mode};
+      const cooldownSnapshot={...cd},uiSnapshot={...UI};
+      const fake={dead:false,level:28,n:'Monstro de teste',d:st.d+1,z:st.z-1,
+        m:{position:new THREE.Vector3(frog.position.x+1,frog.position.y,frog.position.z-1)}};
+      try{
+        sv.race='dwarf';sv.job='crafter';sv.charCreated=1;sv.lineageClass='Scavenger';sv.lineageRole='crafter';
+        sv.lv=20;sv.jlv=1;sv.gold=500;
+        sv.materials={iron_ore:20,rough_hide:20,hardwood:20,monster_essence:20,arcane_crystal:20};
+        st.mp=mpMax();st.pause=false;st.run=true;cd.e=0;cd.c=0;cd.g=0;
+        EN.push(fake);updateLineageSkillBar();
+        const labels={spoil:document.querySelector('#e')?.title||'',sweep:document.querySelector('#c')?.title||'',craft:document.querySelector('#g')?.title||''};
+        skill('e');const spoiled=!!fake.rpgSpoiled;
+        fake.dead=true;fake.deadAt=performance.now();skill('c');
+        const swept=!!fake.rpgSwept,materialsAfterSweep={...sv.materials};
+        openBag('craft');
+        const craftTab=document.querySelector('#bgc')?.textContent.includes('Oficina Anã')||false;
+        const recipe=document.querySelector('#bgc [data-a="craft"][data-recipe="dwarven_hammer"]');
+        const before=inv.length;if(recipe)recipe.click();
+        const item=inv.find(x=>x.craftedBy==='dwarf');
+        return {labels,spoiled,swept,materialsAfterSweep,craftTab,recipeAvailable:!!recipe,
+          crafted:!!item,weaponFamily:item?.weaponFamily||null,inventoryDelta:inv.length-before};
+      }finally{
+        const index=EN.indexOf(fake);if(index>=0)EN.splice(index,1);
+        Object.keys(sv).forEach(k=>delete sv[k]);Object.assign(sv,snapshot);
+        inv.splice(0,inv.length,...inventorySnapshot);uid=uidSnapshot;
+        Object.assign(cd,cooldownSnapshot);Object.assign(UI,uiSnapshot);
+        st.mp=stateSnapshot.mp;st.pause=stateSnapshot.pause;st.run=stateSnapshot.run;mode=stateSnapshot.mode;
+        const bag=document.querySelector('#bg');if(bag)bag.style.display='none';
+        save(true);updateLineageSkillBar();
+        if(snapshot.frog?.externalSkin)loadExternalFrogSkin(snapshot.frog.externalSkin,null);
+        if(snapshot.job){rpgEnsureClassWeapon(snapshot.job);rpgEquipWeaponVisual(null,snapshot.job);}
+      }
+    });
+    if(!dwarfRuntime.spoiled||!dwarfRuntime.swept||!dwarfRuntime.craftTab||!dwarfRuntime.recipeAvailable||
+      !dwarfRuntime.crafted||!['axe','hammer'].includes(dwarfRuntime.weaponFamily)||
+      !/Spoil/.test(dwarfRuntime.labels.spoil)||!/Sweep/.test(dwarfRuntime.labels.sweep)||
+      !/Create Item/.test(dwarfRuntime.labels.craft)||dwarfRuntime.inventoryDelta!==1){
+      throw new Error('Fluxo real de Spoil, Sweep e Crafting do Anão falhou: '+JSON.stringify(dwarfRuntime));
+    }
     if (pageErrors.length) throw new Error('Erros JavaScript durante a execução:\n' + pageErrors.join('\n'));
 
     console.log(JSON.stringify({
@@ -849,6 +894,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       raceBaseClasses,
       elfArcherTransfer,
       archerRuntime,
+      dwarfRuntime,
       runtimeErrors: pageErrors.length
     }, null, 2));
   } catch (error) {
