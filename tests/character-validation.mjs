@@ -7,7 +7,7 @@ for(const [race,classId] of [['human','mago'],['elf','arqueiro'],['human','caval
 for(const bad of [
  {...valid,slot:9},{...valid,level:81},{...valid,name:'x'},
  {...valid,position:{x:'NaN',y:0,z:0}},{...valid,vitals:{hp:'NaN',mp:1}},
- {...valid,race:'dwarf',classId:'mago'},{...valid,mapId:'../../admin'}
+ {...valid,race:'dwarf',classId:'mago'},{...valid,race:'human',classId:'crafter'},{...valid,mapId:'../../admin'}
 ]) assert.throws(()=>validateCharacter(bad));
 assert.throws(()=>validateCharacter({...valid,data:{payload:'x'.repeat(25000)}}),e=>e.status===413);
 console.log('Aetheria character validation: all tests passed.');
