@@ -1,8 +1,9 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const gameSource = fs.readFileSync('index.html', 'utf8');
-if ((gameSource.match(/e\.m\.rotation\.y=rpgMonsterFacingYaw\(dd,dz\)/g) || []).length !== 2) {
-  throw new Error('A correção de direção precisa estar aplicada no mundo normal e no Mundo Aberto.');
+if ((gameSource.match(/e\.m\.rotation\.y=rpgMonsterFacingYaw\(dd,dz\)/g) || []).length !== 1 ||
+    !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)')) {
+  throw new Error('A correção de direção precisa cobrir perseguição e retorno no mundo normal e no Mundo Aberto.');
 }
 if (!gameSource.includes('assets/classes/skill-catalog.js') || !gameSource.includes('const INTERLUDE_SKILL_SETS=window.AetheriaSkillCatalog;')) {
   throw new Error('O catálogo modular de habilidades não está integrado ao cliente Three.js.');
@@ -88,7 +89,8 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const idle=AetheriaMonsterAI.update(mob,{x:25,z:0},1000,opts).mode;
       const chase=AetheriaMonsterAI.update(mob,{x:10,z:0},1100,opts).mode;
       const attack=AetheriaMonsterAI.update(mob,{x:1,z:0},1200,opts).mode;
-      const lost=AetheriaMonsterAI.update(mob,{x:38,z:0},4000,opts);
+      mob.d=10;
+      const lost=AetheriaMonsterAI.update(mob,{x:45,z:0},4000,opts);
       return {idle,chase,attack,lost:lost.mode,returnTarget:lost.target};
     });
     if(monsterAiAudit.idle!=='idle'||monsterAiAudit.chase!=='chase'||monsterAiAudit.attack!=='attack'||
