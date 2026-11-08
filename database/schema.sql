@@ -33,3 +33,14 @@ CREATE UNIQUE INDEX IF NOT EXISTS aetheria_characters_name_lower_uq
   ON aetheria_characters (LOWER(name));
 CREATE INDEX IF NOT EXISTS aetheria_characters_user_updated_idx
   ON aetheria_characters (user_id, updated_at DESC);
+
+-- Character rows are isolated by the authenticated API transaction context.
+ALTER TABLE aetheria_characters ENABLE ROW LEVEL SECURITY;
+ALTER TABLE aetheria_characters FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS aetheria_characters_user_scope ON aetheria_characters;
+CREATE POLICY aetheria_characters_user_scope
+  ON aetheria_characters
+  FOR ALL
+  TO PUBLIC
+  USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid)
+  WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
