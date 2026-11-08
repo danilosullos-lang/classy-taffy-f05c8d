@@ -109,6 +109,7 @@ jobs:
           node --check assets/classes/dwarf-profession.js
           node --check assets/classes/skill-catalog.js
           node --check assets/engine/nav-grid.js
+          node --check assets/monsters/ai-state.js
           node --check api/_lib/rls.js
           node --check api/characters.js
           node --check server.js
@@ -129,6 +130,8 @@ jobs:
         run: |
           node --check assets/monsters/progression.js
           node tests/monster-progression.cjs
+      - name: Test monster aggro, leash and return AI
+        run: node tests/monster-ai.cjs
 
   browser-smoke:
     needs: integrity

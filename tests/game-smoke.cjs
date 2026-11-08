@@ -13,6 +13,11 @@ if (!gameSource.includes('assets/classes/dwarf-profession.js') || !gameSource.in
 if (!gameSource.includes('assets/engine/nav-grid.js') || !gameSource.includes('rpgMonsterNavBlocked') || !gameSource.includes('nav.findPath')) {
   throw new Error('A* navigation is not connected to land-monster movement.');
 }
+if (!gameSource.includes('assets/monsters/ai-state.js') || !gameSource.includes('monsterAI.update(e') ||
+    !gameSource.includes("e.homeD=spawnD;e.homeZ=spawnZ;e.aiMode='idle'") ||
+    !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)')) {
+  throw new Error('Monster aggro/leash/return AI is not integrated into the existing Three.js enemy loop.');
+}
 if (gameSource.includes('Math.atan2(-dd,-dz)')) {
   throw new Error('Ainda existe cálculo invertido da direção dos monstros.');
 }
@@ -59,10 +64,11 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       dwarfProfession: !!window.AetheriaDwarfProfession,
       skillCatalog: !!window.AetheriaSkillCatalog,
       navGrid: !!window.AetheriaNavGrid,
+      monsterAI: !!window.AetheriaMonsterAI,
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
       vfxAssets: !!window.__rpgVfxAssetsDebug
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     const monsterFacingAudit=await page.evaluate(()=>{
@@ -75,6 +81,19 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       Math.abs(monsterFacingAudit.front)>.001||
       Math.abs(Math.abs(monsterFacingAudit.back)-Math.PI)>.001){
       throw new Error('Cálculo de orientação dos monstros incorreto: '+JSON.stringify(monsterFacingAudit));
+    }
+    const monsterAiAudit=await page.evaluate(()=>{
+      const mob={d:0,z:0,homeD:0,homeZ:0,r:2};
+      const opts={aggroRadius:20,loseRadius:30,leashRadius:48,returnRadius:1.25,loseAggroMs:1800,attackRange:2};
+      const idle=AetheriaMonsterAI.update(mob,{x:25,z:0},1000,opts).mode;
+      const chase=AetheriaMonsterAI.update(mob,{x:10,z:0},1100,opts).mode;
+      const attack=AetheriaMonsterAI.update(mob,{x:1,z:0},1200,opts).mode;
+      const lost=AetheriaMonsterAI.update(mob,{x:38,z:0},4000,opts);
+      return {idle,chase,attack,lost:lost.mode,returnTarget:lost.target};
+    });
+    if(monsterAiAudit.idle!=='idle'||monsterAiAudit.chase!=='chase'||monsterAiAudit.attack!=='attack'||
+      monsterAiAudit.lost!=='return'||monsterAiAudit.returnTarget.x!==0||monsterAiAudit.returnTarget.z!==0){
+      throw new Error('Máquina de estados de aggro/leash não passou no navegador: '+JSON.stringify(monsterAiAudit));
     }
     const bossLevelAudit=await page.evaluate(()=>({first:bossAt(0).lv,late:bossAt(100).lv}));
     if(bossLevelAudit.first<1||bossLevelAudit.late!==80)throw new Error('Níveis dos chefes não respeitam o teto 80: '+JSON.stringify(bossLevelAudit));
