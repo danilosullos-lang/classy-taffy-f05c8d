@@ -4,6 +4,9 @@ const gameSource = fs.readFileSync('index.html', 'utf8');
 if ((gameSource.match(/e\.m\.rotation\.y=rpgMonsterFacingYaw\(dd,dz\)/g) || []).length !== 2) {
   throw new Error('A correção de direção precisa estar aplicada no mundo normal e no Mundo Aberto.');
 }
+if (!gameSource.includes('assets/classes/skill-catalog.js') || !gameSource.includes('const INTERLUDE_SKILL_SETS=window.AetheriaSkillCatalog;')) {
+  throw new Error('O catálogo modular de habilidades não está integrado ao cliente Three.js.');
+}
 if (!gameSource.includes('assets/classes/dwarf-profession.js') || !gameSource.includes("dwarfProfessionAction(k,def)")) {
   throw new Error('O módulo de profissão anã não está integrado ao cliente Three.js.');
 }
@@ -54,11 +57,12 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       postprocessing: !!(window.THREE && THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass),
       combatCore: !!window.AetheriaCombatCore,
       dwarfProfession: !!window.AetheriaDwarfProfession,
+      skillCatalog: !!window.AetheriaSkillCatalog,
       navGrid: !!window.AetheriaNavGrid,
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
       vfxAssets: !!window.__rpgVfxAssetsDebug
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.dwarfProfession || !runtimeLibraries.navGrid || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     const monsterFacingAudit=await page.evaluate(()=>{
@@ -113,6 +117,29 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
         if(JSON.stringify(raceBaseClasses[race])!==JSON.stringify(expected)){
           throw new Error('Classes iniciais incorretas para '+race+': '+JSON.stringify(raceBaseClasses[race]));
         }
+      }
+      await page.locator('[data-start-race="dwarf"]').click();
+      const dwarfStartInfo=await page.locator('#cpGrid [data-start-class="guerreiro"] small').textContent();
+      if(!/Scavenger.*Artisan|Artisan.*Scavenger/.test(dwarfStartInfo||'')){
+        throw new Error('A classe inicial do Anão ainda apresenta progressão humana em vez de Scavenger/Artisan: '+dwarfStartInfo);
+      }
+      await page.locator('[data-start-class="guerreiro"]').click();
+      await page.waitForFunction(() => {
+        const status=document.querySelector('#cpPreviewStatus');
+        return !!status&&(window.__rpgLowMemoryMode
+          ? status.textContent.includes('Prévia 3D desativada no modo leve')
+          : status.textContent.includes('Prévia 3D carregada'));
+      }, { timeout: 30000 });
+      const dwarfPreviewAudit=await page.evaluate(()=>({
+        name:document.querySelector('#cpPreviewName')?.textContent||'',
+        description:document.querySelector('#cpPreviewDesc')?.textContent||'',
+        playableSkin:playableClassSkin('guerreiro','dwarf'),
+        previewSkin:CLASS_SKIN_PREVIEWS.dwarf.url
+      }));
+      if(!/Anão/.test(dwarfPreviewAudit.name)||!/corpo anão dedicado/.test(dwarfPreviewAudit.description)||
+        dwarfPreviewAudit.playableSkin!=='/skins/classes/Barbarian.glb'||
+        dwarfPreviewAudit.previewSkin!=='/skins/classes/Barbarian.glb'){
+        throw new Error('Prévia/skin do Anão não corresponde ao rig CC0 disponível: '+JSON.stringify(dwarfPreviewAudit));
       }
       await page.locator('[data-start-race="elf"]').click();
       const elfClassLabel = await page.locator('#cpGrid [data-start-class="guerreiro"] b').textContent();

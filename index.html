@@ -465,6 +465,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 <script>window.THREE&&THREE.CopyShader||document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"><\/script>')</script>
 <script src="lib/LuminosityHighPassShader.js"></script>
 <script>window.THREE&&THREE.LuminosityHighPassShader||document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"><\/script>')</script>
+<script src="assets/classes/skill-catalog.js"></script>
 <script src="assets/classes/dwarf-profession.js"></script>
 <script src="assets/engine/nav-grid.js"></script>
 <script>/* Trystero 0.26.0 (nostr + torrent) — WebRTC P2P para multiplayer */
@@ -594,16 +595,7 @@ let sv={lv:1,xp:0,fl:0,best:0,missions:{},stats:{},opt:{}};
 let inv=[]; let uid=1;
 const SKL={q:[1,'Ataque'],e:[3,'Habilidade'],c:[5,'Controle'],f:[7,'Movimento'],g:[9,'Suporte'],h:[12,'Especial'],t:[15,'Buff'],v:[25,'Ultimate'],w:[1,'Arma']};
 const CD={q:.6,e:12,c:10,f:6,g:25,h:30,t:20,v:45,w:15};
-const INTERLUDE_SKILL_SETS={
- fighter:{q:['⚔️','Power Strike','Golpe físico'],e:['🗡️','Fatal Strike','Golpe pesado'],c:['💫','War Cry','Dano em área'],f:['💨','Rush','Avanço de combate'],g:['🛡️','Defensive Stance','Reduz dano recebido'],h:['🌪️','Whirlwind','Ataque em área'],t:['🔥','Might','Aumenta o ataque'],v:['⚔️','Final Secret','Explosão de dano']},
- tank:{q:['🗡️','Power Strike','Golpe físico'],e:['🛡️','Shield Stun','Atordoa o alvo'],c:['📢','Aggression','Provocação e impacto'],f:['💨','Shield Charge','Investida defensiva'],g:['🔰','Ultimate Defense','Defesa elevada'],h:['✨','Holy Armor','Dano sagrado em área'],t:['🛡️','Fortitude','Resistência elevada'],v:['⚜️','Sacred Judgment','Julgamento sagrado']},
- archer:{q:['🏹','Double Shot','Disparo duplo'],e:['🎯','Stunning Shot','Flecha atordoante'],c:['🌧️','Burst Shot','Chuva de flechas'],f:['↩️','Backstep','Recuo rápido'],g:['🦅','Hawk Eye','Aumenta precisão e crítico'],h:['🏹','Deadly Arrow','Flecha perfurante'],t:['🎯','Focused Aim','Aumenta dano à distância'],v:['🌠','Rain of Arrows','Tempestade de flechas']},
- dagger:{q:['🗡️','Deadly Blow','Ataque rápido'],e:['🌑','Backstab','Ataque pelas costas'],c:['☠️','Poison Blade','Veneno em área'],f:['👤','Shadow Step','Passo das sombras'],g:['👻','Ultimate Evasion','Esquiva elevada'],h:['🩸','Lethal Blow','Golpe letal'],t:['🎯','Focus Death','Aumenta crítico'],v:['☠️','Assassination','Execução']},
- mage:{q:['🔥','Prominence','Magia de fogo'],e:['🌪️','Hurricane','Magia de vento'],c:['🌙','Sleep','Controle arcano'],f:['✨','Blink','Deslocamento arcano'],g:['💚','Vampiric Claw','Drena vida'],h:['⚡','Hurricane Burst','Explosão elemental'],t:['🔮','Empower','Aumenta poder mágico'],v:['☄️','Meteor','Chuva de meteoros']},
- healer:{q:['✨','Holy Bolt','Raio sagrado'],e:['💚','Greater Heal','Cura poderosa'],c:['🌟','Might of Heaven','Dano sagrado em área'],f:['🕊️','Blessed Step','Movimento protegido'],g:['💚','Major Heal','Grande cura'],h:['☀️','Divine Flash','Explosão sagrada'],t:['🙏','Blessing','Bênção defensiva'],v:['🌈','Mass Resurrection','Milagre restaurador']},
- support:{q:['✨','Holy Strike','Golpe espiritual'],e:['💠','Seal of Binding','Selo de controle'],c:['📯','War Chant','Impacto em área'],f:['💨','Swift Retreat','Recuo'],g:['🙏','Prophecy','Bênção de grupo'],h:['🌩️','Spirit Burst','Explosão espiritual'],t:['🛡️','Chant of Victory','Buff de combate'],v:['🌟','Grand Prophecy','Poder supremo']},
- crafter:{q:['🔨','Hammer Crush','Golpe de martelo'],e:['⛏️','Spoil','Marca um monstro para coleta'],c:['🧹','Sweep','Recolhe materiais de um monstro derrotado e marcado'],f:['💨','Dwarven Dash','Avanço'],g:['🛠️','Create Item','Abre a oficina para fabricar equipamentos'],h:['⚒️','Earth Shatter','Impacto pesado'],t:['🧱','Hard Tanning','Defesa reforçada'],v:['💎','Treasure Mastery','Golpe e saque extra']}
-};
+const INTERLUDE_SKILL_SETS=window.AetheriaSkillCatalog;
 function interludeRole(){
  const j=sv.job||'novice';
  if(sv.race==='dwarf')return'crafter';
@@ -4438,7 +4430,7 @@ function selectLineageClass(id){
  sv.lineageClassId=option.id;sv.lineageClass=option.name;sv.lineageRole=option.role;sv.job=option.job;
  sv.jlv=1;sv.jxp=0;sv.skp=(sv.skp||0)+2;sv.charClass=sv.job;
  if(option.job==='crafter'&&typeof rpgEnsureClassWeapon==='function')rpgEnsureClassWeapon(option.job);
- sv.frog=sv.frog||{};sv.frog.externalSkin=playableClassSkin(sv.job);
+ sv.frog=sv.frog||{};sv.frog.externalSkin=playableClassSkin(sv.job,sv.race);
  if(typeof loadExternalFrogSkin==='function')loadExternalFrogSkin(sv.frog.externalSkin,null);
  if(typeof updateLineageSkillBar==='function')updateLineageSkillBar();
  if(typeof st!=='undefined'&&st)st.hp=hpMax();
@@ -4454,7 +4446,7 @@ function applyInterludeRace(){
    const id=b.dataset.startClass,heading=b.querySelector('b'),small=b.querySelector('small');
    b.style.display=(INTERLUDE_ALLOWED_CLASSES[START_RACE]||INTERLUDE_ALLOWED_CLASSES.human).includes(id)?'':'none';
    if(heading)heading.textContent=labels[id]||heading.textContent;
-   if(small)small.textContent=(START_CLASS_INFO[id]||'')+' Raça: '+race+'.';
+   if(small)small.textContent=startClassInfo(START_RACE,id)+' Raça: '+race+'.';
  });
  document.querySelectorAll('#cpRaces [data-start-race]').forEach(b=>b.classList.toggle('selected',b.dataset.startRace===START_RACE));
 }
@@ -4471,7 +4463,12 @@ const START_CLASS_INFO={
  ladino:'Alta esquiva, velocidade e dano crítico. Evolui para Assassino.',
  sacerdote:'Cura, regeneração e proteção. Evolui para Sumo Sacerdote.'
 };
+const START_CLASS_INFO_BY_RACE={
+ dwarf:{guerreiro:'Combatente anão: no nível 20 pode seguir como Scavenger (Coletor) ou Artisan (Artesão), com Spoil, Sweep e fabricação de equipamentos.'}
+};
+function startClassInfo(race,id){return (START_CLASS_INFO_BY_RACE[race]||{})[id]||START_CLASS_INFO[id]||'';}
 const CLASS_SKIN_PREVIEWS={
+ dwarf:{name:'Anão — KayKit (Barbarian CC0)',desc:'Modelo humanoide CC0 reutilizado como base visual; o catálogo ainda não contém um corpo anão dedicado.',url:'/skins/classes/Barbarian.glb'},
  guerreiro:{name:'Guerreiro — KayKit',desc:'Visual robusto de guerreiro para a classe inicial (modelo-base Barbarian).',url:'/skins/classes/Barbarian.glb'},
  mago:{name:'Mago — KayKit',desc:'Aparência arcana para magos e arquimagos.',url:'/skins/classes/Mage.glb'},
  arqueiro:{name:'Arqueira — KayKit',desc:'Modelo humanoide KayKit leve, com arco equipado e animações de tiro compatíveis.',url:'/skins/classes/Rogue_Hooded.glb'},
@@ -4503,13 +4500,14 @@ const PLAYABLE_CLASS_SKINS={
  ranger:'/skins/classes/Rogue_Hooded.glb',
  crafter:'/skins/classes/Barbarian.glb'
 };
-function playableClassSkin(id){
-  // A classe escolhida nunca deve mudar silenciosamente por causa do perfil gráfico.
-  // Modelos e animações são validados no carregamento; o perfil leve só reduz a renderização.
+function playableClassSkin(id,race=sv.race){
+  // Anões usam o rig humanoide CC0 Barbarian disponível até existir um corpo anão dedicado.
+  // A raça/classe nunca altera o modelo por causa do perfil gráfico.
+  if(race==='dwarf')return PLAYABLE_CLASS_SKINS.crafter;
   return PLAYABLE_CLASS_SKINS[id]||'/skins/classes/Barbarian.glb';
 }
-function previewClassSkin(id){
- const cfg=CLASS_SKIN_PREVIEWS[id]||CLASS_SKIN_PREVIEWS.guerreiro;
+function previewClassSkin(id,race=START_RACE){
+ const cfg=race==='dwarf'?CLASS_SKIN_PREVIEWS.dwarf:(CLASS_SKIN_PREVIEWS[id]||CLASS_SKIN_PREVIEWS.guerreiro);
  const name=$('cpPreviewName'),desc=$('cpPreviewDesc'),status=$('cpPreviewStatus'),canvas=$('cpPreviewCanvas');
  if(name)name.textContent=cfg.name;if(desc)desc.textContent=cfg.desc;
  if(LOW_MEM){if(status)status.textContent='Prévia 3D desativada no modo leve para proteger a memória do celular; a classe continua disponível.';return}
@@ -4566,7 +4564,7 @@ function confirmStartClass(){
   const rb=INTERLUDE_RACE_BONUS[START_RACE]||INTERLUDE_RACE_BONUS.human;
   sv.bs=sv.bs||{str:1,agi:1,vit:1,int:1,dex:1,luk:1};
   Object.keys(rb).forEach(k=>{sv.bs[k]=Math.max(1,(sv.bs[k]||1)+rb[k])});
-  sv.frog=sv.frog||{};sv.frog.classSkinPreview=id;sv.frog.externalSkin=playableClassSkin(id);
+  sv.frog=sv.frog||{};sv.frog.classSkinPreview=id;sv.frog.externalSkin=playableClassSkin(id,START_RACE);
   sv.charCreated=1;sv.charClass=id;
   updateLineageSkillBar();
   $('charpick').style.display='none';save(true);
@@ -4576,9 +4574,9 @@ function confirmStartClass(){
 $('cpGrid').addEventListener('click',e=>{
   const b=e.target.closest('[data-start-class]');if(!b)return;
   START_CLASS_PICK=b.dataset.startClass;
-  previewClassSkin(START_CLASS_PICK);
+  previewClassSkin(START_CLASS_PICK,START_RACE);
   $('charpick').querySelectorAll('[data-start-class]').forEach(x=>x.classList.toggle('selected',x===b));
-  $('cpDetail').innerHTML='<b>'+INTERLUDE_RACE_NAMES[START_RACE]+' · '+(INTERLUDE_CLASS_LABELS[START_RACE]||INTERLUDE_CLASS_LABELS.human)[START_CLASS_PICK]+'</b><br>'+START_CLASS_INFO[START_CLASS_PICK]+'<br>Você recebe 2 pontos iniciais de habilidade e atributos raciais.';
+  $('cpDetail').innerHTML='<b>'+INTERLUDE_RACE_NAMES[START_RACE]+' · '+(INTERLUDE_CLASS_LABELS[START_RACE]||INTERLUDE_CLASS_LABELS.human)[START_CLASS_PICK]+'</b><br>'+startClassInfo(START_RACE,START_CLASS_PICK)+'<br>Você recebe 2 pontos iniciais de habilidade e atributos raciais.';
   $('cpConfirm').disabled=false;$('cpConfirm').style.opacity='1';
 });
 $('cpConfirm').onclick=confirmStartClass;
@@ -4593,7 +4591,14 @@ function migrateLegacyPlayableCharacter(){
   const current=String(sv&&sv.job||'').trim().toLowerCase();
   // Aprendiz/Novice é estado pré-classe: precisa abrir o seletor em vez de virar Guerreiro automaticamente.
   if(current==='novice'||current==='apprentice')return false;
-  if(current&&Object.prototype.hasOwnProperty.call(PLAYABLE_CLASS_SKINS,current))return true;
+  if(current&&Object.prototype.hasOwnProperty.call(PLAYABLE_CLASS_SKINS,current)){
+    if(sv.race==='dwarf'){
+      sv.frog=sv.frog||{};
+      const dwarfSkin=playableClassSkin(current,sv.race);
+      if(sv.frog.externalSkin!==dwarfSkin){sv.frog.externalSkin=dwarfSkin;save(true)}
+    }
+    return true;
+  }
   const hasSavedCharacter=!!(sv&&(sv.charCreated||sv.charClass||current||sv.cp||
     Number(sv.lv)>1||Number(sv.xp)>0||(Array.isArray(inv)&&inv.length>0)));
   if(!hasSavedCharacter)return false;
@@ -4609,7 +4614,7 @@ function migrateLegacyPlayableCharacter(){
   sv.lineageStage=Number.isFinite(sv.lineageStage)?sv.lineageStage:0;
   sv.lineageRole=sv.lineageRole||({mago:'mage',arquimago:'mage',arqueiro:'archer',ranger:'archer',ladino:'dagger',assassino:'dagger',sacerdote:'healer',sumo:'healer',cavaleiro:'tank',paladino:'tank',templario:'tank'})[id]||'fighter';
   sv.frog=sv.frog||{};
-  sv.frog.externalSkin=sv.frog.externalSkin||playableClassSkin(id);
+  sv.frog.externalSkin=sv.frog.externalSkin||playableClassSkin(id,sv.race);
   save(true);
   return true;
 }

@@ -107,6 +107,7 @@ jobs:
           node --check assets/engine/account-client.js
           node --check assets/engine/account-ui.js
           node --check assets/classes/dwarf-profession.js
+          node --check assets/classes/skill-catalog.js
           node --check assets/engine/nav-grid.js
           node --check api/_lib/rls.js
           node --check api/characters.js
@@ -120,6 +121,8 @@ jobs:
         run: node tests/combat-core.cjs
       - name: Test dwarf profession
         run: node tests/dwarf-profession.cjs
+      - name: Test class skill catalog
+        run: node tests/class-skill-catalog.cjs
       - name: Test navigation grid
         run: node tests/nav-grid.mjs
       - name: Test monster progression
