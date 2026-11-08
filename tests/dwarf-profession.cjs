@@ -1,7 +1,10 @@
 'use strict';
 const assert=require('node:assert/strict');
-const Dwarf=require('../assets/classes/dwarf-profession.js');
 
+(async()=>{
+await import('../assets/classes/dwarf-profession.js');
+const Dwarf=globalThis.AetheriaDwarfProfession;
+assert.ok(Dwarf,'browser-compatible profession module must expose its API to Node smoke tests');
 assert.equal(Dwarf.MATERIALS.length,5);
 assert.equal(Dwarf.RECIPES.length,4);
 assert.deepEqual(Dwarf.normalizeMaterials({iron_ore:'8',rough_hide:-2,unknown:999}),{
@@ -35,3 +38,4 @@ assert.deepEqual(crafted.materials,{iron_ore:2,rough_hide:1,hardwood:1,monster_e
 assert.equal(crafted.gold,40);
 assert.equal(Dwarf.craft('not-a-recipe',{},100).reason,'receita_inexistente');
 console.log('Dwarven profession: spoil, sweep, materials and crafting passed.');
+})().catch(error=>{console.error(error);process.exitCode=1});
