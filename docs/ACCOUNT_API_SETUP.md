@@ -1,40 +1,41 @@
-# Aetheria RPG — account API setup
+# Aetheria RPG — conta, API e persistência local
 
-The game keeps its offline browser save and now also includes an in-game **Conta / Nuvem** panel. Cloud accounts are an optional extra; they do not disable local saves.
+O jogo mantém o save offline do navegador. A conta em nuvem é opcional e não desativa o save local.
 
-## Database
+## Preparar o PostgreSQL
 
-1. Create a PostgreSQL database (Neon is supported).
-2. Run the complete `database/schema.sql` migration in its SQL console.
-3. Configure `DATABASE_URL` and `JWT_SECRET` in the hosting environment. Generate the secret with:
-   ```sh
-   openssl rand -base64 48
-   ```
-   Use at least 32 random bytes and a different secret per environment.
+1. Crie um banco PostgreSQL compatível com o driver `@neondatabase/serverless`.
+2. Em um banco novo, execute `database/schema.sql`. Esse arquivo cria as tabelas e aplica a política RLS atual.
+3. Em um banco que já recebeu o schema anterior, execute `database/migrations/001_character_rls.sql`. Consulte `database/migrations/README.md` para a ordem das migrações.
 
-## Deploying the API with the Node server
+A tabela `aetheria_characters` usa Row-Level Security com `ENABLE` e `FORCE`. Cada consulta autenticada de personagens roda em uma transação que define o contexto `app.user_id`; a política permite ler ou alterar somente linhas cujo `user_id` corresponda ao usuário autenticado. A tabela de contas permanece acessível apenas pelo código da API; o navegador nunca recebe credenciais SQL.
 
-The repository includes a Node HTTP server that serves the game and routes `/api/*` requests to the same account handlers.
+Use uma role de banco sem privilégios de superusuário e sem `BYPASSRLS`. Não conceda `DATABASE_URL` ao cliente.
 
-For a Render **Web Service**:
-- Runtime: Node
-- Build command: `npm install`
-- Start command: `npm start`
-- Environment variables: `DATABASE_URL`, `JWT_SECRET`
+## Executar localmente
 
-A Render **Static Site** cannot execute these API handlers. If the existing Render service is a Static Site, it must remain the frontend while the API is deployed as a Node Web Service or on Vercel. Do not expect `/api` to work on a static-only host.
+No terminal local, configure as variáveis apenas no ambiente da sessão:
 
-## API endpoints
+```sh
+export DATABASE_URL='sua-connection-string-postgresql'
+export JWT_SECRET="$(openssl rand -base64 48)"
+npm install
+npm start
+```
 
-- `POST /api/auth/register` — JSON `{ "email": "...", "password": "at least 10 characters" }`
-- `POST /api/auth/login` — returns a 12-hour bearer token.
-- `GET /api/characters` — authenticated character list.
-- `PUT /api/characters` — creates/updates a character in slots 0–5.
+O servidor Node inicia em `http://localhost:3000`. O segredo JWT deve ter pelo menos 32 bytes; não o coloque no Git.
 
-Passwords use scrypt hashes; SQL values are parameterized; the API validates race, class, level, position, vitals and save size.
+## Endpoints
 
-## In-game usage
+- `POST /api/auth/register` — JSON `{ "email": "...", "password": "mínimo de 10 caracteres" }`.
+- `POST /api/auth/login` — retorna token bearer com validade de 12 horas.
+- `GET /api/characters` — lista somente os personagens do usuário autenticado.
+- `PUT /api/characters` — cria/atualiza um personagem nos slots 0–5.
 
-Open **☁️ Conta / Nuvem** from the start screen, create an account or log in, then choose **Salvar na nuvem**. **Restaurar selecionado** replaces the current local save with the selected cloud save after confirmation. The local save remains available when offline.
+As senhas são armazenadas com hash scrypt. Os valores SQL são parametrizados. A API valida nome, raça, classe, nível, posição, vitais e tamanho do save. A classe `crafter` é exclusiva da raça `dwarf`.
 
-The API returns HTTP 503 until the database migration and environment variables are configured. No credentials or database secrets are stored in the repository.
+## Uso no jogo
+
+Na tela inicial, abra **☁️ Conta / Nuvem**, registre-se ou entre e escolha **Salvar na nuvem**. **Restaurar selecionado** substitui o save local atual somente após confirmação. O save local continua disponível offline.
+
+A API retorna HTTP 503 até que `DATABASE_URL`, `JWT_SECRET` e o schema/migration necessários estejam configurados. Nenhuma credencial ou segredo de banco fica versionado no projeto.
