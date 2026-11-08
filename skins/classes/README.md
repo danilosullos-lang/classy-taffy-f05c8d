@@ -6,3 +6,7 @@ Pinned upstream revision: 672074b73ba276876a19e8816ecdc5241817ab47
 License: CC0 1.0; see KAYKIT-LICENSE.txt.
 
 The selected class model is mounted on the playable hero. Skeletal clips are used when present; compatible rigs without clips receive procedural locomotion, and unrigged models safely fall back to Lyra.
+
+## Dwarf artisan
+
+The `crafter` job currently reuses `Barbarian.glb`, an existing KayKit CC0 humanoid rig, together with the repository's CC0 hammer and axe models. This is a real imported character model, not a placeholder, but it is not a dwarf-specific body. A dedicated dwarf GLB/rig is not present in the current asset set and is intentionally not fabricated from primitive geometry. The Spoil, Sweep and crafting gameplay is implemented independently in `assets/classes/dwarf-profession.js`.
