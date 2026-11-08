@@ -16,8 +16,10 @@ if (!gameSource.includes('assets/engine/nav-grid.js') || !gameSource.includes('r
 }
 if (!gameSource.includes('assets/monsters/ai-state.js') || !gameSource.includes('monsterAI.update(e') ||
     !gameSource.includes("e.homeD=spawnD;e.homeZ=spawnZ;e.aiMode='idle'") ||
-    !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)')) {
-  throw new Error('Monster aggro/leash/return AI is not integrated into the existing Three.js enemy loop.');
+    !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)') ||
+    !gameSource.includes('function fldMonsterNavBlocked') || !gameSource.includes('fldAI.update(e') ||
+    !gameSource.includes('rpgMonsterFacingYaw(fldFacingD,fldFacingZ)')) {
+  throw new Error('Monster aggro/leash/return AI is not integrated into both existing Three.js world loops.');
 }
 if (gameSource.includes('Math.atan2(-dd,-dz)')) {
   throw new Error('Ainda existe cálculo invertido da direção dos monstros.');
