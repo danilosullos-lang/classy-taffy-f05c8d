@@ -106,6 +106,7 @@ jobs:
           node --check assets/engine/aetheria-engine.js
           node --check assets/engine/account-client.js
           node --check assets/engine/account-ui.js
+          node --check assets/classes/dwarf-profession.js
           node --check server.js
           node tests/engine-foundation.cjs
           node tests/account-client.cjs
@@ -113,6 +114,8 @@ jobs:
           node tests/character-validation.mjs
       - name: Test imported combat engine
         run: node tests/combat-core.cjs
+      - name: Test dwarf profession
+        run: node tests/dwarf-profession.cjs
       - name: Test monster progression
         run: |
           node --check assets/monsters/progression.js
