@@ -1,9 +1,10 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const gameSource = fs.readFileSync('index.html', 'utf8');
-if ((gameSource.match(/e\.m\.rotation\.y=rpgMonsterFacingYaw\(dd,dz\)/g) || []).length !== 1 ||
-    !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)')) {
-  throw new Error('A correção de direção precisa cobrir perseguição e retorno no mundo normal e no Mundo Aberto.');
+if (gameSource.includes('e.m.rotation.y=rpgMonsterFacingYaw(dd,dz)') ||
+    !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)') ||
+    !gameSource.includes('rpgMonsterFacingYaw(fldFacingD,fldFacingZ)')) {
+  throw new Error('A correção de direção precisa cobrir perseguição e retorno nos dois mundos.');
 }
 if (!gameSource.includes('assets/classes/skill-catalog.js') || !gameSource.includes('const INTERLUDE_SKILL_SETS=window.AetheriaSkillCatalog;')) {
   throw new Error('O catálogo modular de habilidades não está integrado ao cliente Three.js.');
