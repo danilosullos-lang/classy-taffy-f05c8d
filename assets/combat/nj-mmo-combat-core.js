@@ -89,6 +89,31 @@
     target.hp=Math.max(0,target.hp-result.damage);
     return {ok:true,...result,killed:target.hp<=0};
   }
+  function resolveMonsterAttack(params){
+    const {attacker,target,state,nowMs,range=2,peaceZone=false}=params||{};
+    if(!attacker||!target||!state||!Number.isFinite(Number(nowMs))||
+       !Number.isFinite(Number(attacker.x))||!Number.isFinite(Number(attacker.z))||
+       !Number.isFinite(Number(target.x))||!Number.isFinite(Number(target.z))){
+      return {ok:false,damage:0,reason:'invalid_state'};
+    }
+    if(attacker.dead||attacker.alive===false||target.alive===false||
+       !Number.isFinite(Number(target.hp))||Number(target.hp)<=0||peaceZone){
+      return {ok:false,damage:0,reason:'not_attackable'};
+    }
+    if(!isInMeleeRange(Number(attacker.x),Number(attacker.z),Number(target.x),Number(target.z),Math.max(0,Number(range)||0))){
+      return {ok:false,damage:0,reason:'out_of_range'};
+    }
+    if(Number(nowMs)<(Number(state.nextAttackAtMs)||0)){
+      return {ok:false,damage:0,reason:'cooldown'};
+    }
+    const rawDamage=Number(attacker.damage??attacker.pAtk??1);
+    if(!Number.isFinite(rawDamage)||rawDamage<=0)return {ok:false,damage:0,reason:'invalid_damage'};
+    const interval=Number.isFinite(Number(attacker.attackIntervalMs))
+      ?clamp(Number(attacker.attackIntervalMs),MIN_ATTACK_INTERVAL_MS,60000)
+      :calculateAttackIntervalMs(attacker.attackSpeed||385);
+    state.nextAttackAtMs=Number(nowMs)+interval;
+    return {ok:true,damage:Math.max(1,rawDamage),critical:false,reason:null,nextAttackAtMs:state.nextAttackAtMs};
+  }
   function canAttackPlayer(attacker,target,peaceZone){
     if(peaceZone||!target||target.alive===false)return false;
     if(target.pvpFlag===1)return true;
@@ -106,6 +131,6 @@
     isInMeleeRange,createCombatState,getSkillCooldownEnd,canUseSkill,
     beginSkillCast,cancelSkillCast,applyDamageToCastingPlayer,
     applyTimedEffect,tickTimedEffects,resolveDamage,resolvePlayerAttack,
-    canAttackPlayer,resolvePlayerVsPlayerAttack
+    resolveMonsterAttack,canAttackPlayer,resolvePlayerVsPlayerAttack
   });
 })(typeof window!=='undefined'?window:globalThis);

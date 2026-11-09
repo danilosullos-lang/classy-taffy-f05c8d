@@ -2990,10 +2990,23 @@ function spawnEn(t,d,z,tier){
   const e=Object.assign({t,mx:scaled.hp,m,bar,d:spawnD,z:spawnZ,level,elite:kind==='elite',
     cd:1,ph:0,tm:rnd(2,4)},ET[t]);
   e.homeD=spawnD;e.homeZ=spawnZ;e.aiMode='idle';e.aiLastSeenAt=0;
+  const combatCore=window.AetheriaCombatCore;
+  if(combatCore){e.combatState=combatCore.createCombatState();e.combatState.nextAttackAtMs=performance.now()+Math.max(0,Number(e.cd)||0)*1000;}
   e.hp=e.mx=scaled.hp;e.dm=scaled.dm;e.xp=scaled.xp;
   if(e.elite){e.hp=e.mx=Math.round(e.hp*5);e.dm=Math.round(e.dm*1.5);e.xp=Math.round(e.xp*6);bar.material.color.setHex(0xffd24a);m.scale.setScalar(1.12)}
   e.nameTag=makeMonsterNameTag(e);
   m.traverse(o=>{o.castShadow=true;if(o.isMesh)o.frustumCulled=false});m.visible=true;bar.visible=true;e.nameTag.visible=true;S.add(m,bar,e.nameTag);EN.push(e);attachMonsterAsset(e);
+}
+function rpgMonsterResolveAttack(e,now,range){
+  const core=window.AetheriaCombatCore;
+  if(!core||!e||e.dead||!st||!(st.hp>0))return null;
+  const state=e.combatState||(e.combatState=core.createCombatState());
+  const result=core.resolveMonsterAttack({
+    attacker:{x:e.d,z:e.z,damage:e.dm,attackIntervalMs:e.attackIntervalMs||1300},
+    target:{x:st.d,z:st.z,hp:st.hp,alive:st.hp>0},
+    state,nowMs:now,range,peaceZone:false
+  });
+  return result.ok?result:null;
 }
 function dmgEn0(e,d,q){
   if(e.dead)return;if(!q)ftext(e.m.position.x,e.m.position.y+e.hh,e.m.position.z,Math.round(d),'#fff');
@@ -7314,7 +7327,7 @@ function enemies(dt,now){
         else{e._navAt=0;e._navPath=null;e._navDirect=false;monsterMoving=false;}
       }else monsterMoving=false;
     }
-    e.cd-=dt;if(e.stun>0)e.stun-=dt;if(e.burn>0){e.burn-=dt;dmgEn(e,e.bd*dt,true)}
+    if(e.stun>0)e.stun-=dt;if(e.burn>0){e.burn-=dt;dmgEn(e,e.bd*dt,true)}
     if(e.slam){
       e.tm-=dt;const rg=e.m.userData.ring;
       if(e.ph===0&&e.tm<=0&&dist<13&&canEngage){e.ph=1;e.tm=1.2;rg.visible=true;e._attackAnimUntil=now+850;if(e.m.userData.monsterActions)setMonsterAnimation(e,'attack')}
@@ -7322,7 +7335,10 @@ function enemies(dt,now){
         rg.material.opacity=.45+.4*Math.sin(now/60);
         if(e.tm<=0){e.ph=0;e.tm=rnd(3,5);rg.visible=false;rip.userData.t=1;if(dist<8.5&&canEngage){if(st.y<.5){sfx('monsterAttack',dist,e);hit(e.dm)}else say('Esquivou! ✨')}}
       }
-    }else if(e.stun<=0&&dist<e.r&&e.cd<=0&&st.y<.6&&canEngage){e._attackAnimUntil=now+650;if(e.m.userData.monsterActions)setMonsterAnimation(e,'attack');sfx('monsterAttack',dist,e);hit(e.dm);const th=abSum('thorns');if(th)dmgEn(e,e.dm*th/100,true);e.cd=1.3}
+    }else if(e.stun<=0&&dist<e.r&&st.y<.6&&canEngage){
+      const attack=rpgMonsterResolveAttack(e,now,Math.max(0,e.r-.001));
+      if(attack){e._attackAnimUntil=now+650;if(e.m.userData.monsterActions)setMonsterAnimation(e,'attack');sfx('monsterAttack',dist,e);hit(attack.damage);const th=abSum('thorns');if(th)dmgEn(e,attack.damage*th/100,true)}
+    }
     const gy=e.land?gnd(e.d,e.z)+.1:0;
     e.m.position.set(cx(e.z)+e.d,gy+(e.fly?2.2:0)+Math.sin(now/300+i)*.08,e.z);
     const facingD=aiState&&aiState.mode==='return'?goal.x-e.d:dd;
@@ -8668,13 +8684,16 @@ function fldEnemies(dt,now){
       }
     }else if(dist<32&&!(e.slam&&e.ph===1)){e.z+=dz/dist*spd;e.d+=dd/dist*spd}
     else if(!(e.slam&&e.ph===1)){e.wt-=dt;if(e.wt<=0){e.wt=rnd(2,4);e.wa=Math.random()*6.28}e.d+=Math.cos(e.wa)*spd*.4;e.z+=Math.sin(e.wa)*spd*.4}
-    e.cd-=dt;if(e.stun>0)e.stun-=dt;if(e.burn>0){e.burn-=dt;dmgEn(e,e.bd*dt,true)}
+    if(e.stun>0)e.stun-=dt;if(e.burn>0){e.burn-=dt;dmgEn(e,e.bd*dt,true)}
     if(e.slam){
       e.tm-=dt;const rg=e.m.userData.ring;
       if(e.ph===0&&e.tm<=0&&dist<13&&canEngage){e.ph=1;e.tm=1.2;if(rg)rg.visible=true}
       else if(e.ph===1){if(rg)rg.material.opacity=.45+.4*Math.sin(now/60);
         if(e.tm<=0){e.ph=0;e.tm=rnd(3,5);if(rg)rg.visible=false;rip.userData.t=1;if(dist<8.5&&canEngage&&st.y<.5)hit(e.dm)}}
-    }else if(dist<e.r+.8&&e.cd<=0&&st.y<.6&&canEngage){hit(e.dm);const th=abSum('thorns');if(th)dmgEn(e,e.dm*th/100,true);e.cd=1.3}
+    }else if(e.stun<=0&&dist<e.r+.8&&st.y<.6&&canEngage){
+      const attack=rpgMonsterResolveAttack(e,now,Math.max(0,e.r+.799));
+      if(attack){e._attackAnimUntil=now+650;if(e.m.userData.monsterActions)setMonsterAnimation(e,'attack');sfx('monsterAttack',dist,e);hit(attack.damage);const th=abSum('thorns');if(th)dmgEn(e,attack.damage*th/100,true)}
+    }
     const br=Math.max(.6,Math.min(2.2,e.r*.45));{const q=fldColAt(e.d,e.z,br,0);e.d=q[0];e.z=q[1]}
     if(!e.fly&&st.y<1.6){const ddx=FLD.x-e.d,ddz=FLD.z-e.z,dd2=Math.hypot(ddx,ddz),mn=br+.55;if(dd2<mn&&dd2>1e-4){const ps=mn-dd2;FLD.x+=ddx/dd2*ps*.6;FLD.z+=ddz/dd2*ps*.6;e.d-=ddx/dd2*ps*.4;e.z-=ddz/dd2*ps*.4}}
     const gy=Math.max(fieldH(e.d,e.z),FWL-.2)+.1+(e.fly?2.4:0);

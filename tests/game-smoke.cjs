@@ -15,6 +15,9 @@ if (!gameSource.includes('assets/classes/dwarf-profession.js') || !gameSource.in
 if (!gameSource.includes('assets/engine/nav-grid.js') || !gameSource.includes('rpgMonsterNavBlocked') || !gameSource.includes('nav.findPath')) {
   throw new Error('A* navigation is not connected to land-monster movement.');
 }
+if (!gameSource.includes('function rpgMonsterResolveAttack') || !gameSource.includes('rpgMonsterResolveAttack(e,now,Math.max(0,e.r-.001))') || !gameSource.includes('rpgMonsterResolveAttack(e,now,Math.max(0,e.r+.799))')) {
+  throw new Error('Monster melee cooldown/damage core is not connected to both existing world loops.');
+}
 if (!gameSource.includes('assets/monsters/ai-state.js') || !gameSource.includes('monsterAI.update(e') ||
     !gameSource.includes("e.homeD=spawnD;e.homeZ=spawnZ;e.aiMode='idle'") ||
     !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)') ||
@@ -99,6 +102,20 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if(monsterAiAudit.idle!=='idle'||monsterAiAudit.chase!=='chase'||monsterAiAudit.attack!=='attack'||
       monsterAiAudit.lost!=='return'||monsterAiAudit.returnTarget.x!==0||monsterAiAudit.returnTarget.z!==0){
       throw new Error('Máquina de estados de aggro/leash não passou no navegador: '+JSON.stringify(monsterAiAudit));
+    }
+    const monsterCombatAudit=await page.evaluate(()=>{
+      const core=window.AetheriaCombatCore,state=core.createCombatState();
+      const attacker={x:0,z:0,damage:14,attackIntervalMs:1300};
+      const target={x:3,z:4,hp:100,alive:true};
+      const first=core.resolveMonsterAttack({attacker,target,state,nowMs:1000,range:5});
+      const blocked=core.resolveMonsterAttack({attacker,target,state,nowMs:2299,range:5});
+      const outside=core.resolveMonsterAttack({attacker,target,state,nowMs:2300,range:4.9});
+      const second=core.resolveMonsterAttack({attacker,target,state,nowMs:2300,range:5});
+      return {first:first.ok,damage:first.damage,next:first.nextAttackAtMs,cooldown:blocked.reason,outside:outside.reason,second:second.ok};
+    });
+    if(!monsterCombatAudit.first||monsterCombatAudit.damage!==14||monsterCombatAudit.next!==2300||
+      monsterCombatAudit.cooldown!=='cooldown'||monsterCombatAudit.outside!=='out_of_range'||!monsterCombatAudit.second){
+      throw new Error('Monster combat core audit failed: '+JSON.stringify(monsterCombatAudit));
     }
     const bossLevelAudit=await page.evaluate(()=>({first:bossAt(0).lv,late:bossAt(100).lv}));
     if(bossLevelAudit.first<1||bossLevelAudit.late!==80)throw new Error('Níveis dos chefes não respeitam o teto 80: '+JSON.stringify(bossLevelAudit));
