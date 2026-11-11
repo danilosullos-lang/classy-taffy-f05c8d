@@ -119,11 +119,20 @@
     if(target.pvpFlag===1)return true;
     return (attacker?.karma||0)<0;
   }
-  function resolvePlayerVsPlayerAttack(params){
-    const allowed=canAttackPlayer(params.attacker,params.target,params.peaceZone);
-    if(!allowed)return {allowed:false,damage:0};
-    const damage=calcMeleeDamage({pAtk:params.attacker.pAtk,randomDamage:params.attacker.randomDamage||0},{pDef:params.target.pDef},{rng:params.rng});
-    return {allowed:true,damage};
+  function resolvePlayerVsPlayerAttack(params={}){
+    const attacker=params.attacker,target=params.target;
+    if(!attacker||!target)return {allowed:false,damage:0,reason:'invalid_target'};
+    if(params.rangeOk===false)return {allowed:false,damage:0,reason:'out_of_range'};
+    if(target.alive===false||(target.hp!=null&&(!Number.isFinite(Number(target.hp))||Number(target.hp)<=0)))
+      return {allowed:false,damage:0,reason:'target_unavailable'};
+    if(params.peaceZone)return {allowed:false,damage:0,reason:'peace_zone'};
+    if(!canAttackPlayer(attacker,target,false))return {allowed:false,damage:0,reason:'not_allowed'};
+    const pAtk=Number(attacker.pAtk),pDef=Number(target.pDef);
+    if(!Number.isFinite(pAtk)||pAtk<=0||!Number.isFinite(pDef)||pDef<=0)
+      return {allowed:false,damage:0,reason:'invalid_stats'};
+    const damage=calcMeleeDamage({pAtk,randomDamage:Math.max(0,Number(attacker.randomDamage)||0)},{pDef},{rng:params.rng});
+    if(!Number.isFinite(damage)||damage<=0)return {allowed:false,damage:0,reason:'invalid_damage'};
+    return {allowed:true,damage,reason:null};
   }
   root.AetheriaCombatCore=Object.freeze({
     createSeededRng,calcMeleeDamage,calcPhysicalSkillDamage,calcMagicSkillDamage,
