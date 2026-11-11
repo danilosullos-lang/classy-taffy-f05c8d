@@ -37,6 +37,8 @@ assert.equal(P.validateHit(outOfRange,{...context,nowMs:10400,distance:9},state)
 assert.equal(P.validateHit(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:4,damage:20,range:34,nowMs:10400}),{...context,nowMs:10400,receiverInZone:false},state).reason,'outside_pvp');
 assert.equal(P.validateHit(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:4,damage:20,range:34,nowMs:10400}),{...context,nowMs:10400,sender:{...sender,lv:19}},state).reason,'invalid_sender');
 assert.equal(P.validateHit(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:4,damage:20,range:34,nowMs:10400}),{...context,nowMs:10400,sender:{...sender,pvp:0}},state).reason,'invalid_sender');
+assert.equal(P.validateHit(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:4,damage:20,range:34,nowMs:10400}),{...context,nowMs:10400,sender:{mode:'river',pvp:1,z:120,d:8,hp:100}},state).reason,'invalid_sender');
+assert.equal(P.validateHit(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:4,damage:20,range:34,nowMs:10400}),{...context,nowMs:10400,sender:{...sender,hp:NaN}},state).reason,'invalid_sender');
 
 const newSession=P.createHitPacket({to:'peer-b',sessionId:'session-b',seq:1,damage:20,range:34,nowMs:10400});
 assert.equal(P.validateHit(newSession,{...context,nowMs:10400},state).ok,true,'new sender session may restart sequence');
