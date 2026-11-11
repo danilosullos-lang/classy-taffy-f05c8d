@@ -30,6 +30,19 @@ assert.equal(C.tickTimedEffects(target,4100).length,1);
 assert.equal(C.canAttackPlayer({pvpFlag:0,karma:0},{pvpFlag:0,karma:0,alive:true},false),false);
 assert.equal(C.canAttackPlayer({pvpFlag:0,karma:0},{pvpFlag:1,karma:0,alive:true},false),true);
 assert.equal(C.canAttackPlayer({pvpFlag:0,karma:0},{pvpFlag:1,karma:0,alive:true},true),false);
+const pvpResolved=C.resolvePlayerVsPlayerAttack({
+  attacker:{pAtk:35,randomDamage:0,pvpFlag:1,karma:0},
+  target:{pDef:77,pvpFlag:1,alive:true,hp:100},
+  peaceZone:false
+});
+assert.equal(pvpResolved.allowed,true);
+assert.equal(pvpResolved.damage,35);
+assert.equal(C.resolvePlayerVsPlayerAttack({attacker:{pAtk:35},target:{pDef:77,pvpFlag:1,alive:true},rangeOk:false}).reason,'out_of_range');
+assert.equal(C.resolvePlayerVsPlayerAttack({attacker:{pAtk:35},target:{pDef:77,pvpFlag:1,alive:false}}).reason,'target_unavailable');
+assert.equal(C.resolvePlayerVsPlayerAttack({attacker:{pAtk:35},target:{pDef:77,pvpFlag:1,alive:true},peaceZone:true}).reason,'peace_zone');
+assert.equal(C.resolvePlayerVsPlayerAttack({attacker:{pAtk:35},target:{pDef:77,pvpFlag:0,alive:true},peaceZone:false}).reason,'not_allowed');
+assert.equal(C.resolvePlayerVsPlayerAttack({attacker:{pAtk:0},target:{pDef:77,pvpFlag:1,alive:true}}).reason,'invalid_stats');
+assert.equal(C.resolvePlayerVsPlayerAttack({target:{pDef:77,pvpFlag:1,alive:true}}).reason,'invalid_target');
 const monsterState=C.createCombatState();
 const monster={x:0,z:0,damage:14,attackIntervalMs:1300};
 const player={x:3,z:4,hp:100,alive:true};
