@@ -61,8 +61,9 @@
 
     const sender=context.sender;
     if(!sender||sender.mode!=='river'||Number(sender.pvp)!==1||
-       Number(sender.lv)<minLevel||!Number.isFinite(Number(sender.z))||
-       !Number.isFinite(Number(sender.d))||Number(sender.hp)<=0)return reject('invalid_sender');
+       !Number.isFinite(Number(sender.lv))||Number(sender.lv)<minLevel||
+       !Number.isFinite(Number(sender.z))||!Number.isFinite(Number(sender.d))||
+       !Number.isFinite(Number(sender.hp))||Number(sender.hp)<=0)return reject('invalid_sender');
     if(context.receiverInZone!==true)return reject('outside_pvp');
     const distance=Number(context.distance);
     const range=Number(packet.r);
