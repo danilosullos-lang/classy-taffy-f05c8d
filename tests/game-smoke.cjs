@@ -15,6 +15,13 @@ if (!gameSource.includes('assets/classes/dwarf-profession.js') || !gameSource.in
 if (!gameSource.includes('assets/engine/nav-grid.js') || !gameSource.includes('rpgMonsterNavBlocked') || !gameSource.includes('nav.findPath')) {
   throw new Error('A* navigation is not connected to land-monster movement.');
 }
+if (!gameSource.includes('assets/combat/pvp-protocol.js') ||
+    !gameSource.includes('AetheriaPvpProtocol.createHitPacket') ||
+    !gameSource.includes('protocol.validateHit') ||
+    !gameSource.includes('core.resolvePlayerVsPlayerAttack') ||
+    !gameSource.includes('cooldownMs:250')) {
+  throw new Error('PvP peer messages are not protected by packet, replay, range and combat-core validation.');
+}
 if (!gameSource.includes('function rpgMonsterResolveAttack') || !gameSource.includes('rpgMonsterResolveAttack(e,now,Math.max(0,e.r-.001))') || !gameSource.includes('rpgMonsterResolveAttack(e,now,Math.max(0,e.r+.799))')) {
   throw new Error('Monster melee cooldown/damage core is not connected to both existing world loops.');
 }
@@ -68,6 +75,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       skeletonUtils: !!(window.THREE && THREE.SkeletonUtils),
       postprocessing: !!(window.THREE && THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass),
       combatCore: !!window.AetheriaCombatCore,
+      pvpProtocol: !!window.AetheriaPvpProtocol,
       dwarfProfession: !!window.AetheriaDwarfProfession,
       skillCatalog: !!window.AetheriaSkillCatalog,
       navGrid: !!window.AetheriaNavGrid,
@@ -75,7 +83,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
       vfxAssets: !!window.__rpgVfxAssetsDebug
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     const monsterFacingAudit=await page.evaluate(()=>{
@@ -116,6 +124,18 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if(!monsterCombatAudit.first||monsterCombatAudit.damage!==14||monsterCombatAudit.next!==2300||
       monsterCombatAudit.cooldown!=='cooldown'||monsterCombatAudit.outside!=='out_of_range'||!monsterCombatAudit.second){
       throw new Error('Monster combat core audit failed: '+JSON.stringify(monsterCombatAudit));
+    }
+    const pvpProtocolAudit=await page.evaluate(()=>{
+      const protocol=window.AetheriaPvpProtocol,state={};
+      const sender={mode:'river',pvp:1,lv:25,hp:100,z:120,d:8};
+      const context={senderId:'browser-peer-a',recipientId:'browser-peer-b',sender,receiverInZone:true,distance:12,nowMs:10000,maxDamage:90};
+      const packet=protocol.createHitPacket({to:'browser-peer-b',sessionId:'browser-smoke-session',seq:1,damage:100,range:34,nowMs:10000});
+      const accepted=protocol.validateHit(packet,context,state);
+      const replay=protocol.validateHit(packet,{...context,nowMs:10300},state);
+      return {loaded:!!protocol,accepted:accepted.ok,damage:accepted.damage,replay:replay.reason};
+    });
+    if(!pvpProtocolAudit.loaded||!pvpProtocolAudit.accepted||pvpProtocolAudit.damage!==35||pvpProtocolAudit.replay!=='replay'){
+      throw new Error('PvP browser protocol audit failed: '+JSON.stringify(pvpProtocolAudit));
     }
     const bossLevelAudit=await page.evaluate(()=>({first:bossAt(0).lv,late:bossAt(100).lv}));
     if(bossLevelAudit.first<1||bossLevelAudit.late!==80)throw new Error('Níveis dos chefes não respeitam o teto 80: '+JSON.stringify(bossLevelAudit));
