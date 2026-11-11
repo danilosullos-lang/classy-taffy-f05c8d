@@ -480,6 +480,7 @@ ${Oe}`;q.test(K)&&(N(H),H=setTimeout(V,Ps))},pe=()=>{k.iceGatheringState==="comp
 <script src="assets/monsters/progression.js"></script>
 <script src="assets/monsters/ai-state.js"></script>
 <script src="assets/combat/nj-mmo-combat-core.js"></script>
+<script src="assets/combat/pvp-protocol.js"></script>
 <script src="assets/engine/aetheria-engine.js"></script>
 <script src="assets/engine/account-client.js"></script>
 <script>
@@ -3271,7 +3272,7 @@ function lineageSkill(k,fromCast=false){
    const playerTarget=getSelectedPvPTarget(34);
    if(playerTarget){
      const pvpScale={q:1,e:1.55,c:.82,h:1.25,v:2.05}[k]||1;
-     sendPvp(playerTarget.id,Math.round(base*pvpScale));
+     sendPvp(playerTarget.id,Math.round(base*pvpScale),34);
      PV.last={id:playerTarget.id,t:Date.now()};
      message+=' · PvP: '+playerTarget.name;
    }
@@ -7495,7 +7496,7 @@ setInterval(()=>{if(!V.on||!room||!room.pc||!st)return;const pc=room.pc(),me=myI
   near.forEach(o=>{if(!V.calls[o.id]&&me<o.id){try{vAttach(o.id,pc.call(o.id,V.stream))}catch(e){}}const a=V.audio[o.id];if(a)a.volume=Math.max(0,Math.min(1,1-o.d/VR))})},1500);
 
 /* ===== PVP ===== */
-const PV={last:null,hit:{},cd:{},msg:0,in:false,target:null};
+const PV={last:null,hit:{},cd:{},msg:0,in:false,target:null,seq:{},rx:{},session:(()=>{try{const a=new Uint32Array(4);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(16)).join('')}catch(_){return Date.now().toString(36)+Math.random().toString(36).slice(2)}})()};
 function inPvp(){return !!(st&&st.run&&sv.lv>=PVP_LV&&Math.abs(st.d)>=PVP_D)}
 function cpMax(){return Math.max(1,Math.round(hpMax()*.30))}
 if(!Number.isFinite(+sv.cp))sv.cp=cpMax();sv.cp=Math.max(0,Math.min(cpMax(),+sv.cp||0));
@@ -7513,10 +7514,39 @@ function updatePvPTargetPanel(){
  list.slice(0,4).forEach(p=>{const b=document.createElement('button');b.type='button';b.textContent=(PV.target===p.id?'▶ ':'')+p.name+' Nv.'+p.level+' · CP '+Math.round(p.cp)+'% · HP '+Math.round(p.hp)+'%';b.style.cssText='display:block;width:100%;margin:3px 0;padding:7px 6px;border:1px solid '+(PV.target===p.id?'#c18cff':'#ffffff30')+';border-radius:8px;background:'+(PV.target===p.id?'rgba(150,95,220,.42)':'rgba(255,255,255,.08)')+';color:#fff;text-align:left;font:700 11px system-ui';b.onclick=()=>{PV.target=p.id;updatePvPTargetPanel()};_pvpTargetPanel.appendChild(b)})
 }
 function playLineageCombatAnimation(role,k){try{if(!frog||!frog.userData)return;const clips=typeof _externalFrogClips!=='undefined'?_externalFrogClips:null;if(!clips)return;let clip=null;if(role==='archer')clip=clips.shoot||null;else if(role==='mage'||role==='healer'||role==='support')clip=clips.cast||null;else{clip=clips.slash||clips.melee||null;if(!clip&&clips.attack&&!/bow|shoot|arrow|spell|cast|magic/i.test(String(clips.attack.name||'')))clip=clips.attack}if(clip)frog.userData._animOverride={clip,until:performance.now()+Math.min(1250,Math.max(320,(clip.duration||.7)*1000)),loop:false}}catch(_){}}
-function sendPvp(id,d){if(!room||!id)return;PV.hit[id]=Date.now();PK.out[id]=Date.now();room.emit('pvp',{to:id,d:Math.round(d)}).catch(()=>{})}
-function pvpAoE(r,d){if(room)room.peers().forEach(p=>{const q=p.presence;if(p.isMe||!q||q.mode!=='river'||!q.pvp)return;if(Math.hypot(q.z-st.z,q.d-st.d)<r)sendPvp(p.peer,d)})}
+function sendPvp(id,d,range=40){
+  if(!room||!id||!window.AetheriaPvpProtocol)return;
+  const target=String(id).slice(0,128),now=Date.now(),seq=(PV.seq[target]||0)+1;
+  const packet=window.AetheriaPvpProtocol.createHitPacket({to:target,sessionId:PV.session,seq,damage:d,range,nowMs:now});
+  if(!packet)return;
+  PV.seq[target]=seq;PV.hit[target]=now;PK.out[target]=now;
+  room.emit('pvp',packet).catch(()=>{});
+}
+function pvpAoE(r,d){if(room)room.peers().forEach(p=>{const q=p.presence;if(p.isMe||!q||q.mode!=='river'||!q.pvp)return;if(Math.hypot(q.z-st.z,q.d-st.d)<r)sendPvp(p.peer,d,r)})}
 const rw5=setInterval(()=>{if(room){clearInterval(rw5);try{
-  room.on('pvp',m=>{const d=m.data||{};if(m.isMe||d.to!==myId()||!inPvp())return;const a=room.peers().find(p=>p.peer===m.peer),ap=a&&a.presence;if(!ap||ap.mode!=='river'||!ap.pvp||(+ap.lv||0)<PVP_LV||!Number.isFinite(+ap.z)||!Number.isFinite(+ap.d)||Math.hypot(ap.z-st.z,ap.d-st.d)>40)return;PV.last={id:m.peer,t:Date.now()};PK.in[m.peer]=Date.now();applyPvpDamage(Math.max(1,Math.round(Math.min((+d.d||0)*.35,hpMax()*.12))))});
+  room.on('pvp',m=>{
+    const d=m.data||{};
+    if(m.isMe||d.to!==myId()||!inPvp())return;
+    const a=room.peers().find(p=>p.peer===m.peer),ap=a&&a.presence;
+    if(!ap||ap.mode!=='river'||!Number.isFinite(Number(ap.z))||!Number.isFinite(Number(ap.d)))return;
+    const core=window.AetheriaCombatCore,protocol=window.AetheriaPvpProtocol;
+    if(!core||!protocol)return;
+    const distance=Math.hypot(Number(ap.z)-st.z,Number(ap.d)-st.d),now=Date.now();
+    const state=PV.rx[m.peer]||(PV.rx[m.peer]={});
+    const checked=protocol.validateHit(d,{
+      senderId:m.peer,recipientId:myId(),sender:ap,receiverInZone:inPvp(),
+      distance,nowMs:now,maxDamage:Math.max(1,Math.round(hpMax()*.12))
+    },state,{ttlMs:5000,cooldownMs:250,minLevel:PVP_LV,maxDistance:40,damageScale:.35});
+    if(!checked.ok)return;
+    const resolved=core.resolvePlayerVsPlayerAttack({
+      attacker:{pAtk:checked.damage,randomDamage:0,pvpFlag:1,karma:0},
+      target:{pDef:77,pvpFlag:1,alive:st.hp>0,hp:st.hp},
+      peaceZone:false,rangeOk:true
+    });
+    if(!resolved.allowed)return;
+    PV.last={id:m.peer,t:now};PK.in[m.peer]=now;
+    applyPvpDamage(Math.min(checked.damage,resolved.damage));
+  });
   room.on('pvploot',m=>{const d=m.data||{},it=d.item;if(m.isMe||d.to!==myId()||!it||!RAR[it.r]||!SL[it.s]||!it.st||typeof it.st!=='object')return;if(!PV.hit[m.peer]||Date.now()-PV.hit[m.peer]>15000)return;delete PV.hit[m.peer];it.u=uid++;it.p=+it.p||0;
     if(inv.length>=sv.cap){sv.gold+=price(it);say('Bolsa cheia! Item vendido');return}inv.push(it);save();const e=$('pop');e.innerHTML='🏴‍☠️ ITEM ROUBADO!<br><small>'+esc(it.n)+'</small>';e.style.fontSize='22px';e.style.display='block';popT=3;gain(100)})
 }catch(e){}}},500);
