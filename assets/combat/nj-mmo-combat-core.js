@@ -70,14 +70,28 @@
     return expired;
   }
   function resolveDamage(options){
+    options=options||{};
     const {kind='physical',attackPower=1,defense,magicDefense,power=0,critRate=0,critMultiplier=2,randomDamage=0,rng,rangeOk=true,damageMultiplier=1}=options;
-    if(!rangeOk)return {ok:false,missed:false,critical:false,damage:0,reason:'out_of_range'};
+    const reject=reason=>({ok:false,missed:false,critical:false,damage:0,reason});
+    if(!rangeOk)return reject('out_of_range');
+    if(kind!=='physical'&&kind!=='magic')return reject('invalid_kind');
+    const attack=Number(attackPower),skillPower=Number(power),crit=Number(critRate);
+    const critScale=Number(critMultiplier),variance=Number(randomDamage),multiplier=Number(damageMultiplier);
+    const defenseValue=Number(kind==='magic'?(magicDefense||91):(defense||77));
+    if(!Number.isFinite(attack)||attack<=0||!Number.isFinite(skillPower)||skillPower<0||
+       !Number.isFinite(defenseValue)||defenseValue<=0||!Number.isFinite(crit)||
+       !Number.isFinite(critScale)||critScale<1||!Number.isFinite(variance)||variance<0||
+       !Number.isFinite(multiplier)||multiplier<=0)return reject('invalid_stats');
+    if(rng&&(typeof rng.nextFloat!=='function'||typeof rng.nextDamageOffset!=='function'))
+      return reject('invalid_rng');
     const sourceRng=rng||createSeededRng((options.seed??1)>>>0);
     const raw=kind==='magic'
-      ?calcMagicSkillDamage({mAtk:attackPower},{mDef:magicDefense||91},power,{rng:sourceRng})
-      :calcPhysicalSkillDamage({pAtk:attackPower,randomDamage},{pDef:defense||77},power,{rng:sourceRng});
-    const critical=rollCrit({critRate},sourceRng);
-    const damage=Math.max(1,Math.floor(applyCritMultiplier(raw,critical,critMultiplier)*Math.max(.01,damageMultiplier)));
+      ?calcMagicSkillDamage({mAtk:attack},{mDef:defenseValue},skillPower,{rng:sourceRng})
+      :calcPhysicalSkillDamage({pAtk:attack,randomDamage:variance},{pDef:defenseValue},skillPower,{rng:sourceRng});
+    if(!Number.isFinite(raw)||raw<=0)return reject('invalid_damage');
+    const critical=rollCrit({critRate:crit},sourceRng);
+    const damage=Math.max(1,Math.floor(applyCritMultiplier(raw,critical,critScale)*multiplier));
+    if(!Number.isFinite(damage))return reject('invalid_damage');
     return {ok:true,missed:false,critical,damage,reason:null};
   }
   function resolvePlayerAttack(params){
@@ -85,6 +99,7 @@
     if(!attacker||!target||target.hp<=0||peaceZone||!isInMeleeRange(attacker.x,attacker.z,target.x,target.z,range))return {ok:false,damage:0,killed:false};
     if(nowMs<(state.nextAttackAtMs||0))return {ok:false,damage:0,killed:false};
     const result=resolveDamage({kind:'physical',attackPower:attacker.pAtk,defense:target.pDef,critRate:attacker.critRate,randomDamage:attacker.randomDamage||0,rng});
+    if(!result.ok)return {...result,killed:false};
     state.nextAttackAtMs=nowMs+calculateAttackIntervalMs(attacker.attackSpeed||300);
     target.hp=Math.max(0,target.hp-result.damage);
     return {ok:true,...result,killed:target.hp<=0};
