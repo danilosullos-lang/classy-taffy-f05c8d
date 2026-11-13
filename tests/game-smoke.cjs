@@ -26,7 +26,7 @@ if (!gameSource.includes('function rpgMonsterResolveAttack') || !gameSource.incl
   throw new Error('Monster melee cooldown/damage core is not connected to both existing world loops.');
 }
 if (!gameSource.includes('function rpgCancelActiveCast') ||
-    (gameSource.match(/if\\(st\\.cast\\)rpgCancelActiveCast\\(true\\)/g)||[]).length!==2 ||
+    (gameSource.split('if(st.cast)rpgCancelActiveCast(true)').length-1)!==2 ||
     !gameSource.includes('core.completeSkillCast(state,now)')) {
   throw new Error('Cast completion/interruption must stay synchronized in both existing worlds.');
 }
