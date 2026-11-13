@@ -43,15 +43,36 @@
   function createCombatState(){
     return {targetId:null,nextAttackAtMs:0,skillCooldownEndMs:Object.create(null),castingSkillId:0,castEndMs:0,castTargetId:null,effects:[]};
   }
-  function getSkillCooldownEnd(state,id){return state.skillCooldownEndMs[id]||0}
+  function getSkillCooldownEnd(state,id){
+    const value=state&&state.skillCooldownEndMs?Number(state.skillCooldownEndMs[id]):0;
+    return Number.isFinite(value)?value:0;
+  }
   function canUseSkill(state,id,knownIds,nowMs){
-    return knownIds.has(id)&&nowMs>=getSkillCooldownEnd(state,id)&&state.castingSkillId===0;
+    const now=Number(nowMs);
+    return !!state&&!!knownIds&&typeof knownIds.has==='function'&&knownIds.has(id)&&
+      Number.isFinite(now)&&now>=getSkillCooldownEnd(state,id)&&state.castingSkillId===0;
   }
   function beginSkillCast(state,id,targetId,hitTime,nowMs){
-    state.castingSkillId=id;state.castEndMs=nowMs+Math.max(0,hitTime||0);state.castTargetId=targetId||null;
+    const duration=Number(hitTime),start=Number(nowMs);
+    if(!state||id===undefined||id===null||id===0||!Number.isFinite(duration)||duration<0||!Number.isFinite(start))return false;
+    const end=start+duration;
+    if(!Number.isFinite(end))return false;
+    state.castingSkillId=id;state.castEndMs=end;state.castTargetId=targetId==null?null:targetId;
+    return true;
+  }
+  function completeSkillCast(state,nowMs){
+    const now=Number(nowMs);
+    if(!state||state.castingSkillId===0||!Number.isFinite(now)||
+       !Number.isFinite(Number(state.castEndMs))||now<Number(state.castEndMs))return null;
+    const completed={id:state.castingSkillId,targetId:state.castTargetId};
+    cancelSkillCast(state);
+    return completed;
   }
   function cancelSkillCast(state){
+    if(!state)return false;
+    const active=state.castingSkillId!==0;
     state.castingSkillId=0;state.castEndMs=0;state.castTargetId=null;
+    return active;
   }
   function applyDamageToCastingPlayer(state,damage){
     if(damage>0&&state.castingSkillId!==0){cancelSkillCast(state);return true}return false;
@@ -71,23 +92,26 @@
   }
   function resolveDamage(options){
     options=options||{};
-    const {kind='physical',attackPower=1,defense,magicDefense,power=0,critRate=0,critMultiplier=2,randomDamage=0,rng,rangeOk=true,damageMultiplier=1}=options;
+    const {kind='physical',attackPower=1,defense,magicDefense,power=0,critRate=0,critMultiplier=2,randomDamage=0,rng,rngOffset,rangeOk=true,damageMultiplier=1}=options;
     const reject=reason=>({ok:false,missed:false,critical:false,damage:0,reason});
     if(!rangeOk)return reject('out_of_range');
     if(kind!=='physical'&&kind!=='magic')return reject('invalid_kind');
     const attack=Number(attackPower),skillPower=Number(power),crit=Number(critRate);
     const critScale=Number(critMultiplier),variance=Number(randomDamage),multiplier=Number(damageMultiplier);
-    const defenseValue=Number(kind==='magic'?(magicDefense||91):(defense||77));
+    const defenseValue=Number(kind==='magic'?(magicDefense??91):(defense??77));
     if(!Number.isFinite(attack)||attack<=0||!Number.isFinite(skillPower)||skillPower<0||
        !Number.isFinite(defenseValue)||defenseValue<=0||!Number.isFinite(crit)||
        !Number.isFinite(critScale)||critScale<1||!Number.isFinite(variance)||variance<0||
-       !Number.isFinite(multiplier)||multiplier<=0)return reject('invalid_stats');
+       !Number.isFinite(multiplier)||multiplier<=0||
+       (rngOffset!==undefined&&!Number.isFinite(Number(rngOffset))))return reject('invalid_stats');
     if(rng&&(typeof rng.nextFloat!=='function'||typeof rng.nextDamageOffset!=='function'))
       return reject('invalid_rng');
     const sourceRng=rng||createSeededRng((options.seed??1)>>>0);
+    const calcOptions={rng:sourceRng};
+    if(rngOffset!==undefined)calcOptions.rngOffset=Number(rngOffset);
     const raw=kind==='magic'
-      ?calcMagicSkillDamage({mAtk:attack},{mDef:defenseValue},skillPower,{rng:sourceRng})
-      :calcPhysicalSkillDamage({pAtk:attack,randomDamage:variance},{pDef:defenseValue},skillPower,{rng:sourceRng});
+      ?calcMagicSkillDamage({mAtk:attack},{mDef:defenseValue},skillPower,calcOptions)
+      :calcPhysicalSkillDamage({pAtk:attack,randomDamage:variance},{pDef:defenseValue},skillPower,calcOptions);
     if(!Number.isFinite(raw)||raw<=0)return reject('invalid_damage');
     const critical=rollCrit({critRate:crit},sourceRng);
     const damage=Math.max(1,Math.floor(applyCritMultiplier(raw,critical,critScale)*multiplier));
@@ -95,9 +119,15 @@
     return {ok:true,missed:false,critical,damage,reason:null};
   }
   function resolvePlayerAttack(params){
-    const {attacker,target,state,nowMs,range=4,peaceZone=false,rng}=params;
-    if(!attacker||!target||target.hp<=0||peaceZone||!isInMeleeRange(attacker.x,attacker.z,target.x,target.z,range))return {ok:false,damage:0,killed:false};
-    if(nowMs<(state.nextAttackAtMs||0))return {ok:false,damage:0,killed:false};
+    const {attacker,target,state,nowMs,range=4,peaceZone=false,rng}=params||{};
+    if(!attacker||!target||!state||!Number.isFinite(Number(nowMs))||
+       ![attacker.x,attacker.z,target.x,target.z,target.hp].every(v=>Number.isFinite(Number(v))))
+      return {ok:false,damage:0,killed:false,reason:'invalid_state'};
+    if(Number(target.hp)<=0||peaceZone||!isInMeleeRange(Number(attacker.x),Number(attacker.z),Number(target.x),Number(target.z),range))
+      return {ok:false,damage:0,killed:false,reason:peaceZone?'peace_zone':'out_of_range'};
+    const nextAttackAt=Number(state.nextAttackAtMs||0);
+    if(!Number.isFinite(nextAttackAt))return {ok:false,damage:0,killed:false,reason:'invalid_state'};
+    if(Number(nowMs)<nextAttackAt)return {ok:false,damage:0,killed:false,reason:'cooldown'};
     const result=resolveDamage({kind:'physical',attackPower:attacker.pAtk,defense:target.pDef,critRate:attacker.critRate,randomDamage:attacker.randomDamage||0,rng});
     if(!result.ok)return {...result,killed:false};
     state.nextAttackAtMs=nowMs+calculateAttackIntervalMs(attacker.attackSpeed||300);
@@ -153,7 +183,7 @@
     createSeededRng,calcMeleeDamage,calcPhysicalSkillDamage,calcMagicSkillDamage,
     rollCrit,applyCritMultiplier,calculateAttackIntervalMs,horizontalDistance,
     isInMeleeRange,createCombatState,getSkillCooldownEnd,canUseSkill,
-    beginSkillCast,cancelSkillCast,applyDamageToCastingPlayer,
+    beginSkillCast,completeSkillCast,cancelSkillCast,applyDamageToCastingPlayer,
     applyTimedEffect,tickTimedEffects,resolveDamage,resolvePlayerAttack,
     resolveMonsterAttack,canAttackPlayer,resolvePlayerVsPlayerAttack
   });
