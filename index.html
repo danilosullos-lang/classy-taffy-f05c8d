@@ -3151,6 +3151,17 @@ function dwarfProfessionAction(k,def){
  }
 }
 
+function rpgCancelActiveCast(notify=false){
+ const hadCast=!!(st&&st.cast);
+ if(st)st.cast=null;
+ const core=window.AetheriaCombatCore,state=window.__aetheriaCombatState;
+ if(core&&state&&typeof core.cancelSkillCast==='function')core.cancelSkillCast(state);
+ const panel=$('castPanel'),fill=$('castFill');
+ if(panel)panel.style.display='none';
+ if(fill)fill.style.width='0%';
+ if(hadCast&&notify)say('⛔ Conjuração interrompida!');
+ return hadCast;
+}
 function lineageSkill(k,fromCast=false){
  if(!st.run||st.pause||(!fromCast&&(cd[k]>0||sv.lv<SKL[k][0]||st.cast)))return;
  if(k==='w'){_legacyFrogSkill(k);return}
@@ -3844,7 +3855,7 @@ function hit(d){
   if(st.bub>0)return say('Bloqueado! 🫧');
   if(Math.random()*100<abSum('dodge')){say('💨 Esquivou!');return}
   if(st.shield>0){const sh=Math.min(st.shield,d);st.shield-=sh;d-=sh;if(d<=0){say('🛡️ Escudo absorveu o golpe!');return}}if(st.barrier>0){const b_=Math.min(st.barrier,d);st.barrier-=b_;d-=b_;if(d<=0){say('🛡️ Barreira!');return}}
-  if(st.cast){st.cast=null;const panel=$('castPanel');if(panel)panel.style.display='none';const _state=window.__aetheriaCombatState;if(_state)window.AetheriaCombatCore.cancelSkillCast(_state);say('⛔ Conjuração interrompida!')}d=Math.max(1,Math.round(d*100/(100+stat('def')*2)));ftext(frog.position.x,frog.position.y+2,frog.position.z,'-'+d,'#ff6b6b');
+  if(st.cast)rpgCancelActiveCast(true);d=Math.max(1,Math.round(d*100/(100+stat('def')*2)));ftext(frog.position.x,frog.position.y+2,frog.position.z,'-'+d,'#ff6b6b');
   st.hp-=d;say('Ai! -'+d);sfx('hit');fxBurst(frog.position.x,frog.position.y+1,frog.position.z,0xff4b58,16,4,.42,true);flash('#ff1838',.16);hitstop=Math.max(hitstop,.04);
   if(sv.opt.vib!==false&&navigator.vibrate)navigator.vibrate(40);
   if(st.hp<=0){if(abSum('revive')&&Date.now()>(st.rvAt||0)){st.rvAt=Date.now()+300000;st.hp=Math.max(1,hpMax()*abSum('revive')/100);say('🔥 RENASCEU!');sv.rev=1;return}st.run=false;pvpDeath();const m=rgDist(),lost=Math.floor(sv.gold*.1);sv.gold-=lost;sv.best=Math.max(sv.best||0,m);save();
@@ -7012,7 +7023,12 @@ function tick(now){
      if(st.cast){
        const now=performance.now(),left=Math.max(0,st.cast.endsAt-now),pct=1-left/Math.max(1,st.cast.duration);
        const fill=$('castFill');if(fill)fill.style.width=(pct*100)+'%';
-       if(left<=0){const key=st.cast.key;st.cast=null;const panel=$('castPanel');if(panel)panel.style.display='none';lineageSkill(key,true)}
+       if(left<=0){
+         const key=st.cast.key,core=window.AetheriaCombatCore,state=window.__aetheriaCombatState;
+         const completed=core&&state&&typeof core.completeSkillCast==='function'?core.completeSkillCast(state,now):null;
+         if(!completed||completed.id!==key)rpgCancelActiveCast(false);
+         else{st.cast=null;const panel=$('castPanel');if(panel)panel.style.display='none';lineageSkill(key,true)}
+       }
      }
     if(cd.q<=0&&sv.lv>=SKL.q[0]&&(EN.some(e=>!e.dead&&st.z-e.z>=0&&st.z-e.z<=16&&Math.abs(Math.atan2(e.d-st.d,st.z-e.z))<=.7)||things.some(t=>t.k==='f'&&!t.dead&&t.z<st.z&&st.z-t.z<9&&Math.abs(t.d-st.d)<4)))skill('q');
     if(st.bub>0)st.bub-=dt;
@@ -8771,6 +8787,7 @@ hit=function(d){
   if(st.bub>0)return;
   if(Math.random()*100<abSum('dodge')){ftext(frog.position.x,frog.position.y+2,frog.position.z,'Esquivou','#9fe0ff');return}
   if(st.barrier>0){const b_=Math.min(st.barrier,d);st.barrier-=b_;d-=b_;if(d<=0)return}
+  if(st.cast)rpgCancelActiveCast(true);
   d=Math.max(1,Math.round(d*100/(100+stat('def')*2)));ftext(frog.position.x,frog.position.y+2,frog.position.z,'-'+d,'#ff6b6b');
   st.hp-=d;sfx('hit');hitstop=Math.max(hitstop,.04);if(sv.opt.vib!==false&&navigator.vibrate)navigator.vibrate(40);
   if(st.hp<=0){
