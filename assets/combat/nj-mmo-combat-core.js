@@ -12,6 +12,7 @@
   const MIN_ATTACK_INTERVAL_MS=50;
   const ATTACK_SPEED_DIVISOR=500000;
   const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+  const floorDamage=value=>Math.floor(value+Number.EPSILON*Math.max(1,Math.abs(value))*8);
   function createSeededRng(seed){
     let state=seed>>>0;
     const nextFloat=()=>{state=(Math.imul(1664525,state)+1013904223)>>>0;return state/0x100000000};
@@ -24,19 +25,19 @@
   function calcMeleeDamage(attacker,defender,options={}){
     const randomDamage=attacker.randomDamage??0;
     const offset=options.rngOffset??options.rng?.nextDamageOffset(randomDamage)??0;
-    return Math.max(1,Math.floor(attacker.pAtk*(1+offset/100)*MELEE_WEAPON_MODIFIER/Math.max(1,defender.pDef)));
+    return Math.max(1,floorDamage(attacker.pAtk*(1+offset/100)*MELEE_WEAPON_MODIFIER/Math.max(1,defender.pDef)));
   }
   function calcPhysicalSkillDamage(attacker,defender,power,options={}){
     const randomDamage=attacker.randomDamage??0;
     const offset=options.rngOffset??options.rng?.nextDamageOffset(randomDamage)??0;
-    return Math.max(1,Math.floor(((attacker.pAtk+power)/Math.max(1,defender.pDef))*MELEE_WEAPON_MODIFIER*(1+offset/100)));
+    return Math.max(1,floorDamage(((attacker.pAtk+power)/Math.max(1,defender.pDef))*MELEE_WEAPON_MODIFIER*(1+offset/100)));
   }
   function calcMagicSkillDamage(attacker,defender,power,options={}){
     const offset=options.rngOffset??options.rng?.nextDamageOffset(0)??0;
-    return Math.max(1,Math.floor((MAGIC_DAMAGE_CONSTANT*(attacker.mAtk+power)/Math.max(1,defender.mDef))*(1+offset/100)));
+    return Math.max(1,floorDamage((MAGIC_DAMAGE_CONSTANT*(attacker.mAtk+power)/Math.max(1,defender.mDef))*(1+offset/100)));
   }
   function rollCrit(attacker,rng){return rng.nextFloat()<clamp(attacker.critRate||0,0,100)/100}
-  function applyCritMultiplier(damage,isCrit,multiplier=2){return isCrit?Math.floor(damage*multiplier):damage}
+  function applyCritMultiplier(damage,isCrit,multiplier=2){return isCrit?floorDamage(damage*multiplier):damage}
   function calculateAttackIntervalMs(attackSpeed){return Math.max(MIN_ATTACK_INTERVAL_MS,Math.floor(ATTACK_SPEED_DIVISOR/Math.max(1,attackSpeed)))}
   function horizontalDistance(x1,z1,x2,z2){return Math.hypot(x2-x1,z2-z1)}
   function isInMeleeRange(ax,az,tx,tz,range){return horizontalDistance(ax,az,tx,tz)<=range}
@@ -114,7 +115,7 @@
       :calcPhysicalSkillDamage({pAtk:attack,randomDamage:variance},{pDef:defenseValue},skillPower,calcOptions);
     if(!Number.isFinite(raw)||raw<=0)return reject('invalid_damage');
     const critical=rollCrit({critRate:crit},sourceRng);
-    const damage=Math.max(1,Math.floor(applyCritMultiplier(raw,critical,critScale)*multiplier));
+    const damage=Math.max(1,floorDamage(applyCritMultiplier(raw,critical,critScale)*multiplier));
     if(!Number.isFinite(damage))return reject('invalid_damage');
     return {ok:true,missed:false,critical,damage,reason:null};
   }
