@@ -25,6 +25,11 @@ if (!gameSource.includes('assets/combat/pvp-protocol.js') ||
 if (!gameSource.includes('function rpgMonsterResolveAttack') || !gameSource.includes('rpgMonsterResolveAttack(e,now,Math.max(0,e.r-.001))') || !gameSource.includes('rpgMonsterResolveAttack(e,now,Math.max(0,e.r+.799))')) {
   throw new Error('Monster melee cooldown/damage core is not connected to both existing world loops.');
 }
+if (!gameSource.includes('function rpgCancelActiveCast') ||
+    (gameSource.match(/if\\(st\\.cast\\)rpgCancelActiveCast\\(true\\)/g)||[]).length!==2 ||
+    !gameSource.includes('core.completeSkillCast(state,now)')) {
+  throw new Error('Cast completion/interruption must stay synchronized in both existing worlds.');
+}
 if (!gameSource.includes('assets/monsters/ai-state.js') || !gameSource.includes('monsterAI.update(e') ||
     !gameSource.includes("e.homeD=spawnD;e.homeZ=spawnZ;e.aiMode='idle'") ||
     !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)') ||
@@ -85,6 +90,27 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     }));
     if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
+    }
+    const castLifecycleAudit=await page.evaluate(()=>{
+      const core=window.AetheriaCombatCore,state=core.createCombatState();
+      core.beginSkillCast(state,'browser-test',null,1000,1000);
+      window.__aetheriaCombatState=state;
+      st.cast={key:'browser-test',endsAt:2000,startedAt:1000,duration:1000};
+      const cancelled=window.rpgCancelActiveCast(false);
+      return {cancelled,playerCast:!!st.cast,coreCast:state.castingSkillId,panel:document.querySelector('#castPanel')?.style.display};
+    });
+    if(!castLifecycleAudit.cancelled||castLifecycleAudit.playerCast||castLifecycleAudit.coreCast!==0||castLifecycleAudit.panel!=='none'){
+      throw new Error('Cast interruption left the player or combat-core cast active: '+JSON.stringify(castLifecycleAudit));
+    }
+    const castCompletionAudit=await page.evaluate(()=>{
+      const core=window.AetheriaCombatCore,state=core.createCombatState();
+      const started=core.beginSkillCast(state,'complete-test','mob-1',250,1000);
+      const early=core.completeSkillCast(state,1249);
+      const completed=core.completeSkillCast(state,1250);
+      return {started,early:early===null,completed:completed&&completed.id,cleared:state.castingSkillId===0};
+    });
+    if(!castCompletionAudit.started||!castCompletionAudit.early||castCompletionAudit.completed!=='complete-test'||!castCompletionAudit.cleared){
+      throw new Error('Combat-core cast completion timing is invalid: '+JSON.stringify(castCompletionAudit));
     }
     const monsterFacingAudit=await page.evaluate(()=>{
       const right=rpgMonsterFacingYaw(1,0),left=rpgMonsterFacingYaw(-1,0);
