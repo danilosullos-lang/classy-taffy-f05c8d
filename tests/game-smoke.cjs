@@ -6,6 +6,9 @@ if (gameSource.includes('e.m.rotation.y=rpgMonsterFacingYaw(dd,dz)') ||
     !gameSource.includes('rpgMonsterFacingYaw(fldFacingD,fldFacingZ)')) {
   throw new Error('A correção de direção precisa cobrir perseguição e retorno nos dois mundos.');
 }
+if (!gameSource.includes('assets/ui/mobile-panels.css')) {
+  throw new Error('Os estilos responsivos dos painéis móveis não estão carregados.');
+}
 if (!gameSource.includes('assets/classes/skill-catalog.js') || !gameSource.includes('const INTERLUDE_SKILL_SETS=window.AetheriaSkillCatalog;')) {
   throw new Error('O catálogo modular de habilidades não está integrado ao cliente Three.js.');
 }
@@ -1033,6 +1036,35 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     });
     if(monsterNavigation.direct||monsterNavigation.pathLength<1||!monsterNavigation.detour||!monsterNavigation.waypointClear){
       throw new Error('Land-monster A* collision routing failed: '+JSON.stringify(monsterNavigation));
+    }
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobilePanelAudit = await page.evaluate(() => {
+      openBag('bag');
+      try {
+        const overlay = document.querySelector('#bg');
+        const panel = document.querySelector('#bgc');
+        const grid = panel.querySelector('.grid');
+        const tab = panel.querySelector('.tab');
+        const overlayStyle = getComputedStyle(overlay);
+        const panelStyle = getComputedStyle(panel);
+        return {
+          display: overlayStyle.display,
+          position: overlayStyle.position,
+          overflowY: panelStyle.overflowY,
+          columns: grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').length : 0,
+          tabHeight: tab ? tab.getBoundingClientRect().height : 0,
+          panelHeight: panel.getBoundingClientRect().height,
+          viewportHeight: innerHeight
+        };
+      } finally {
+        closeBag();
+      }
+    });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    if (mobilePanelAudit.display !== 'flex' || mobilePanelAudit.position !== 'fixed' ||
+      mobilePanelAudit.overflowY !== 'auto' || mobilePanelAudit.columns !== 4 ||
+      mobilePanelAudit.tabHeight < 44 || mobilePanelAudit.panelHeight > mobilePanelAudit.viewportHeight + 1) {
+      throw new Error('Mobile inventory panel layout failed: '+JSON.stringify(mobilePanelAudit));
     }
     if (pageErrors.length) throw new Error('Erros JavaScript durante a execução:\n' + pageErrors.join('\n'));
 
