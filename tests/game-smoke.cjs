@@ -22,6 +22,11 @@ if (!gameSource.includes('assets/combat/pvp-protocol.js') ||
     !gameSource.includes('cooldownMs:250')) {
   throw new Error('PvP peer messages are not protected by packet, replay, range and combat-core validation.');
 }
+if (!gameSource.includes('assets/combat/death-lifecycle.js') ||
+    !gameSource.includes('AetheriaDeathLifecycle.resolveFieldRespawn') ||
+    !gameSource.includes('sv.stats.deaths=(sv.stats.deaths||0)+1')) {
+  throw new Error('Open-world death must use the tested respawn lifecycle and record PvE deaths.');
+}
 if (!gameSource.includes('function rpgMonsterResolveAttack') || !gameSource.includes('rpgMonsterResolveAttack(e,now,Math.max(0,e.r-.001))') || !gameSource.includes('rpgMonsterResolveAttack(e,now,Math.max(0,e.r+.799))')) {
   throw new Error('Monster melee cooldown/damage core is not connected to both existing world loops.');
 }
@@ -81,6 +86,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       postprocessing: !!(window.THREE && THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass),
       combatCore: !!window.AetheriaCombatCore,
       pvpProtocol: !!window.AetheriaPvpProtocol,
+      deathLifecycle: !!window.AetheriaDeathLifecycle,
       dwarfProfession: !!window.AetheriaDwarfProfession,
       skillCatalog: !!window.AetheriaSkillCatalog,
       navGrid: !!window.AetheriaNavGrid,
@@ -88,7 +94,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
       vfxAssets: !!window.__rpgVfxAssetsDebug
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     const castLifecycleAudit=await page.evaluate(()=>{
@@ -101,6 +107,23 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     });
     if(!castLifecycleAudit.cancelled||castLifecycleAudit.playerCast||castLifecycleAudit.coreCast!==0||castLifecycleAudit.panel!=='none'){
       throw new Error('Cast interruption left the player or combat-core cast active: '+JSON.stringify(castLifecycleAudit));
+    }
+    const deathRespawnAudit=await page.evaluate(()=>{
+      const D=window.AetheriaDeathLifecycle;
+      const inventory=[{id:'sword'},{id:'armor'}];
+      const player={hp:0,mp:19,y:7,vy:3,inventory};
+      const field={x:40,z:50,vx:2,vz:3,h:5,cy:1,faceT:2,gx:0};
+      const result=D.resolveFieldRespawn({
+        player,field,spawn:{x:0,z:20000},gold:1001,hpMax:500,
+        terrainHeight:1.4,groundY:1.4,waterLevel:-.9,goldLossRate:.05,invulnerabilitySeconds:3
+      });
+      return {ok:result.ok,gold:result.gold,lost:result.lost,hp:player.hp,mp:player.mp,
+        x:field.x,z:field.z,iframe:player.iframe,inventory:player.inventory.length};
+    });
+    if(!deathRespawnAudit.ok||deathRespawnAudit.gold!==951||deathRespawnAudit.lost!==50||
+      deathRespawnAudit.hp!==500||deathRespawnAudit.mp!==19||deathRespawnAudit.x!==0||
+      deathRespawnAudit.z!==20000||deathRespawnAudit.iframe!==3||deathRespawnAudit.inventory!==2){
+      throw new Error('Field death/respawn browser audit failed: '+JSON.stringify(deathRespawnAudit));
     }
     const castCompletionAudit=await page.evaluate(()=>{
       const core=window.AetheriaCombatCore,state=core.createCombatState();
