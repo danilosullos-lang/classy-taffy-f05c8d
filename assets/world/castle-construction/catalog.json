@@ -1,0 +1,1053 @@
+{
+  "pack": "Medieval Castle Construction",
+  "source": "https://3dassets.dev/packs/medieval-castle-construction",
+  "manifest": "https://3dassets.dev/api/v1/packs/medieval-castle-construction",
+  "license": "CC0-1.0",
+  "model_count": 149,
+  "starter_scene": "/assets/world/castle-construction/castle-starter.glb",
+  "assets": [
+    {
+      "title": "Curtain Straight 4 m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-straight-4m-5338abb1",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-straight-4m-5338abb1.glb",
+      "license": "CC0-1.0",
+      "triangles": 264
+    },
+    {
+      "title": "Curtain Straight 2m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-straight-2m-e502053e",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-straight-2m-e502053e.glb",
+      "license": "CC0-1.0",
+      "triangles": 240
+    },
+    {
+      "title": "Curtain Straight 6m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-straight-6m-a914bcf9",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-straight-6m-a914bcf9.glb",
+      "license": "CC0-1.0",
+      "triangles": 288
+    },
+    {
+      "title": "Curtain Low 2m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-low-2m-24f43a18",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-low-2m-24f43a18.glb",
+      "license": "CC0-1.0",
+      "triangles": 144
+    },
+    {
+      "title": "Curtain Low 4 m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-low-4m-0ab44b3b",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-low-4m-0ab44b3b.glb",
+      "license": "CC0-1.0",
+      "triangles": 168
+    },
+    {
+      "title": "Curtain High 4 m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-high-4m-4c3dc2a0",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-high-4m-4c3dc2a0.glb",
+      "license": "CC0-1.0",
+      "triangles": 360
+    },
+    {
+      "title": "Curtain Corner (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-corner-abc40abb",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-corner-abc40abb.glb",
+      "license": "CC0-1.0",
+      "triangles": 120
+    },
+    {
+      "title": "Curtain Corner Low (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-corner-low-a0072841",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-corner-low-a0072841.glb",
+      "license": "CC0-1.0",
+      "triangles": 120
+    },
+    {
+      "title": "Curtain Tee (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-tee-3d989f0b",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-tee-3d989f0b.glb",
+      "license": "CC0-1.0",
+      "triangles": 84
+    },
+    {
+      "title": "Curtain Cross (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-cross-f3c88dd4",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-cross-f3c88dd4.glb",
+      "license": "CC0-1.0",
+      "triangles": 72
+    },
+    {
+      "title": "Curtain End (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-end-d833e01a",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-end-d833e01a.glb",
+      "license": "CC0-1.0",
+      "triangles": 252
+    },
+    {
+      "title": "Curtain End Low (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-end-low-d2c60db1",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-end-low-d2c60db1.glb",
+      "license": "CC0-1.0",
+      "triangles": 156
+    },
+    {
+      "title": "Curtain Buttressed (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-buttressed-f5880d67",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-buttressed-f5880d67.glb",
+      "license": "CC0-1.0",
+      "triangles": 312
+    },
+    {
+      "title": "Curtain Splayed Base (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-splayed-base-55d76713",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-splayed-base-55d76713.glb",
+      "license": "CC0-1.0",
+      "triangles": 288
+    },
+    {
+      "title": "Curtain Arrow Loop (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-arrow-loop-a093475c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-arrow-loop-a093475c.glb",
+      "license": "CC0-1.0",
+      "triangles": 300
+    },
+    {
+      "title": "Curtain Cross Loop (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-cross-loop-2ce86c33",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-cross-loop-2ce86c33.glb",
+      "license": "CC0-1.0",
+      "triangles": 348
+    },
+    {
+      "title": "Curtain Drain (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-drain-dda70b6f",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-drain-dda70b6f.glb",
+      "license": "CC0-1.0",
+      "triangles": 324
+    },
+    {
+      "title": "Curtain Postern (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-postern-5a8ac7c1",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-postern-5a8ac7c1.glb",
+      "license": "CC0-1.0",
+      "triangles": 948
+    },
+    {
+      "title": "Curtain Breached (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-breached-598922fe",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-breached-598922fe.glb",
+      "license": "CC0-1.0",
+      "triangles": 72
+    },
+    {
+      "title": "Curtain Buttressed 6m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-buttressed-6m-3907ce07",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-buttressed-6m-3907ce07.glb",
+      "license": "CC0-1.0",
+      "triangles": 336
+    },
+    {
+      "title": "Curtain Arrow Loop Paired (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-arrow-loop-paired-0ba81ba8",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-arrow-loop-paired-0ba81ba8.glb",
+      "license": "CC0-1.0",
+      "triangles": 552
+    },
+    {
+      "title": "Curtain Breached Low (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-curtain-breached-low-6f2d8794",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-curtain-breached-low-6f2d8794.glb",
+      "license": "CC0-1.0",
+      "triangles": 72
+    },
+    {
+      "title": "Retaining Wall (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-retaining-wall-65f68c59",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-retaining-wall-65f68c59.glb",
+      "license": "CC0-1.0",
+      "triangles": 36
+    },
+    {
+      "title": "Palisade Straight (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-palisade-straight-2aba11b6",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-palisade-straight-2aba11b6.glb",
+      "license": "CC0-1.0",
+      "triangles": 420
+    },
+    {
+      "title": "Palisade Corner (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-palisade-corner-0fb0eaff",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-palisade-corner-0fb0eaff.glb",
+      "license": "CC0-1.0",
+      "triangles": 480
+    },
+    {
+      "title": "Palisade Gate (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-palisade-gate-5b081f5e",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-palisade-gate-5b081f5e.glb",
+      "license": "CC0-1.0",
+      "triangles": 264
+    },
+    {
+      "title": "Palisade End (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-palisade-end-c0992cd5",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-palisade-end-c0992cd5.glb",
+      "license": "CC0-1.0",
+      "triangles": 252
+    },
+    {
+      "title": "Square Tower Base (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-square-tower-base-efc63b8a",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-square-tower-base-efc63b8a.glb",
+      "license": "CC0-1.0",
+      "triangles": 24
+    },
+    {
+      "title": "Square Tower Chamber (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-square-tower-chamber-7eba1932",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-square-tower-chamber-7eba1932.glb",
+      "license": "CC0-1.0",
+      "triangles": 756
+    },
+    {
+      "title": "Square Tower Battlement (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-square-tower-battlement-bc598a0e",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-square-tower-battlement-bc598a0e.glb",
+      "license": "CC0-1.0",
+      "triangles": 252
+    },
+    {
+      "title": "Round Tower Base (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-round-tower-base-df7755cc",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-round-tower-base-df7755cc.glb",
+      "license": "CC0-1.0",
+      "triangles": 64
+    },
+    {
+      "title": "Round Tower Chamber (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-round-tower-chamber-ca55018a",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-round-tower-chamber-ca55018a.glb",
+      "license": "CC0-1.0",
+      "triangles": 396
+    },
+    {
+      "title": "Round Tower Battlement (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-round-tower-battlement-671c7a76",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-round-tower-battlement-671c7a76.glb",
+      "license": "CC0-1.0",
+      "triangles": 288
+    },
+    {
+      "title": "Octagonal Tower Base (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-octagonal-tower-base-aff15391",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-octagonal-tower-base-aff15391.glb",
+      "license": "CC0-1.0",
+      "triangles": 32
+    },
+    {
+      "title": "Octagonal Tower Chamber (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-octagonal-tower-chamber-fe963062",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-octagonal-tower-chamber-fe963062.glb",
+      "license": "CC0-1.0",
+      "triangles": 204
+    },
+    {
+      "title": "Octagonal Tower Battlement (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-octagonal-tower-battlemen-f52a7611",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-octagonal-tower-battlemen-f52a7611.glb",
+      "license": "CC0-1.0",
+      "triangles": 144
+    },
+    {
+      "title": "Square Tower Base Tall (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-square-tower-base-tall-e556e41c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-square-tower-base-tall-e556e41c.glb",
+      "license": "CC0-1.0",
+      "triangles": 24
+    },
+    {
+      "title": "Round Tower Base Tall (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-round-tower-base-tall-7aa5fe75",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-round-tower-base-tall-7aa5fe75.glb",
+      "license": "CC0-1.0",
+      "triangles": 64
+    },
+    {
+      "title": "Octagonal Tower Base Tall (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-octagonal-tower-base-tall-503cd46d",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-octagonal-tower-base-tall-503cd46d.glb",
+      "license": "CC0-1.0",
+      "triangles": 32
+    },
+    {
+      "title": "Square Tower Chamber Door (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-square-tower-chamber-door-58ae3896",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-square-tower-chamber-door-58ae3896.glb",
+      "license": "CC0-1.0",
+      "triangles": 744
+    },
+    {
+      "title": "Round Tower Chamber Door (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-round-tower-chamber-door-c917f59c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-round-tower-chamber-door-c917f59c.glb",
+      "license": "CC0-1.0",
+      "triangles": 384
+    },
+    {
+      "title": "Watchtower Timber (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-watchtower-timber-30e37d06",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-watchtower-timber-30e37d06.glb",
+      "license": "CC0-1.0",
+      "triangles": 116
+    },
+    {
+      "title": "Keep Ground Floor (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-keep-ground-floor-75bb6592",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-keep-ground-floor-75bb6592.glb",
+      "license": "CC0-1.0",
+      "triangles": 792
+    },
+    {
+      "title": "Keep Upper Floor (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-keep-upper-floor-1eff3592",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-keep-upper-floor-1eff3592.glb",
+      "license": "CC0-1.0",
+      "triangles": 792
+    },
+    {
+      "title": "Keep Upper Floor Balcony (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-keep-upper-floor-balcony-219bad37",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-keep-upper-floor-balcony-219bad37.glb",
+      "license": "CC0-1.0",
+      "triangles": 840
+    },
+    {
+      "title": "Keep Battlement (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-keep-battlement-02168fc2",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-keep-battlement-02168fc2.glb",
+      "license": "CC0-1.0",
+      "triangles": 348
+    },
+    {
+      "title": "Turret Corbel (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-turret-corbel-6b2df76b",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-turret-corbel-6b2df76b.glb",
+      "license": "CC0-1.0",
+      "triangles": 152
+    },
+    {
+      "title": "Bell Tower (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-bell-tower-fc95039c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-bell-tower-fc95039c.glb",
+      "license": "CC0-1.0",
+      "triangles": 180
+    },
+    {
+      "title": "Arch Gateway (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-arch-gateway-26177d6e",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-arch-gateway-26177d6e.glb",
+      "license": "CC0-1.0",
+      "triangles": 756
+    },
+    {
+      "title": "Arch Gateway Wide (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-arch-gateway-wide-b883b1c8",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-arch-gateway-wide-b883b1c8.glb",
+      "license": "CC0-1.0",
+      "triangles": 780
+    },
+    {
+      "title": "Pointed Gateway (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-pointed-gateway-cf641220",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-pointed-gateway-cf641220.glb",
+      "license": "CC0-1.0",
+      "triangles": 756
+    },
+    {
+      "title": "Pointed Gateway Wide (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-pointed-gateway-wide-e59a56e5",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-pointed-gateway-wide-e59a56e5.glb",
+      "license": "CC0-1.0",
+      "triangles": 780
+    },
+    {
+      "title": "Lintel Gateway (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-lintel-gateway-f33e62d9",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-lintel-gateway-f33e62d9.glb",
+      "license": "CC0-1.0",
+      "triangles": 48
+    },
+    {
+      "title": "Gatehouse (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-gatehouse-5a3a2b6d",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-gatehouse-5a3a2b6d.glb",
+      "license": "CC0-1.0",
+      "triangles": 1248
+    },
+    {
+      "title": "Portcullis Frame (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-portcullis-frame-a373c1a6",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-portcullis-frame-a373c1a6.glb",
+      "license": "CC0-1.0",
+      "triangles": 828
+    },
+    {
+      "title": "Portcullis Frame Raised (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-portcullis-frame-raised-f228e1cd",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-portcullis-frame-raised-f228e1cd.glb",
+      "license": "CC0-1.0",
+      "triangles": 828
+    },
+    {
+      "title": "Timber Gate Single (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-timber-gate-single-db1dd714",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-timber-gate-single-db1dd714.glb",
+      "license": "CC0-1.0",
+      "triangles": 144
+    },
+    {
+      "title": "Timber Gate Single Open (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-timber-gate-single-open-4751c8e9",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-timber-gate-single-open-4751c8e9.glb",
+      "license": "CC0-1.0",
+      "triangles": 144
+    },
+    {
+      "title": "Timber Gate Double (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-timber-gate-double-21f64a16",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-timber-gate-double-21f64a16.glb",
+      "license": "CC0-1.0",
+      "triangles": 288
+    },
+    {
+      "title": "Timber Gate Double Open (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-timber-gate-double-open-d2a0c6bf",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-timber-gate-double-open-d2a0c6bf.glb",
+      "license": "CC0-1.0",
+      "triangles": 288
+    },
+    {
+      "title": "Iron Grille Gate (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-iron-grille-gate-dc72762c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-iron-grille-gate-dc72762c.glb",
+      "license": "CC0-1.0",
+      "triangles": 120
+    },
+    {
+      "title": "Drawbridge Deck (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-drawbridge-deck-15c006a3",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-drawbridge-deck-15c006a3.glb",
+      "license": "CC0-1.0",
+      "triangles": 192
+    },
+    {
+      "title": "Drawbridge Raised (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-drawbridge-raised-b724e544",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-drawbridge-raised-b724e544.glb",
+      "license": "CC0-1.0",
+      "triangles": 192
+    },
+    {
+      "title": "Gate Winch (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-gate-winch-3634bfee",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-gate-winch-3634bfee.glb",
+      "license": "CC0-1.0",
+      "triangles": 264
+    },
+    {
+      "title": "Murder Hole Gallery (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-murder-hole-gallery-14269c95",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-murder-hole-gallery-14269c95.glb",
+      "license": "CC0-1.0",
+      "triangles": 92
+    },
+    {
+      "title": "Covered Sally Port (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-covered-sally-port-6cfdd97b",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-covered-sally-port-6cfdd97b.glb",
+      "license": "CC0-1.0",
+      "triangles": 704
+    },
+    {
+      "title": "Gate Threshold (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-gate-threshold-66a214e7",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-gate-threshold-66a214e7.glb",
+      "license": "CC0-1.0",
+      "triangles": 36
+    },
+    {
+      "title": "Stairs Straight 4 m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stairs-straight-4m-75489801",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stairs-straight-4m-75489801.glb",
+      "license": "CC0-1.0",
+      "triangles": 192
+    },
+    {
+      "title": "Stairs Straight 2m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stairs-straight-2m-15f5cf42",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stairs-straight-2m-15f5cf42.glb",
+      "license": "CC0-1.0",
+      "triangles": 96
+    },
+    {
+      "title": "Stairs Straight 1m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stairs-straight-1m-46b07f25",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stairs-straight-1m-46b07f25.glb",
+      "license": "CC0-1.0",
+      "triangles": 48
+    },
+    {
+      "title": "Stairs Quarter Turn (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stairs-quarter-turn-2df3eecb",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stairs-quarter-turn-2df3eecb.glb",
+      "license": "CC0-1.0",
+      "triangles": 204
+    },
+    {
+      "title": "Stairs Switchback (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stairs-switchback-a6ff9ff3",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stairs-switchback-a6ff9ff3.glb",
+      "license": "CC0-1.0",
+      "triangles": 204
+    },
+    {
+      "title": "Stair Landing (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stair-landing-639689c8",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stair-landing-639689c8.glb",
+      "license": "CC0-1.0",
+      "triangles": 12
+    },
+    {
+      "title": "Stair Landing Railed (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stair-landing-railed-af1964d9",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stair-landing-railed-af1964d9.glb",
+      "license": "CC0-1.0",
+      "triangles": 36
+    },
+    {
+      "title": "Timber Walkway (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-timber-walkway-ab9cd7c3",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-timber-walkway-ab9cd7c3.glb",
+      "license": "CC0-1.0",
+      "triangles": 264
+    },
+    {
+      "title": "Timber Walkway 6m (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-timber-walkway-6m-5529811a",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-timber-walkway-6m-5529811a.glb",
+      "license": "CC0-1.0",
+      "triangles": 360
+    },
+    {
+      "title": "Timber Walkway Corner (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-timber-walkway-corner-3c386a29",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-timber-walkway-corner-3c386a29.glb",
+      "license": "CC0-1.0",
+      "triangles": 276
+    },
+    {
+      "title": "Stone Bridge (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stone-bridge-c08cb122",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stone-bridge-c08cb122.glb",
+      "license": "CC0-1.0",
+      "triangles": 720
+    },
+    {
+      "title": "Stone Bridge Wide (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stone-bridge-wide-73de46e0",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stone-bridge-wide-73de46e0.glb",
+      "license": "CC0-1.0",
+      "triangles": 720
+    },
+    {
+      "title": "Bridge End Ramp (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-bridge-end-ramp-a603e0f7",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-bridge-end-ramp-a603e0f7.glb",
+      "license": "CC0-1.0",
+      "triangles": 8
+    },
+    {
+      "title": "Roof Gable (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-gable-45c637c4",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-gable-45c637c4.glb",
+      "license": "CC0-1.0",
+      "triangles": 8
+    },
+    {
+      "title": "Roof Gable Long (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-gable-long-100f1112",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-gable-long-100f1112.glb",
+      "license": "CC0-1.0",
+      "triangles": 8
+    },
+    {
+      "title": "Roof Hipped (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-hipped-efebe0a2",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-hipped-efebe0a2.glb",
+      "license": "CC0-1.0",
+      "triangles": 12
+    },
+    {
+      "title": "Roof Conical (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-conical-687c98ab",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-conical-687c98ab.glb",
+      "license": "CC0-1.0",
+      "triangles": 32
+    },
+    {
+      "title": "Roof Conical Small (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-conical-small-b6ab810d",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-conical-small-b6ab810d.glb",
+      "license": "CC0-1.0",
+      "triangles": 24
+    },
+    {
+      "title": "Roof Pyramid (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-pyramid-03676f94",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-pyramid-03676f94.glb",
+      "license": "CC0-1.0",
+      "triangles": 8
+    },
+    {
+      "title": "Roof Dormer (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-dormer-ba349a76",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-dormer-ba349a76.glb",
+      "license": "CC0-1.0",
+      "triangles": 56
+    },
+    {
+      "title": "Roof Chimney (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-chimney-370fe0b6",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-chimney-370fe0b6.glb",
+      "license": "CC0-1.0",
+      "triangles": 72
+    },
+    {
+      "title": "Roof Ridge Cap (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-roof-ridge-cap-de4976dd",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-roof-ridge-cap-de4976dd.glb",
+      "license": "CC0-1.0",
+      "triangles": 8
+    },
+    {
+      "title": "Parapet Straight (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-parapet-straight-63e78128",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-parapet-straight-63e78128.glb",
+      "license": "CC0-1.0",
+      "triangles": 60
+    },
+    {
+      "title": "Parapet Corner (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-parapet-corner-65f1db40",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-parapet-corner-65f1db40.glb",
+      "license": "CC0-1.0",
+      "triangles": 60
+    },
+    {
+      "title": "Parapet Arrow Loop (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-parapet-arrow-loop-0b18d771",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-parapet-arrow-loop-0b18d771.glb",
+      "license": "CC0-1.0",
+      "triangles": 48
+    },
+    {
+      "title": "Battlement Merlon (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-battlement-merlon-97533054",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-battlement-merlon-97533054.glb",
+      "license": "CC0-1.0",
+      "triangles": 24
+    },
+    {
+      "title": "Hoarding Gallery (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-hoarding-gallery-f931c440",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-hoarding-gallery-f931c440.glb",
+      "license": "CC0-1.0",
+      "triangles": 92
+    },
+    {
+      "title": "Hoarding Gallery Corner (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-hoarding-gallery-corner-98800f5e",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-hoarding-gallery-corner-98800f5e.glb",
+      "license": "CC0-1.0",
+      "triangles": 116
+    },
+    {
+      "title": "Ladder Access (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-ladder-access-d9cc4196",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-ladder-access-d9cc4196.glb",
+      "license": "CC0-1.0",
+      "triangles": 180
+    },
+    {
+      "title": "Mantlet (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-mantlet-3fb7dd0c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-mantlet-3fb7dd0c.glb",
+      "license": "CC0-1.0",
+      "triangles": 564
+    },
+    {
+      "title": "Cheval De Frise (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-cheval-de-frise-ea0cf74c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-cheval-de-frise-ea0cf74c.glb",
+      "license": "CC0-1.0",
+      "triangles": 132
+    },
+    {
+      "title": "Stake Barricade (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stake-barricade-b9f01a4c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stake-barricade-b9f01a4c.glb",
+      "license": "CC0-1.0",
+      "triangles": 152
+    },
+    {
+      "title": "Archery Target (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-archery-target-d0908e4d",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-archery-target-d0908e4d.glb",
+      "license": "CC0-1.0",
+      "triangles": 212
+    },
+    {
+      "title": "Training Pell (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-training-pell-1a86a816",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-training-pell-1a86a816.glb",
+      "license": "CC0-1.0",
+      "triangles": 120
+    },
+    {
+      "title": "Spear Rack (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-spear-rack-2521cfc5",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-spear-rack-2521cfc5.glb",
+      "license": "CC0-1.0",
+      "triangles": 168
+    },
+    {
+      "title": "Shield Rack (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-shield-rack-b978c8a8",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-shield-rack-b978c8a8.glb",
+      "license": "CC0-1.0",
+      "triangles": 144
+    },
+    {
+      "title": "Sword Rack (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-sword-rack-de395282",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-sword-rack-de395282.glb",
+      "license": "CC0-1.0",
+      "triangles": 180
+    },
+    {
+      "title": "Crossbow Stand (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-crossbow-stand-83ec8dea",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-crossbow-stand-83ec8dea.glb",
+      "license": "CC0-1.0",
+      "triangles": 84
+    },
+    {
+      "title": "Ballista (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-ballista-d86e9ade",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-ballista-d86e9ade.glb",
+      "license": "CC0-1.0",
+      "triangles": 960
+    },
+    {
+      "title": "Trebuchet (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-trebuchet-9d55b578",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-trebuchet-9d55b578.glb",
+      "license": "CC0-1.0",
+      "triangles": 120
+    },
+    {
+      "title": "Battering Ram (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-battering-ram-92de4511",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-battering-ram-92de4511.glb",
+      "license": "CC0-1.0",
+      "triangles": 968
+    },
+    {
+      "title": "Siege Ladder (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-siege-ladder-cd622bf2",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-siege-ladder-cd622bf2.glb",
+      "license": "CC0-1.0",
+      "triangles": 276
+    },
+    {
+      "title": "Signal Brazier (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-signal-brazier-a736762d",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-signal-brazier-a736762d.glb",
+      "license": "CC0-1.0",
+      "triangles": 220
+    },
+    {
+      "title": "Beacon Tower (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-beacon-tower-59ac9748",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-beacon-tower-59ac9748.glb",
+      "license": "CC0-1.0",
+      "triangles": 240
+    },
+    {
+      "title": "Banner Pole (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-banner-pole-68e9f245",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-banner-pole-68e9f245.glb",
+      "license": "CC0-1.0",
+      "triangles": 116
+    },
+    {
+      "title": "Wall Banner (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-wall-banner-6b92cf25",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-wall-banner-6b92cf25.glb",
+      "license": "CC0-1.0",
+      "triangles": 52
+    },
+    {
+      "title": "Oil Cauldron (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-oil-cauldron-1bed401e",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-oil-cauldron-1bed401e.glb",
+      "license": "CC0-1.0",
+      "triangles": 168
+    },
+    {
+      "title": "Stone Ammunition Pile (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stone-ammunition-pile-3098eec1",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stone-ammunition-pile-3098eec1.glb",
+      "license": "CC0-1.0",
+      "triangles": 512
+    },
+    {
+      "title": "Arrow Barrel (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-arrow-barrel-fc5883b4",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-arrow-barrel-fc5883b4.glb",
+      "license": "CC0-1.0",
+      "triangles": 560
+    },
+    {
+      "title": "Supply Chest (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-supply-chest-1a7d4438",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-supply-chest-1a7d4438.glb",
+      "license": "CC0-1.0",
+      "triangles": 56
+    },
+    {
+      "title": "Sentry Shelter (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-sentry-shelter-f67e9e54",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-sentry-shelter-f67e9e54.glb",
+      "license": "CC0-1.0",
+      "triangles": 56
+    },
+    {
+      "title": "Shield Pavise (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-shield-pavise-92a590f0",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-shield-pavise-92a590f0.glb",
+      "license": "CC0-1.0",
+      "triangles": 44
+    },
+    {
+      "title": "War Drum (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-war-drum-3806d8ad",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-war-drum-3806d8ad.glb",
+      "license": "CC0-1.0",
+      "triangles": 300
+    },
+    {
+      "title": "Alarm Bell (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-alarm-bell-2f49a1b9",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-alarm-bell-2f49a1b9.glb",
+      "license": "CC0-1.0",
+      "triangles": 160
+    },
+    {
+      "title": "Well (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-well-1791f3cf",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-well-1791f3cf.glb",
+      "license": "CC0-1.0",
+      "triangles": 248
+    },
+    {
+      "title": "Horse Trough (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-horse-trough-e231ede5",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-horse-trough-e231ede5.glb",
+      "license": "CC0-1.0",
+      "triangles": 60
+    },
+    {
+      "title": "Hitching Post (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-hitching-post-073d0be1",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-hitching-post-073d0be1.glb",
+      "license": "CC0-1.0",
+      "triangles": 132
+    },
+    {
+      "title": "Stable Stall (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stable-stall-dd56fae6",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stable-stall-dd56fae6.glb",
+      "license": "CC0-1.0",
+      "triangles": 140
+    },
+    {
+      "title": "Market Awning (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-market-awning-a3f2c2e9",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-market-awning-a3f2c2e9.glb",
+      "license": "CC0-1.0",
+      "triangles": 68
+    },
+    {
+      "title": "Trestle Table (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-trestle-table-483f5a48",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-trestle-table-483f5a48.glb",
+      "license": "CC0-1.0",
+      "triangles": 72
+    },
+    {
+      "title": "Long Bench (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-long-bench-8a85a897",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-long-bench-8a85a897.glb",
+      "license": "CC0-1.0",
+      "triangles": 72
+    },
+    {
+      "title": "Throne Chair (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-throne-chair-3dfdfcce",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-throne-chair-3dfdfcce.glb",
+      "license": "CC0-1.0",
+      "triangles": 140
+    },
+    {
+      "title": "Notice Board (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-notice-board-5ad505f4",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-notice-board-5ad505f4.glb",
+      "license": "CC0-1.0",
+      "triangles": 68
+    },
+    {
+      "title": "Woodpile (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-woodpile-5e60f1d3",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-woodpile-5e60f1d3.glb",
+      "license": "CC0-1.0",
+      "triangles": 108
+    },
+    {
+      "title": "Water Barrel (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-water-barrel-888d2c29",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-water-barrel-888d2c29.glb",
+      "license": "CC0-1.0",
+      "triangles": 336
+    },
+    {
+      "title": "Bucket (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-bucket-83c68ccf",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-bucket-83c68ccf.glb",
+      "license": "CC0-1.0",
+      "triangles": 164
+    },
+    {
+      "title": "Handcart (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-handcart-787fa568",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-handcart-787fa568.glb",
+      "license": "CC0-1.0",
+      "triangles": 504
+    },
+    {
+      "title": "Hay Rack (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-hay-rack-54ec061c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-hay-rack-54ec061c.glb",
+      "license": "CC0-1.0",
+      "triangles": 168
+    },
+    {
+      "title": "Grindstone (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-grindstone-5528a63c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-grindstone-5528a63c.glb",
+      "license": "CC0-1.0",
+      "triangles": 124
+    },
+    {
+      "title": "Anvil Stump (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-anvil-stump-db97d436",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-anvil-stump-db97d436.glb",
+      "license": "CC0-1.0",
+      "triangles": 76
+    },
+    {
+      "title": "Forge Hearth (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-forge-hearth-c8ddcc67",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-forge-hearth-c8ddcc67.glb",
+      "license": "CC0-1.0",
+      "triangles": 84
+    },
+    {
+      "title": "Bread Oven (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-bread-oven-ecd01d45",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-bread-oven-ecd01d45.glb",
+      "license": "CC0-1.0",
+      "triangles": 728
+    },
+    {
+      "title": "Stone Planter (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-stone-planter-1d8c4e85",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-stone-planter-1d8c4e85.glb",
+      "license": "CC0-1.0",
+      "triangles": 112
+    },
+    {
+      "title": "Sundial (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-sundial-a677cb39",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-sundial-a677cb39.glb",
+      "license": "CC0-1.0",
+      "triangles": 116
+    },
+    {
+      "title": "Cobble Tile (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-cobble-tile-f77cdcc0",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-cobble-tile-f77cdcc0.glb",
+      "license": "CC0-1.0",
+      "triangles": 312
+    },
+    {
+      "title": "Drainage Channel (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-drainage-channel-7cbe221f",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-drainage-channel-7cbe221f.glb",
+      "license": "CC0-1.0",
+      "triangles": 36
+    },
+    {
+      "title": "Supply Crate (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-supply-crate-ecce95c8",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-supply-crate-ecce95c8.glb",
+      "license": "CC0-1.0",
+      "triangles": 72
+    },
+    {
+      "title": "Rope Coil (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-rope-coil-1d09ef25",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-rope-coil-1d09ef25.glb",
+      "license": "CC0-1.0",
+      "triangles": 780
+    },
+    {
+      "title": "Wash Basin (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-wash-basin-cdb07b63",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-wash-basin-cdb07b63.glb",
+      "license": "CC0-1.0",
+      "triangles": 192
+    },
+    {
+      "title": "Blue Banner Castle Courtyard (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-castle-cour-480ed575-starter-scene",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-castle-cour-480ed575-starter-scene.glb",
+      "license": "CC0-1.0",
+      "triangles": 4624
+    },
+    {
+      "title": "Castle Connector Cases (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-castle-connector-cases-2abdad3c",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-castle-connector-cases-2abdad3c.glb",
+      "license": "CC0-1.0",
+      "triangles": 912
+    },
+    {
+      "title": "Castle Siege Camp (Medieval Castle Construction)",
+      "slug": "medieval-castle-construction-castle-siege-camp-294a67fb",
+      "path": "/assets/world/castle-construction/pieces/medieval-castle-construction-castle-siege-camp-294a67fb.glb",
+      "license": "CC0-1.0",
+      "triangles": 3792
+    }
+  ]
+}\n
