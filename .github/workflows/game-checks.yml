@@ -104,6 +104,7 @@ jobs:
           node --check /tmp/aetheria-inline.js
           node --check assets/combat/nj-mmo-combat-core.js
           node --check assets/combat/pvp-protocol.js
+          node --check assets/combat/death-lifecycle.js
           node --check assets/engine/aetheria-engine.js
           node --check assets/engine/account-client.js
           node --check assets/engine/account-ui.js
@@ -121,6 +122,8 @@ jobs:
           node tests/character-validation.mjs
       - name: Test imported combat engine
         run: node tests/combat-core.cjs
+      - name: Test death and respawn lifecycle
+        run: node tests/death-lifecycle.cjs
       - name: Test PvP peer-message protocol
         run: node tests/pvp-protocol.cjs
       - name: Test dwarf profession
