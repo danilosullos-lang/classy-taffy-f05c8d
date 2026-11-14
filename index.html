@@ -481,6 +481,7 @@ ${Oe}`;q.test(K)&&(N(H),H=setTimeout(V,Ps))},pe=()=>{k.iceGatheringState==="comp
 <script src="assets/monsters/ai-state.js"></script>
 <script src="assets/combat/nj-mmo-combat-core.js"></script>
 <script src="assets/combat/pvp-protocol.js"></script>
+<script src="assets/combat/death-lifecycle.js"></script>
 <script src="assets/engine/aetheria-engine.js"></script>
 <script src="assets/engine/account-client.js"></script>
 <script>
@@ -8792,16 +8793,19 @@ hit=function(d){
   st.hp-=d;sfx('hit');hitstop=Math.max(hitstop,.04);if(sv.opt.vib!==false&&navigator.vibrate)navigator.vibrate(40);
   if(st.hp<=0){
     if(abSum('revive')&&Date.now()>(st.rvAt||0)){st.rvAt=Date.now()+300000;st.hp=Math.max(1,hpMax()*abSum('revive')/100);rgBanner('🔥 RENASCEU!','Habilidade passiva','#ffb347');return}
-    fldBossClear();const lost=Math.floor(sv.gold*.05);sv.gold-=lost;st.hp=hpMax();
-    // Respawn sempre apoiado no terreno: zera todo o estado vertical do salto
-    // antes de reposicionar, e recalcula a altura real do ponto seguro.
-    FLD.x=FLD.ox;FLD.z=FLD.oz;FLD.vx=FLD.vz=0;FLD.h=0;FLD.cy=0;FH=0;
-    st.y=0;st.vy=0;st.gy=Math.max(fieldH(FLD.x,FLD.z),FWL-.28);
-    st.coyote=0;st.jumpBuf=0;st.wet=fieldH(FLD.x,FLD.z)<FWL+.15;
-    st.bub=3;st.iframe=3;FLD.faceT=0;C._init=false;FLD.gx=1e9;
+    fldBossClear();
+    const terrainHeight=fieldH(FLD.ox,FLD.oz);
+    const respawn=window.AetheriaDeathLifecycle.resolveFieldRespawn({
+      player:st,field:FLD,spawn:{x:FLD.ox,z:FLD.oz},
+      gold:Math.max(0,Number.isFinite(Number(sv.gold))?Number(sv.gold):0),
+      hpMax:hpMax(),terrainHeight,groundY:Math.max(terrainHeight,FWL-.28),
+      waterLevel:FWL,goldLossRate:.05,invulnerabilitySeconds:3
+    });
+    if(!respawn.ok){console.error('Field respawn rejected:',respawn.reason);return}
+    sv.gold=respawn.gold;sv.stats.deaths=(sv.stats.deaths||0)+1;FH=0;C._init=false;
     fldGround();fldCells(true);
     EN.forEach(e=>{if(!e.dead&&Math.hypot(e.d-FLD.ox,e.z-FLD.oz)<40)e.dead=1});
-    rgBanner('💀 Você caiu!','Perdeu 🪙'+lost+' · renasceu no centro do campo','#ff6b6b');save()}
+    rgBanner('💀 Você caiu!','Perdeu 🪙'+respawn.lost+' · itens preservados · renasceu no centro do campo','#ff6b6b');save()}
 };
 const _inPvp0=inPvp;inPvp=function(){return FLDON?false:_inPvp0()};
 const _reset0=reset;reset=function(){if(FLDON)fldExit(true);_reset0()};
