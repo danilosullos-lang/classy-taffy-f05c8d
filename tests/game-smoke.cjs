@@ -775,7 +775,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     // Exercise camera drag on a phone-sized viewport and verify the low-memory
     // renderer keeps its reduced GPU pixel budget without losing WebGL context.
     const partyPanelAudit = await page.evaluate(() => {
-      const snapshot = { pause: st.pause, mode, page: MU.page, unread: MU.unread };
+      const snapshot = { pause: st.pause, mode, page: MU.page, unread: MU.unread, conf: MU.conf };
       openMenu('party');
       const heading = document.querySelector('#muc h2');
       const result = {
@@ -790,6 +790,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       mode = snapshot.mode;
       MU.page = snapshot.page;
       MU.unread = snapshot.unread;
+      MU.conf = snapshot.conf;
       return result;
     });
     if (!partyPanelAudit.visible || !partyPanelAudit.heading.includes('Grupo') ||
