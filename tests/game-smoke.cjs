@@ -9,6 +9,10 @@ if (gameSource.includes('e.m.rotation.y=rpgMonsterFacingYaw(dd,dz)') ||
 if (!gameSource.includes('assets/ui/mobile-panels.css')) {
   throw new Error('Os estilos responsivos dos painéis móveis não estão carregados.');
 }
+if (!gameSource.includes('assets/social/party.js') || !gameSource.includes('function partyPage(') ||
+    !gameSource.includes('data-party-action')) {
+  throw new Error('O painel de grupo e o protocolo P2P não estão integrados ao menu existente.');
+}
 if (!gameSource.includes('assets/classes/skill-catalog.js') || !gameSource.includes('const INTERLUDE_SKILL_SETS=window.AetheriaSkillCatalog;')) {
   throw new Error('O catálogo modular de habilidades não está integrado ao cliente Three.js.');
 }
@@ -95,9 +99,10 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       navGrid: !!window.AetheriaNavGrid,
       monsterAI: !!window.AetheriaMonsterAI,
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
-      vfxAssets: !!window.__rpgVfxAssetsDebug
+      vfxAssets: !!window.__rpgVfxAssetsDebug,
+      party: !!window.AetheriaParty
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     const castLifecycleAudit=await page.evaluate(()=>{
@@ -769,6 +774,28 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
 
     // Exercise camera drag on a phone-sized viewport and verify the low-memory
     // renderer keeps its reduced GPU pixel budget without losing WebGL context.
+    const partyPanelAudit = await page.evaluate(() => {
+      const snapshot = { pause: st.pause, mode, page: MU.page, unread: MU.unread };
+      openMenu('party');
+      const heading = document.querySelector('#muc h2');
+      const result = {
+        visible: document.querySelector('#mu').style.display === 'flex',
+        heading: heading ? heading.textContent : '',
+        hasOnlineSection: document.querySelector('#muc').textContent.includes('Jogadores online'),
+        groupCopy: document.querySelector('#muc').textContent.includes('grupo de até cinco membros') ||
+          document.querySelector('#muc').textContent.includes('Grupo ·')
+      };
+      document.querySelector('#mu').style.display = 'none';
+      st.pause = snapshot.pause;
+      mode = snapshot.mode;
+      MU.page = snapshot.page;
+      MU.unread = snapshot.unread;
+      return result;
+    });
+    if (!partyPanelAudit.visible || !partyPanelAudit.heading.includes('Grupo') ||
+        !partyPanelAudit.hasOnlineSection || !partyPanelAudit.groupCopy) {
+      throw new Error('Painel de grupo não renderizou corretamente: '+JSON.stringify(partyPanelAudit));
+    }
     await page.setViewportSize({ width: 390, height: 844 });
     await page.waitForTimeout(700);
     const cameraCanvas = await page.locator('canvas').first();
@@ -1183,6 +1210,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       mobilePanelAudit,
       keyboardInventoryAudit,
       chatPanelAudit,
+      partyPanelAudit,
       runtimeErrors: pageErrors.length
     }, null, 2));
   } catch (error) {
