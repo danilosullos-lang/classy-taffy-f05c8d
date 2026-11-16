@@ -1039,27 +1039,114 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     }
     await page.setViewportSize({ width: 390, height: 844 });
     const mobilePanelAudit = await page.evaluate(() => {
+      const snapshot = {
+        sv: JSON.parse(JSON.stringify(sv)),
+        inv: JSON.parse(JSON.stringify(inv)),
+        uid,
+        ui: { ...UI },
+        mu: { page: MU.page, unread: MU.unread, ch: MU.ch, conf: MU.conf },
+        pause: st.pause,
+        mode
+      };
+      window.__aetheriaUiAuditSnapshot = snapshot;
+      if (!inv.length) inv.push(mkItem(1, 0));
       openBag('bag');
-      try {
-        const overlay = document.querySelector('#bg');
-        const panel = document.querySelector('#bgc');
-        const grid = panel.querySelector('.grid');
-        const tab = panel.querySelector('.tab');
-        const overlayStyle = getComputedStyle(overlay);
-        const panelStyle = getComputedStyle(panel);
-        return {
-          display: overlayStyle.display,
-          position: overlayStyle.position,
-          overflowY: panelStyle.overflowY,
-          columns: grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').length : 0,
-          tabHeight: tab ? tab.getBoundingClientRect().height : 0,
-          panelHeight: panel.getBoundingClientRect().height,
-          viewportHeight: innerHeight
-        };
-      } finally {
-        closeBag();
-      }
+      const overlay = document.querySelector('#bg');
+      const panel = document.querySelector('#bgc');
+      const grid = panel.querySelector('.grid');
+      const slot = grid && grid.querySelector('button.slot[data-a="sel"]');
+      const tab = panel.querySelector(':scope > .tabs .tab');
+      const filter = panel.querySelector('.tabs .tab[data-a="flt"]');
+      const overlayStyle = getComputedStyle(overlay);
+      const panelStyle = getComputedStyle(panel);
+      return {
+        display: overlayStyle.display,
+        position: overlayStyle.position,
+        overflowY: panelStyle.overflowY,
+        columns: grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').length : 0,
+        tabHeight: tab ? tab.getBoundingClientRect().height : 0,
+        panelHeight: panel.getBoundingClientRect().height,
+        viewportHeight: innerHeight,
+        slotFound: !!slot,
+        slotTag: slot ? slot.tagName : null,
+        slotLabel: slot ? slot.getAttribute('aria-label') : null,
+        slotPressed: slot ? slot.getAttribute('aria-pressed') : null,
+        tabPressed: tab ? tab.getAttribute('aria-pressed') : null,
+        filterPressed: filter ? filter.getAttribute('aria-pressed') : null,
+        gridRole: grid ? grid.getAttribute('role') : null,
+        horizontalOverflow: panel.scrollWidth > panel.clientWidth + 1
+      };
     });
+    let keyboardInventoryAudit = null;
+    let chatPanelAudit = null;
+    try {
+      if (!mobilePanelAudit.slotFound || mobilePanelAudit.slotTag !== 'BUTTON' ||
+          !mobilePanelAudit.slotLabel || mobilePanelAudit.tabPressed !== 'true' ||
+          mobilePanelAudit.filterPressed !== 'true' || mobilePanelAudit.gridRole !== 'group' ||
+          mobilePanelAudit.horizontalOverflow) {
+        throw new Error('Acessibilidade/grade do inventário mobile inválida: '+JSON.stringify(mobilePanelAudit));
+      }
+      await page.locator('#bgc button.slot[data-a="sel"]').first().focus();
+      await page.keyboard.press('Enter');
+      keyboardInventoryAudit = await page.evaluate(() => {
+        const selected = document.querySelector('#bgc button.slot.sel');
+        return {
+          selected: !!selected,
+          pressed: selected ? selected.getAttribute('aria-pressed') : null,
+          focusedUid: document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.u || null : null,
+          selectedUid: selected ? selected.dataset.u : null,
+          detailVisible: !!document.querySelector('#bgc .det')
+        };
+      });
+      if (!keyboardInventoryAudit.selected || keyboardInventoryAudit.pressed !== 'true' ||
+          !keyboardInventoryAudit.focusedUid || keyboardInventoryAudit.focusedUid !== keyboardInventoryAudit.selectedUid ||
+          !keyboardInventoryAudit.detailVisible) {
+        throw new Error('Seleção de item por teclado/foco persistente falhou: '+JSON.stringify(keyboardInventoryAudit));
+      }
+      chatPanelAudit = await page.evaluate(() => {
+        closeBag();
+        openMenu('chat');
+        const log = document.querySelector('#cl');
+        const input = document.querySelector('#ci');
+        const send = document.querySelector('#muc [data-a="send"]');
+        return {
+          logRole: log ? log.getAttribute('role') : null,
+          live: log ? log.getAttribute('aria-live') : null,
+          logLabel: log ? log.getAttribute('aria-label') : null,
+          inputLabel: input ? input.getAttribute('aria-label') : null,
+          inputMode: input ? input.getAttribute('inputmode') : null,
+          enterKeyHint: input ? input.getAttribute('enterkeyhint') : null,
+          inputFontSize: input ? getComputedStyle(input).fontSize : null,
+          sendHeight: send ? send.getBoundingClientRect().height : 0
+        };
+      });
+      if (chatPanelAudit.logRole !== 'log' || chatPanelAudit.live !== 'polite' ||
+          !chatPanelAudit.logLabel || chatPanelAudit.inputLabel !== 'Mensagem do chat' ||
+          chatPanelAudit.inputMode !== 'text' || chatPanelAudit.enterKeyHint !== 'send' ||
+          parseFloat(chatPanelAudit.inputFontSize) < 16 || chatPanelAudit.sendHeight < 44) {
+        throw new Error('Acessibilidade/ergonomia do chat mobile falhou: '+JSON.stringify(chatPanelAudit));
+      }
+    } finally {
+      await page.evaluate(() => {
+        const snapshot = window.__aetheriaUiAuditSnapshot;
+        if (!snapshot) return;
+        $('bg').style.display = 'none';
+        $('mu').style.display = 'none';
+        inv.splice(0, inv.length, ...snapshot.inv);
+        Object.keys(sv).forEach(key => delete sv[key]);
+        Object.assign(sv, snapshot.sv);
+        uid = snapshot.uid;
+        Object.assign(UI, snapshot.ui);
+        MU.page = snapshot.mu.page;
+        MU.unread = snapshot.mu.unread;
+        MU.ch = snapshot.mu.ch;
+        MU.conf = snapshot.mu.conf;
+        st.pause = snapshot.pause;
+        mode = snapshot.mode;
+        save(true);
+        delete window.__aetheriaUiAuditSnapshot;
+      });
+    }
     await page.setViewportSize({ width: 1280, height: 800 });
     if (mobilePanelAudit.display !== 'flex' || mobilePanelAudit.position !== 'fixed' ||
       mobilePanelAudit.overflowY !== 'auto' || mobilePanelAudit.columns !== 4 ||
@@ -1093,6 +1180,9 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       archerRuntime,
       dwarfRuntime,
       monsterNavigation,
+      mobilePanelAudit,
+      keyboardInventoryAudit,
+      chatPanelAudit,
       runtimeErrors: pageErrors.length
     }, null, 2));
   } catch (error) {
