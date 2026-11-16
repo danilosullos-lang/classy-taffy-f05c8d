@@ -116,3 +116,55 @@
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
+
+
+/* Acessibilidade e ergonomia dos controles do inventário e do chat. */
+#bg button.slot {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#bg button.slot:active {
+  transform: scale(.97);
+}
+
+#bg button.slot:focus-visible,
+#mu button:focus-visible,
+#mu input:focus-visible {
+  outline: 3px solid #ffd24a;
+  outline-offset: 2px;
+}
+
+#mu #cl {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+#mu #ci {
+  min-width: 0;
+  min-height: 44px;
+  font-size: 16px !important;
+}
+
+#mu [data-a="send"] {
+  min-width: 68px;
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #bg *, #mu * {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
