@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const Party = require('../assets/social/party.js');
 
 let clock = 1000;
-const online = new Set(['leader','member-a','member-b','member-c','member-d','offline']);
+const online = new Set(['leader','member-a','member-b','member-c','member-d']);
 const make = id => {
   const sent = [];
   const changes = [];
