@@ -1055,7 +1055,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const panel = document.querySelector('#bgc');
       const grid = panel.querySelector('.grid');
       const slot = grid && grid.querySelector('button.slot[data-a="sel"]');
-      const tab = panel.querySelector(':scope > .tabs .tab');
+      const tab = panel.querySelector(':scope > .tabs .tab[aria-pressed="true"]') || panel.querySelector(':scope > .tabs .tab');
       const filter = panel.querySelector('.tabs .tab[data-a="flt"]');
       const overlayStyle = getComputedStyle(overlay);
       const panelStyle = getComputedStyle(panel);
