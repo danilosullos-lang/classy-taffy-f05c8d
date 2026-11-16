@@ -41,6 +41,7 @@ function create(options={}){
     for(const [id,expiresAt] of pending){
       if(expiresAt<=time){pending.delete(id);changed=true}
     }
+    if(party&&party.leader===selfId&&party.members.length===1&&!pending.size){party=null;changed=true}
     return changed;
   };
   const snapshot=()=>{
@@ -64,7 +65,7 @@ function create(options={}){
     expire();
     const target=cleanId(peerId);
     if(!target||target===selfId||!online(target))return false;
-    if(!party)party={id:selfId+':'+now().toString(36)+':'+Math.random().toString(36).slice(2,8),leader:selfId,members:[selfId]};
+    if(!party)party={id:selfId.slice(0,80)+':'+now().toString(36)+':'+Math.random().toString(36).slice(2,8),leader:selfId,members:[selfId]};
     if(party.leader!==selfId||party.members.length>=MAX_MEMBERS||party.members.includes(target)||pending.has(target))return false;
     const expiresAt=now()+INVITE_TTL_MS;
     pending.set(target,expiresAt);
