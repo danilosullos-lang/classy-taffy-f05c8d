@@ -90,6 +90,16 @@ assert.equal(expMember.api.accept(expInvite.data.partyId),false);
 assert.equal(expMember.api.snapshot().invites.length,0);
 assert.equal(expLeader.api.snapshot().pending.length,0);
 
+const declineLeader=make('leader');
+assert.equal(declineLeader.api.invite('member-c','Líder'),true);
+const declineInvite=declineLeader.sent.at(-1),declineMember=make('member-c');
+assert.equal(declineMember.api.receive('partyInvite','leader',declineInvite.data),true);
+assert.equal(declineMember.api.decline(declineInvite.data.partyId),true);
+assert.equal(declineMember.sent.at(-1).type,'partyDecline');
+assert.equal(declineLeader.api.receive(declineMember.sent.at(-1).type,'member-c',declineMember.sent.at(-1).data),true);
+assert.equal(declineLeader.api.snapshot().pending.length,0);
+assert.equal(declineLeader.api.snapshot().party,null);
+
 const cleanupLeader=make('leader');
 assert.equal(cleanupLeader.api.invite('member-a','Líder'),true);
 const cleanupInvite=cleanupLeader.sent.at(-1);
