@@ -3963,7 +3963,7 @@ function rpgPartyInit(){
     peerExists:id=>room.peers().some(peer=>peer.peer===id),
     onChange:()=>{if(MU.page==='party'&&$('mu').style.display==='flex')renderMenu()}
   });
-  ['partyInvite','partyAccept','partyState','partyLeave','partyDisband','partyReject'].forEach(type=>{
+  ['partyInvite','partyAccept','partyState','partyLeave','partyDisband','partyReject','partyDecline'].forEach(type=>{
     room.on(type,message=>{if(!message.isMe)RPG_PARTY.receive(type,message.peer,message.data||{})});
   });
   RPG_PARTY.onPeers(room.peers());
