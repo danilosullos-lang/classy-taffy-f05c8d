@@ -1,5 +1,9 @@
 const assert = require('node:assert/strict');
-const Party = require('../assets/social/party.js');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const moduleSandbox = { module: { exports: {} } };
+vm.runInNewContext(fs.readFileSync(require.resolve('../assets/social/party.js'), 'utf8'), moduleSandbox);
+const Party = moduleSandbox.module.exports;
 
 let clock = 1000;
 const online = new Set(['leader','member-a','member-b','member-c','member-d']);
