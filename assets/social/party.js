@@ -97,7 +97,9 @@ function create(options={}){
     expire();
     const index=invites.findIndex(item=>item.partyId===partyId);
     if(index<0)return false;
+    const invite=invites[index];
     invites.splice(index,1);
+    emit('partyDecline',{to:invite.fromPeer,partyId:invite.partyId});
     notify();
     return true;
   }
@@ -146,6 +148,15 @@ function create(options={}){
       }
       party.members.push(from);
       broadcast();
+      notify();
+      return true;
+    }
+
+    if(type==='partyDecline'){
+      const expiry=pending.get(from);
+      if(!party||party.leader!==selfId||data.to!==selfId||data.partyId!==party.id||!expiry)return false;
+      pending.delete(from);
+      if(party.members.length===1&&!pending.size)party=null;
       notify();
       return true;
     }
