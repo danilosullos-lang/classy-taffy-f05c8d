@@ -36,8 +36,8 @@ const acceptA=memberA.sent.at(-1);
 assert.equal(leader.api.receive(acceptA.type,'member-a',acceptA.data),true);
 const stateA=leader.sent.filter(x=>x.type==='partyState'&&x.data.to==='member-a').at(-1);
 assert.equal(memberA.api.receive(stateA.type,'leader',stateA.data),true);
-assert.deepEqual(leader.api.snapshot().party.members,['leader','member-a']);
-assert.deepEqual(memberA.api.snapshot().party.members,['leader','member-a']);
+assert.deepEqual(Array.from(leader.api.snapshot().party.members),['leader','member-a']);
+assert.deepEqual(Array.from(memberA.api.snapshot().party.members),['leader','member-a']);
 
 assert.equal(leader.api.invite('member-b','Líder Aetheria'),true);
 const inviteB=leader.sent.at(-1);
