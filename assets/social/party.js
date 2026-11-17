@@ -47,17 +47,18 @@ function create(options={}){
   const snapshot=()=>{
     expire();
     return {
-      party:party?{id:party.id,leader:party.leader,members:[...party.members],isLeader:party.leader===selfId}:null,
+      party:party?{id:party.id,leader:party.leader,members:[...party.members],isLeader:party.leader===selfId,revision:party.revision}:null,
       invites:invites.map(item=>({...item})),
       pending:[...pending.keys()]
     };
   };
   const broadcast=()=>{
     if(!party||party.leader!==selfId)return;
+    party.revision=(Number.isSafeInteger(party.revision)?party.revision:0)+1;
     const members=[...party.members];
     for(const to of members){
       if(to===selfId)continue;
-      emit('partyState',{to,partyId:party.id,leader:selfId,members,issuedAt:now()});
+      emit('partyState',{to,partyId:party.id,leader:selfId,members,revision:party.revision,issuedAt:now()});
     }
   };
 
@@ -65,7 +66,7 @@ function create(options={}){
     expire();
     const target=cleanId(peerId);
     if(!target||target===selfId||!online(target))return false;
-    if(!party)party={id:selfId.slice(0,80)+':'+now().toString(36)+':'+Math.random().toString(36).slice(2,8),leader:selfId,members:[selfId]};
+    if(!party)party={id:selfId.slice(0,80)+':'+now().toString(36)+':'+Math.random().toString(36).slice(2,8),leader:selfId,members:[selfId],revision:0};
     if(party.leader!==selfId||party.members.length>=MAX_MEMBERS||party.members.includes(target)||pending.has(target))return false;
     const expiresAt=now()+INVITE_TTL_MS;
     pending.set(target,expiresAt);
@@ -86,7 +87,7 @@ function create(options={}){
     const invite=invites[index];
     if(party&&party.id!==invite.partyId)return false;
     if(!online(invite.fromPeer)){invites.splice(index,1);notify();return false}
-    party={id:invite.partyId,leader:invite.fromPeer,members:[invite.fromPeer,selfId]};
+    party={id:invite.partyId,leader:invite.fromPeer,members:[invite.fromPeer,selfId],revision:0};
     invites.splice(index,1);
     emit('partyAccept',{to:invite.fromPeer,partyId:invite.partyId});
     notify();
@@ -164,6 +165,9 @@ function create(options={}){
     if(type==='partyState'){
       if(!party||party.id!==data.partyId||party.leader!==from||data.to!==selfId||data.leader!==from||
           !Array.isArray(data.members)||data.members.length<2||data.members.length>MAX_MEMBERS)return false;
+      const revision=data.revision;
+      const currentRevision=Number.isSafeInteger(party.revision)?party.revision:0;
+      if(!Number.isSafeInteger(revision)||revision<=currentRevision)return false;
       const members=[];
       for(const raw of data.members){
         const id=cleanId(raw);
@@ -172,6 +176,7 @@ function create(options={}){
       }
       if(!members.includes(selfId)||!members.includes(from))return false;
       party.members=members;
+      party.revision=revision;
       notify();
       return true;
     }
