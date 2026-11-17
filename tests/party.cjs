@@ -34,8 +34,14 @@ assert.equal(memberA.api.snapshot().invites.length,1);
 assert.equal(memberA.api.accept(inviteA.data.partyId),true);
 const acceptA=memberA.sent.at(-1);
 assert.equal(leader.api.receive(acceptA.type,'member-a',acceptA.data),true);
+assert.equal(leader.api.receive(acceptA.type,'member-a',acceptA.data),false);
 const stateA=leader.sent.filter(x=>x.type==='partyState'&&x.data.to==='member-a').at(-1);
 assert.equal(memberA.api.receive(stateA.type,'leader',stateA.data),true);
+assert.equal(memberA.api.snapshot().party.revision,1);
+assert.equal(memberA.api.receive(stateA.type,'leader',stateA.data),false);
+assert.equal(memberA.api.receive(stateA.type,'leader',{...stateA.data,revision:0}),false);
+const missingRevision={...stateA.data};delete missingRevision.revision;
+assert.equal(memberA.api.receive(stateA.type,'leader',missingRevision),false);
 assert.deepEqual(Array.from(leader.api.snapshot().party.members),['leader','member-a']);
 assert.deepEqual(Array.from(memberA.api.snapshot().party.members),['leader','member-a']);
 
@@ -49,6 +55,10 @@ const stateB=leader.sent.filter(x=>x.type==='partyState'&&x.data.to==='member-b'
 assert.equal(memberB.api.receive(stateB.type,'leader',stateB.data),true);
 const updateA=leader.sent.filter(x=>x.type==='partyState'&&x.data.to==='member-a').at(-1);
 assert.equal(memberA.api.receive(updateA.type,'leader',updateA.data),true);
+assert.equal(memberA.api.snapshot().party.revision,2);
+assert.equal(memberA.api.receive(stateA.type,'leader',stateA.data),false);
+assert.equal(memberA.api.receive(updateA.type,'leader',{...updateA.data,revision:3,members:['leader','member-a','member-a']}),false);
+assert.equal(memberA.api.snapshot().party.revision,2);
 assert.equal(leader.api.snapshot().party.members.length,3);
 
 assert.equal(leader.api.invite('member-c','Líder Aetheria'),true);
