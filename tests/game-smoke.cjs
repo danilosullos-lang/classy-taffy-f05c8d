@@ -29,6 +29,12 @@ if (!gameSource.includes('assets/combat/pvp-protocol.js') ||
     !gameSource.includes('cooldownMs:250')) {
   throw new Error('PvP peer messages are not protected by packet, replay, range and combat-core validation.');
 }
+if (!gameSource.includes('assets/combat/pvp-loot.js') ||
+    !gameSource.includes('AetheriaPvpLoot.preparePvpDrop') ||
+    !gameSource.includes('const now=Date.now(),victimFlag=myFlag(),red=victimFlag===1') ||
+    !gameSource.includes('sv.eq=loot.equipment')) {
+  throw new Error('PvP loot must use the victim PK state and clear equipment references for dropped items.');
+}
 if (!gameSource.includes('assets/combat/death-lifecycle.js') ||
     !gameSource.includes('AetheriaDeathLifecycle.resolveFieldRespawn') ||
     !gameSource.includes('sv.stats.deaths=(sv.stats.deaths||0)+1')) {
@@ -93,6 +99,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       postprocessing: !!(window.THREE && THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass && THREE.ShaderPass),
       combatCore: !!window.AetheriaCombatCore,
       pvpProtocol: !!window.AetheriaPvpProtocol,
+      pvpLoot: !!window.AetheriaPvpLoot,
       deathLifecycle: !!window.AetheriaDeathLifecycle,
       dwarfProfession: !!window.AetheriaDwarfProfession,
       skillCatalog: !!window.AetheriaSkillCatalog,
@@ -102,7 +109,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       vfxAssets: !!window.__rpgVfxAssetsDebug,
       party: !!window.AetheriaParty
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.pvpLoot || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     const castLifecycleAudit=await page.evaluate(()=>{
@@ -193,6 +200,26 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     });
     if(!pvpProtocolAudit.loaded||!pvpProtocolAudit.accepted||pvpProtocolAudit.damage!==35||pvpProtocolAudit.replay!=='replay'){
       throw new Error('PvP browser protocol audit failed: '+JSON.stringify(pvpProtocolAudit));
+    }
+    const pvpLootAudit=await page.evaluate(()=>{
+      const loot=window.AetheriaPvpLoot;
+      const inventory=[
+        {u:20,s:0,r:1},
+        {u:21,s:1,r:3},
+        {u:22,s:2,r:2,lock:true},
+        {u:23,s:3,r:4}
+      ];
+      const values=[0,.1,.9];let index=0;
+      const result=loot.preparePvpDrop(inventory,{0:21,1:23},{red:true,random:()=>values[index++]??.9});
+      return {loaded:!!loot,ok:result.ok,ids:result.items.map(item=>item.u),
+        remaining:result.inventory.map(item=>item.u),equipment:result.equipment,removed:result.removedEquipmentSlots};
+    });
+    if(!pvpLootAudit.loaded||!pvpLootAudit.ok||
+      JSON.stringify(pvpLootAudit.ids)!==JSON.stringify([20,21])||
+      JSON.stringify(pvpLootAudit.remaining)!==JSON.stringify([22,23])||
+      JSON.stringify(pvpLootAudit.equipment)!==JSON.stringify({1:23})||
+      JSON.stringify(pvpLootAudit.removed)!==JSON.stringify(['0'])){
+      throw new Error('PvP loot/equipment browser audit failed: '+JSON.stringify(pvpLootAudit));
     }
     const bossLevelAudit=await page.evaluate(()=>({first:bossAt(0).lv,late:bossAt(100).lv}));
     if(bossLevelAudit.first<1||bossLevelAudit.late!==80)throw new Error('Níveis dos chefes não respeitam o teto 80: '+JSON.stringify(bossLevelAudit));
