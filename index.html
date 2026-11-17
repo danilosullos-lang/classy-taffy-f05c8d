@@ -483,6 +483,7 @@ ${Oe}`;q.test(K)&&(N(H),H=setTimeout(V,Ps))},pe=()=>{k.iceGatheringState==="comp
 <script src="assets/monsters/ai-state.js"></script>
 <script src="assets/combat/nj-mmo-combat-core.js"></script>
 <script src="assets/combat/pvp-protocol.js"></script>
+<script src="assets/combat/pvp-loot.js"></script>
 <script src="assets/combat/death-lifecycle.js"></script>
 <script src="assets/engine/aetheria-engine.js"></script>
 <script src="assets/engine/account-client.js"></script>
@@ -7699,12 +7700,16 @@ sv.pk=sv.pk||{k:0,d:0,rk:0,karma:0};sv.pk.karma=Math.max(0,Math.min(999,+sv.pk.k
 const PK={out:{},in:{},lk:{}};
 function myFlag(){const n=Date.now();if((sv.pk&&sv.pk.karma>0)||n<(sv.redUntil||0))return 1;for(const id in PK.out)if(n-PK.out[id]<60000)return 2;for(const id in PK.in)if(n-PK.in[id]<60000)return 2;return 0}
 function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t>8000||!room)return;
-  const now=Date.now(),victim=room.peers().find(p=>p.peer===k.id),victimFlag=pn(victim&&victim.presence&&victim.presence.fl),red=victimFlag===1,items=[];
-  if(!(PV.cd[k.id]&&now-PV.cd[k.id]<120000)){const eq=Object.values(sv.eq||{});let c=inv.filter(i=>!i.lock&&!eq.includes(i.u));if(!c.length)c=inv.filter(i=>!i.lock);
-    if(c.length)items.push(c[Math.floor(Math.random()*c.length)]);
-    if(red)inv.filter(i=>i.r>=2&&!i.lock&&!items.includes(i)).sort(()=>Math.random()-.5).forEach(i=>{if(items.length<3&&Math.random()<.35)items.push(i)})}
-  inv=inv.filter(x=>!items.includes(x));PV.cd[k.id]=now;save();
-  room.emit('pvpkill',{to:k.id,items,red:myFlag()===1,flag:myFlag(),vn:myName,karma:sv.pk.karma||0}).catch(()=>{})}
+  const now=Date.now(),victimFlag=myFlag(),red=victimFlag===1;let items=[];
+  if(!(PV.cd[k.id]&&now-PV.cd[k.id]<120000)){
+    const loot=window.AetheriaPvpLoot.preparePvpDrop(inv,sv.eq||{},{red,random:Math.random});
+    if(loot.ok){
+      items=loot.items;inv=loot.inventory;sv.eq=loot.equipment;
+      if(loot.removedEquipmentSlots.includes('0')&&frog&&frog.userData)frog.userData._weaponSignature='';
+    }
+  }
+  PV.cd[k.id]=now;save();
+  room.emit('pvpkill',{to:k.id,items,red,flag:victimFlag,vn:myName,karma:sv.pk.karma||0}).catch(()=>{})}
 function killRank(){const col=f=>f===1?'#ff4b4b':f===2?'#b980ff':'#fff';
   const rows=[{n:myName+' (você)',k:sv.pk.k,f:myFlag()}].concat(PEERS.filter(p=>!p.isMe&&p.presence&&p.presence.name).map(p=>({n:esc(String(p.presence.name).slice(0,16)),k:pn(p.presence.k),f:pn(p.presence.fl)}))).sort((a,b)=>b.k-a.k).slice(0,10);
   return '<h3 style="margin:12px 0 4px">⚔️ Ranking de Kills</h3><div style="font-size:12px;opacity:.8">Você: '+sv.pk.k+' kills · '+sv.pk.d+' mortes · ☠️ Karma '+(sv.pk.karma||0)+' · 🔴 '+sv.pk.rk+' PKs</div>'+rows.map((r,i)=>'<div class="it"><span style="color:'+col(r.f)+'">'+(i+1)+'. '+r.n+(r.f===1?' 🔴':r.f===2?' 🟣':'')+'</span><b>'+r.k+' kills</b></div>').join('')}
