@@ -6,6 +6,7 @@
   'use strict';
   const MAX_DROP_ITEMS=3;
   function preparePvpDrop(inventory,equipment,options={}){
+    options=options&&typeof options==='object'?options:{};
     const fail=reason=>({ok:false,reason,items:[],inventory:null,equipment:null,removedEquipmentSlots:[]});
     if(!Array.isArray(inventory)||!equipment||typeof equipment!=='object'||Array.isArray(equipment))
       return fail('invalid_state');
@@ -40,7 +41,8 @@
     if(red){
       for(const item of inventory){
         if(items.length>=MAX_DROP_ITEMS)break;
-        if(!item||typeof item!=='object'||item.lock||Number(item.r)<2||item.u===undefined||item.u===null||items.includes(item))continue;
+        const rarity=Number(item&&item.r);
+        if(!item||typeof item!=='object'||item.lock||!Number.isFinite(rarity)||rarity<2||item.u===undefined||item.u===null||items.includes(item))continue;
         const value=roll();
         if(value===null)return fail('invalid_random');
         if(value<.35)items.push(item);
