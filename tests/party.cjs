@@ -125,6 +125,42 @@ online.delete('member-a');
 cleanupLeader.api.onPeers([{peer:'leader',isMe:true}]);
 assert.equal(cleanupLeader.api.snapshot().party,null);
 
+// A disconnect from a multi-member party must publish a newer authoritative snapshot.
+online.add('leader-disconnect');
+online.add('disconnect-a');
+online.add('disconnect-b');
+const disconnectLeader=make('leader-disconnect');
+assert.equal(disconnectLeader.api.invite('disconnect-a','Líder'),true);
+const disconnectInviteA=disconnectLeader.sent.at(-1);
+const disconnectA=make('disconnect-a');
+assert.equal(disconnectA.api.receive('partyInvite','leader-disconnect',disconnectInviteA.data),true);
+assert.equal(disconnectA.api.accept(disconnectInviteA.data.partyId),true);
+assert.equal(disconnectLeader.api.receive(disconnectA.sent.at(-1).type,'disconnect-a',disconnectA.sent.at(-1).data),true);
+const disconnectStateA=disconnectLeader.sent.filter(x=>x.type==='partyState'&&x.data.to==='disconnect-a').at(-1);
+assert.equal(disconnectA.api.receive(disconnectStateA.type,'leader-disconnect',disconnectStateA.data),true);
+
+assert.equal(disconnectLeader.api.invite('disconnect-b','Líder'),true);
+const disconnectInviteB=disconnectLeader.sent.at(-1);
+const disconnectB=make('disconnect-b');
+assert.equal(disconnectB.api.receive('partyInvite','leader-disconnect',disconnectInviteB.data),true);
+assert.equal(disconnectB.api.accept(disconnectInviteB.data.partyId),true);
+assert.equal(disconnectLeader.api.receive(disconnectB.sent.at(-1).type,'disconnect-b',disconnectB.sent.at(-1).data),true);
+const disconnectStateB=disconnectLeader.sent.filter(x=>x.type==='partyState'&&x.data.to==='disconnect-b').at(-1);
+assert.equal(disconnectB.api.receive(disconnectStateB.type,'leader-disconnect',disconnectStateB.data),true);
+const disconnectUpdateA=disconnectLeader.sent.filter(x=>x.type==='partyState'&&x.data.to==='disconnect-a').at(-1);
+assert.equal(disconnectA.api.receive(disconnectUpdateA.type,'leader-disconnect',disconnectUpdateA.data),true);
+assert.equal(disconnectB.api.snapshot().party.revision,2);
+
+online.delete('disconnect-a');
+disconnectLeader.api.onPeers([{peer:'leader-disconnect',isMe:true},{peer:'disconnect-b'}]);
+const afterDisconnect=disconnectLeader.sent.filter(x=>x.type==='partyState'&&x.data.to==='disconnect-b').at(-1);
+assert.equal(afterDisconnect.data.revision,3);
+assert.equal(disconnectB.api.receive(afterDisconnect.type,'leader-disconnect',afterDisconnect.data),true);
+assert.deepEqual(Array.from(disconnectB.api.snapshot().party.members),['leader-disconnect','disconnect-b']);
+assert.equal(disconnectB.api.snapshot().party.revision,3);
+assert.equal(disconnectB.api.receive(disconnectStateB.type,'leader-disconnect',disconnectStateB.data),false);
+assert.deepEqual(Array.from(disconnectLeader.api.snapshot().party.members),['leader-disconnect','disconnect-b']);
+
 const invalid=make('member-a');
 assert.equal(invalid.api.receive('partyInvite','leader',{to:'other',partyId:'x',leader:'leader',expiresAt:clock+1000}),false);
 assert.equal(invalid.api.receive('partyState','leader',{to:'member-a',partyId:'x',leader:'leader',members:['leader','other']}),false);
