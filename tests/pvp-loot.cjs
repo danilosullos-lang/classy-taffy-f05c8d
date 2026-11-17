@@ -70,5 +70,14 @@ assert.equal(invalidRandom.ok,false);
 assert.equal(invalidRandom.reason,'invalid_random');
 assert.equal(Loot.preparePvpDrop(null,{}).reason,'invalid_state');
 assert.equal(Loot.preparePvpDrop([],[]).reason,'invalid_state');
+const malformedRarity=Loot.preparePvpDrop(
+  [{u:70,r:1},{u:71,r:NaN}],
+  {},
+  {red:true,random:()=>0}
+);
+assert.equal(malformedRarity.ok,true);
+assert.deepEqual(malformedRarity.items.map(item=>item.u),[70],'non-finite rarity must not qualify for the PK bonus drop');
+const nullOptions=Loot.preparePvpDrop([{u:72,r:1}],{},null);
+assert.equal(nullOptions.ok,true,'null optional settings must safely use the default random source');
 
 console.log('Aetheria PvP loot: selection, PK bonus, locked items, equipment cleanup, drop cap and atomic invalid-state handling passed.');
