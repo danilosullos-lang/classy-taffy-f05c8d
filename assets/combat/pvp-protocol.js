@@ -115,9 +115,7 @@
     if(!recipient||!senderId||senderId===recipient||String(packet.to||'')!==recipient)return reject('wrong_recipient');
     const sid=String(packet.sid||'');
     const seq=Number(packet.seq);
-    const sentAt=Number(packet.sentAt);
     if(!sid||sid.length>MAX_SESSION_LENGTH||!Number.isSafeInteger(seq)||seq<1)return reject('invalid_sequence');
-    if(!Number.isFinite(sentAt)||sentAt>now+1000||now-sentAt>ttlMs)return reject('stale_packet');
 
     if(!Array.isArray(state.sessions))state.sessions=[];
     if(state.sessions.includes(sid)&&state.sessionId!==sid)return reject('replayed_session');
