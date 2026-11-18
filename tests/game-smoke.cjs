@@ -35,6 +35,15 @@ if (!gameSource.includes('assets/combat/pvp-loot.js') ||
     !gameSource.includes('sv.eq=loot.equipment')) {
   throw new Error('PvP loot must use the victim PK state and clear equipment references for dropped items.');
 }
+
+if (gameSource.includes("room.on('pvploot'") ||
+    !gameSource.includes('createDeathPacket') ||
+    !gameSource.includes('validateDeathPacket(d.event') ||
+    !gameSource.includes("room.emit('pvpkill',{to:k.id,event,items,red") ||
+    !gameSource.includes('PV.killRx[m.peer]') ||
+    !gameSource.includes('seenLootIds')) {
+  throw new Error('PvP death rewards must use sequenced, replay-safe kill events and reject the obsolete pvploot listener.');
+}
 if (!gameSource.includes('assets/combat/death-lifecycle.js') ||
     !gameSource.includes('AetheriaDeathLifecycle.resolveFieldRespawn') ||
     !gameSource.includes('sv.stats.deaths=(sv.stats.deaths||0)+1')) {
@@ -200,6 +209,18 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     });
     if(!pvpProtocolAudit.loaded||!pvpProtocolAudit.accepted||pvpProtocolAudit.damage!==35||pvpProtocolAudit.replay!=='replay'){
       throw new Error('PvP browser protocol audit failed: '+JSON.stringify(pvpProtocolAudit));
+    }
+
+    const pvpDeathPacketAudit=await page.evaluate(()=>{
+      const protocol=window.AetheriaPvpProtocol,state={};
+      const context={senderId:'browser-death-victim',recipientId:'browser-death-killer',nowMs:20000};
+      const packet=protocol.createDeathPacket({to:context.recipientId,sessionId:'browser-death-session',seq:1,nowMs:20000});
+      const accepted=protocol.validateDeathPacket(packet,context,state);
+      const replay=protocol.validateDeathPacket(packet,{...context,nowMs:20300},state);
+      return {loaded:!!protocol,accepted:accepted.ok,seq:accepted.seq,replay:replay.reason};
+    });
+    if(!pvpDeathPacketAudit.loaded||!pvpDeathPacketAudit.accepted||pvpDeathPacketAudit.seq!==1||pvpDeathPacketAudit.replay!=='replay'){
+      throw new Error('PvP death event replay protection failed in Chromium: '+JSON.stringify(pvpDeathPacketAudit));
     }
     const pvpLootAudit=await page.evaluate(()=>{
       const loot=window.AetheriaPvpLoot;
