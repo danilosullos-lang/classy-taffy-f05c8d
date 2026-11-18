@@ -92,5 +92,52 @@
     return {ok:true,damage,rawDamage:Math.round(rawDamage),seq,reason:null};
   }
 
-  root.AetheriaPvpProtocol=Object.freeze({VERSION,createHitPacket,validateHit});
+  function createDeathPacket(input){
+    input=input||{};
+    const to=String(input.to||'').trim();
+    const sid=String(input.sessionId||'');
+    const seq=Number(input.seq);
+    const sentAt=Number(input.nowMs);
+    if(!to||to.length>128||!sid||sid.length>MAX_SESSION_LENGTH||
+       !Number.isSafeInteger(seq)||seq<1||!Number.isFinite(sentAt))return null;
+    return {v:VERSION,to,sid,seq,sentAt};
+  }
+
+  function validateDeathPacket(packet,context,state,options){
+    packet=packet||{};
+    context=context||{};
+    state=state||{};
+    options=options||{};
+    const now=Number(context.nowMs);
+    const ttlMs=clamp(Number(options.ttlMs)||15000,1000,30000);
+    const cooldownMs=clamp(Number(options.cooldownMs)||250,0,5000);
+    const reject=reason=>({ok:false,reason});
+    if(!Number.isFinite(now)||!packet||typeof packet!=='object')return reject('invalid_context');
+    if(packet.v!==VERSION)return reject('unsupported_version');
+    const recipient=String(context.recipientId||'');
+    const senderId=String(context.senderId||'');
+    if(!recipient||!senderId||senderId===recipient||String(packet.to||'')!==recipient)return reject('wrong_recipient');
+    const sid=String(packet.sid||'');
+    const seq=Number(packet.seq);
+    const sentAt=Number(packet.sentAt);
+    if(!sid||sid.length>MAX_SESSION_LENGTH||!Number.isSafeInteger(seq)||seq<1)return reject('invalid_sequence');
+    if(!Number.isFinite(sentAt)||sentAt>now+1000||now-sentAt>ttlMs)return reject('stale_packet');
+
+    if(!Array.isArray(state.sessions))state.sessions=[];
+    if(state.sessions.includes(sid)&&state.sessionId!==sid)return reject('replayed_session');
+    if(state.sessionId!==sid){
+      state.sessions.push(sid);
+      if(state.sessions.length>8)state.sessions=state.sessions.slice(-8);
+      state.sessionId=sid;
+      state.lastSeq=0;
+      state.lastAcceptedAt=0;
+    }
+    if(seq<=Number(state.lastSeq||0))return reject('replay');
+    state.lastSeq=seq;
+    if(now-Number(state.lastAcceptedAt||0)<cooldownMs)return reject('cooldown');
+    state.lastAcceptedAt=now;
+    return {ok:true,seq,sessionId:sid,reason:null};
+  }
+
+  root.AetheriaPvpProtocol=Object.freeze({VERSION,createHitPacket,validateHit,createDeathPacket,validateDeathPacket});
 })(typeof window!=='undefined'?window:globalThis);
