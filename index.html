@@ -7583,7 +7583,7 @@ setInterval(()=>{if(!V.on||!room||!room.pc||!st)return;const pc=room.pc(),me=myI
   near.forEach(o=>{if(!V.calls[o.id]&&me<o.id){try{vAttach(o.id,pc.call(o.id,V.stream))}catch(e){}}const a=V.audio[o.id];if(a)a.volume=Math.max(0,Math.min(1,1-o.d/VR))})},1500);
 
 /* ===== PVP ===== */
-const PV={last:null,hit:{},cd:{},msg:0,in:false,target:null,seq:{},rx:{},session:(()=>{try{const a=new Uint32Array(4);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(16)).join('')}catch(_){return Date.now().toString(36)+Math.random().toString(36).slice(2)}})()};
+const PV={last:null,hit:{},cd:{},msg:0,in:false,target:null,seq:{},rx:{},deathSeq:0,killRx:{},session:(()=>{try{const a=new Uint32Array(4);crypto.getRandomValues(a);return Array.from(a,x=>x.toString(16)).join('')}catch(_){return Date.now().toString(36)+Math.random().toString(36).slice(2)}})()};
 function inPvp(){return !!(st&&st.run&&sv.lv>=PVP_LV&&Math.abs(st.d)>=PVP_D)}
 function cpMax(){return Math.max(1,Math.round(hpMax()*.30))}
 if(!Number.isFinite(+sv.cp))sv.cp=cpMax();sv.cp=Math.max(0,Math.min(cpMax(),+sv.cp||0));
@@ -7634,8 +7634,7 @@ const rw5=setInterval(()=>{if(room){clearInterval(rw5);try{
     PV.last={id:m.peer,t:now};PK.in[m.peer]=now;
     applyPvpDamage(Math.min(checked.damage,resolved.damage));
   });
-  room.on('pvploot',m=>{const d=m.data||{},it=d.item;if(m.isMe||d.to!==myId()||!it||!RAR[it.r]||!SL[it.s]||!it.st||typeof it.st!=='object')return;if(!PV.hit[m.peer]||Date.now()-PV.hit[m.peer]>15000)return;delete PV.hit[m.peer];it.u=uid++;it.p=+it.p||0;
-    if(inv.length>=sv.cap){sv.gold+=price(it);say('Bolsa cheia! Item vendido');return}inv.push(it);save();const e=$('pop');e.innerHTML='🏴‍☠️ ITEM ROUBADO!<br><small>'+esc(it.n)+'</small>';e.style.fontSize='22px';e.style.display='block';popT=3;gain(100)})
+  
 }catch(e){}}},500);
 setInterval(()=>{if(!st||!st.run)return;const n=inPvp();if(n!==PV.in){PV.in=n;if(n)sv.pvpEnter=1;say(n?'⚔️ ZONA PVP! Seus itens estão em risco':'🛡️ Zona segura')}
   updatePvPTargetPanel();
@@ -7700,7 +7699,10 @@ sv.pk=sv.pk||{k:0,d:0,rk:0,karma:0};sv.pk.karma=Math.max(0,Math.min(999,+sv.pk.k
 const PK={out:{},in:{},lk:{}};
 function myFlag(){const n=Date.now();if((sv.pk&&sv.pk.karma>0)||n<(sv.redUntil||0))return 1;for(const id in PK.out)if(n-PK.out[id]<60000)return 2;for(const id in PK.in)if(n-PK.in[id]<60000)return 2;return 0}
 function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t>8000||!room)return;
-  const now=Date.now(),victimFlag=myFlag(),red=victimFlag===1;let items=[];
+  const now=Date.now(),victimFlag=myFlag(),red=victimFlag===1,protocol=window.AetheriaPvpProtocol;let items=[];
+  const event=protocol&&protocol.createDeathPacket({to:k.id,sessionId:PV.session,seq:PV.deathSeq+1,nowMs:now});
+  if(!event)return;
+  PV.deathSeq=event.seq;
   if(!(PV.cd[k.id]&&now-PV.cd[k.id]<120000)){
     const loot=window.AetheriaPvpLoot.preparePvpDrop(inv,sv.eq||{},{red,random:Math.random});
     if(loot.ok){
@@ -7709,13 +7711,25 @@ function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t
     }
   }
   PV.cd[k.id]=now;save();
-  room.emit('pvpkill',{to:k.id,items,red,flag:victimFlag,vn:myName,karma:sv.pk.karma||0}).catch(()=>{})}
+  room.emit('pvpkill',{to:k.id,event,items,red,flag:victimFlag,vn:myName,karma:sv.pk.karma||0}).catch(()=>{})}
 function killRank(){const col=f=>f===1?'#ff4b4b':f===2?'#b980ff':'#fff';
   const rows=[{n:myName+' (você)',k:sv.pk.k,f:myFlag()}].concat(PEERS.filter(p=>!p.isMe&&p.presence&&p.presence.name).map(p=>({n:esc(String(p.presence.name).slice(0,16)),k:pn(p.presence.k),f:pn(p.presence.fl)}))).sort((a,b)=>b.k-a.k).slice(0,10);
   return '<h3 style="margin:12px 0 4px">⚔️ Ranking de Kills</h3><div style="font-size:12px;opacity:.8">Você: '+sv.pk.k+' kills · '+sv.pk.d+' mortes · ☠️ Karma '+(sv.pk.karma||0)+' · 🔴 '+sv.pk.rk+' PKs</div>'+rows.map((r,i)=>'<div class="it"><span style="color:'+col(r.f)+'">'+(i+1)+'. '+r.n+(r.f===1?' 🔴':r.f===2?' 🟣':'')+'</span><b>'+r.k+' kills</b></div>').join('')}
-const rw6=setInterval(()=>{if(room){clearInterval(rw6);try{room.on('pvpkill',m=>{const d=m.data||{};if(m.isMe||d.to!==myId())return;if(!PV.hit[m.peer]||Date.now()-PV.hit[m.peer]>15000)return;delete PV.hit[m.peer];
-  const now=Date.now(),vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1)),victimFlag=Number.isFinite(+d.flag)?Math.max(0,Math.min(2,+d.flag)):(prov?2:vr?1:0);
-  let got=0;(Array.isArray(d.items)?d.items.slice(0,3):[]).forEach(x=>{const it=cleanItem(x);if(!it)return;if(inv.length>=sv.cap){sv.gold+=price(it);return}inv.push(it);got++});
+const rw6=setInterval(()=>{if(room){clearInterval(rw6);try{room.on('pvpkill',m=>{const d=m.data||{};if(m.isMe||d.to!==myId())return;
+  const now=Date.now(),hitAt=PV.hit[m.peer],protocol=window.AetheriaPvpProtocol;
+  if(!Number.isFinite(hitAt)||now-hitAt< -1000||now-hitAt>15000||!protocol)return;
+  const state=PV.killRx[m.peer]||(PV.killRx[m.peer]={});
+  const checked=protocol.validateDeathPacket(d.event,{senderId:m.peer,recipientId:myId(),nowMs:now},state,{ttlMs:15000,cooldownMs:250});
+  if(!checked.ok)return;
+  delete PV.hit[m.peer];
+  const vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1)),victimFlag=Number.isFinite(+d.flag)?Math.max(0,Math.min(2,+d.flag)):(prov?2:vr?1:0);
+  const seenLootIds=new Set();let got=0;
+  (Array.isArray(d.items)?d.items.slice(0,3):[]).forEach(x=>{
+    if(!x||x.u===undefined||x.u===null)return;
+    const itemId=String(x.u);if(!itemId||seenLootIds.has(itemId))return;seenLootIds.add(itemId);
+    const it=cleanItem(x);if(!it)return;
+    if(inv.length>=sv.cap){sv.gold+=price(it);return}inv.push(it);got++;
+  });
   if(!PK.lk[m.peer]||now-PK.lk[m.peer]>120000){PK.lk[m.peer]=now;sv.pk.k++}
   if(victimFlag===0){sv.pk.karma=Math.min(999,(+sv.pk.karma||0)+1);sv.pk.rk++;say('🔴 PK! Karma +1')}else say(victimFlag===1?'☠️ PK abatido!':'🟣 PvP justo!');
   const e=$('pop');e.innerHTML='🏴‍☠️ '+(got?got+' ITEM(S) ROUBADO(S)!':'KILL!')+'<br><small>'+esc(vn)+'</small>';e.style.fontSize='22px';e.style.display='block';popT=3;gain(100);save();
