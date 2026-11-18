@@ -214,7 +214,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     const pvpDeathPacketAudit=await page.evaluate(()=>{
       const protocol=window.AetheriaPvpProtocol,state={};
       const context={senderId:'browser-death-victim',recipientId:'browser-death-killer',nowMs:20000};
-      const packet=protocol.createDeathPacket({to:context.recipientId,sessionId:'browser-death-session',seq:1,nowMs:20000});
+      const packet=protocol.createDeathPacket({to:context.recipientId,sessionId:'browser-death-session',seq:1});
       const accepted=protocol.validateDeathPacket(packet,context,state);
       const replay=protocol.validateDeathPacket(packet,{...context,nowMs:20300},state);
       return {loaded:!!protocol,accepted:accepted.ok,seq:accepted.seq,replay:replay.reason};
