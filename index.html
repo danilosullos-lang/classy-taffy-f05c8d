@@ -7719,7 +7719,7 @@ const rw6=setInterval(()=>{if(room){clearInterval(rw6);try{room.on('pvpkill',m=>
   const now=Date.now(),hitAt=PV.hit[m.peer],protocol=window.AetheriaPvpProtocol;
   if(!Number.isFinite(hitAt)||now-hitAt< -1000||now-hitAt>15000||!protocol)return;
   const state=PV.killRx[m.peer]||(PV.killRx[m.peer]={});
-  const checked=protocol.validateDeathPacket(d.event,{senderId:m.peer,recipientId:myId(),nowMs:now},state,{ttlMs:15000,cooldownMs:250});
+  const checked=protocol.validateDeathPacket(d.event,{senderId:m.peer,recipientId:myId(),nowMs:now},state,{cooldownMs:250});
   if(!checked.ok)return;
   delete PV.hit[m.peer];
   const vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1)),victimFlag=Number.isFinite(+d.flag)?Math.max(0,Math.min(2,+d.flag)):(prov?2:vr?1:0);
