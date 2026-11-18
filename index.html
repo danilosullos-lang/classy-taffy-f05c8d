@@ -7700,7 +7700,7 @@ const PK={out:{},in:{},lk:{}};
 function myFlag(){const n=Date.now();if((sv.pk&&sv.pk.karma>0)||n<(sv.redUntil||0))return 1;for(const id in PK.out)if(n-PK.out[id]<60000)return 2;for(const id in PK.in)if(n-PK.in[id]<60000)return 2;return 0}
 function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t>8000||!room)return;
   const now=Date.now(),victimFlag=myFlag(),red=victimFlag===1,protocol=window.AetheriaPvpProtocol;let items=[];
-  const event=protocol&&protocol.createDeathPacket({to:k.id,sessionId:PV.session,seq:PV.deathSeq+1,nowMs:now});
+  const event=protocol&&protocol.createDeathPacket({to:k.id,sessionId:PV.session,seq:PV.deathSeq+1});
   if(!event)return;
   PV.deathSeq=event.seq;
   if(!(PV.cd[k.id]&&now-PV.cd[k.id]<120000)){
