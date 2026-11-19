@@ -128,6 +128,8 @@ jobs:
         run: node tests/death-lifecycle.cjs
       - name: Test PvP peer-message protocol
         run: node tests/pvp-protocol.cjs
+      - name: Test PvP death event protocol
+        run: node tests/pvp-death-protocol.cjs
       - name: Test PvP loot and equipment cleanup
         run: node tests/pvp-loot.cjs
       - name: Test dwarf profession
