@@ -41,12 +41,18 @@ assert.equal(P.validateHit(P.createHitPacket({to:'peer-b',sessionId:'session-a',
 assert.equal(P.validateHit(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:4,damage:20,range:34,nowMs:10400}),{...context,nowMs:10400,sender:{...sender,hp:NaN}},state).reason,'invalid_sender');
 
 const newSession=P.createHitPacket({to:'peer-b',sessionId:'session-b',seq:1,damage:20,range:34,nowMs:10400});
-assert.equal(P.validateHit(newSession,{...context,nowMs:10400},state).ok,true,'new sender session may restart sequence');
-const oldSession=P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:5,damage:20,range:34,nowMs:10700});
-assert.equal(P.validateHit(oldSession,{...context,nowMs:10700},state).reason,'replayed_session');
+assert.equal(P.validateHit(newSession,{...context,nowMs:10400},state).reason,'cooldown',
+  'rotating the sender session must not bypass the per-peer hit cooldown');
+assert.equal(state.sessionId,'session-a','a rate-limited session must not replace the active session');
+assert.equal(state.lastSeq,3,'a rate-limited new session must not mutate the active sequence');
+const resumedSession=P.createHitPacket({to:'peer-b',sessionId:'session-b',seq:1,damage:20,range:34,nowMs:10550});
+assert.equal(P.validateHit(resumedSession,{...context,nowMs:10550},state).ok,true,
+  'a new sender session may restart its sequence after the shared cooldown');
+const oldSession=P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:5,damage:20,range:34,nowMs:10800});
+assert.equal(P.validateHit(oldSession,{...context,nowMs:10800},state).reason,'replayed_session');
 
 assert.equal(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:0,damage:20,range:34,nowMs:1}),null);
 assert.equal(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:1,damage:0,range:34,nowMs:1}),null);
 assert.equal(P.createHitPacket({to:'peer-b',sessionId:'session-a',seq:1,damage:20,range:0,nowMs:1}),null);
 
-console.log('Aetheria PvP hit protocol: recipient, sender, zone, range, expiry, sequence, session replay, cooldown and damage cap passed.');
+console.log('Aetheria PvP hit protocol: recipient, sender, zone, range, expiry, sequence, session replay, cross-session cooldown and damage cap passed.');
