@@ -9,7 +9,27 @@
   const VERSION=1;
   const MAX_PACKET_DAMAGE=1000000;
   const MAX_SESSION_LENGTH=64;
+  const MAX_TRACKED_SESSIONS=64;
   const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+
+  function cooldownActive(state,now,cooldownMs){
+    if(state.lastAcceptedAt===undefined||state.lastAcceptedAt===null)return false;
+    const last=Number(state.lastAcceptedAt);
+    return !Number.isFinite(last)||now-last<cooldownMs;
+  }
+
+  function enterSession(sid,state,now,cooldownMs){
+    if(state.sessionId===sid)return {ok:true,isNew:false};
+    if(state.sessions.includes(sid))return {ok:false,reason:'replayed_session'};
+    // Do not let arbitrary session rotation bypass the per-peer cooldown or
+    // fill the replay history while packets are being rate-limited.
+    if(cooldownActive(state,now,cooldownMs))return {ok:false,reason:'cooldown'};
+    state.sessions.push(sid);
+    if(state.sessions.length>MAX_TRACKED_SESSIONS)state.sessions=state.sessions.slice(-MAX_TRACKED_SESSIONS);
+    state.sessionId=sid;
+    state.lastSeq=0;
+    return {ok:true,isNew:true};
+  }
 
   function createHitPacket(input){
     input=input||{};
@@ -74,18 +94,13 @@
     if(!Number.isFinite(rawDamage)||rawDamage<=0||rawDamage>MAX_PACKET_DAMAGE)return reject('invalid_damage');
 
     if(!Array.isArray(state.sessions))state.sessions=[];
-    if(state.sessions.includes(sid)&&state.sessionId!==sid)return reject('replayed_session');
-    if(state.sessionId!==sid){
-      state.sessions.push(sid);
-      if(state.sessions.length>8)state.sessions=state.sessions.slice(-8);
-      state.sessionId=sid;
-      state.lastSeq=0;
-      state.lastAcceptedAt=0;
-    }
+    const session=enterSession(sid,state,now,cooldownMs);
+    if(!session.ok)return reject(session.reason);
+    if(!Number.isSafeInteger(Number(state.lastSeq))&&state.lastSeq!==undefined)return reject('invalid_sequence');
     if(seq<=Number(state.lastSeq||0))return reject('replay');
-    // Consume a valid sequence even when rate-limited, so it cannot be replayed later.
+    // Consume a sequence for the active session even when rate-limited.
     state.lastSeq=seq;
-    if(now-Number(state.lastAcceptedAt||0)<cooldownMs)return reject('cooldown');
+    if(!session.isNew&&cooldownActive(state,now,cooldownMs))return reject('cooldown');
 
     const damage=Math.max(1,Math.min(maxDamage,Math.round(rawDamage*damageScale)));
     state.lastAcceptedAt=now;
@@ -120,17 +135,12 @@
     if(!sid||sid.length>MAX_SESSION_LENGTH||!Number.isSafeInteger(seq)||seq<1)return reject('invalid_sequence');
 
     if(!Array.isArray(state.sessions))state.sessions=[];
-    if(state.sessions.includes(sid)&&state.sessionId!==sid)return reject('replayed_session');
-    if(state.sessionId!==sid){
-      state.sessions.push(sid);
-      if(state.sessions.length>8)state.sessions=state.sessions.slice(-8);
-      state.sessionId=sid;
-      state.lastSeq=0;
-      state.lastAcceptedAt=0;
-    }
+    const session=enterSession(sid,state,now,cooldownMs);
+    if(!session.ok)return reject(session.reason);
+    if(!Number.isSafeInteger(Number(state.lastSeq))&&state.lastSeq!==undefined)return reject('invalid_sequence');
     if(seq<=Number(state.lastSeq||0))return reject('replay');
     state.lastSeq=seq;
-    if(now-Number(state.lastAcceptedAt||0)<cooldownMs)return reject('cooldown');
+    if(!session.isNew&&cooldownActive(state,now,cooldownMs))return reject('cooldown');
     state.lastAcceptedAt=now;
     return {ok:true,seq,sessionId:sid,reason:null};
   }
