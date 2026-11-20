@@ -222,6 +222,19 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if(!pvpDeathPacketAudit.loaded||!pvpDeathPacketAudit.accepted||pvpDeathPacketAudit.seq!==1||pvpDeathPacketAudit.replay!=='replay'){
       throw new Error('PvP death event replay protection failed in Chromium: '+JSON.stringify(pvpDeathPacketAudit));
     }
+    const pvpDeathReceiptAudit=await page.evaluate(()=>{
+      const protocol=window.AetheriaPvpProtocol;
+      const event=protocol.createDeathPacket({to:'browser-killer',sessionId:'browser-persisted-receipt',seq:1});
+      const first=protocol.rememberDeathReceipt([],'browser-victim',event);
+      const persisted=JSON.parse(JSON.stringify(first.receipts));
+      const afterReload=protocol.rememberDeathReceipt(persisted,'browser-victim',event);
+      return {loaded:!!protocol,accepted:first.ok,duplicate:afterReload.reason,count:afterReload.receipts.length};
+    });
+    if(!pvpDeathReceiptAudit.loaded||!pvpDeathReceiptAudit.accepted||
+       pvpDeathReceiptAudit.duplicate!=='duplicate'||pvpDeathReceiptAudit.count!==1){
+      throw new Error('Persisted PvP death receipt audit failed in Chromium: '+JSON.stringify(pvpDeathReceiptAudit));
+    }
+
     const pvpLootAudit=await page.evaluate(()=>{
       const loot=window.AetheriaPvpLoot;
       const inventory=[
