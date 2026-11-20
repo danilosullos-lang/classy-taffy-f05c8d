@@ -1,0 +1,2878 @@
+{
+  "source": "Poly Haven",
+  "sourceUrl": "https://polyhaven.com/",
+  "credit": "Powered by Poly Haven",
+  "license": "CC0 1.0 Universal",
+  "licenseUrl": "https://polyhaven.com/license",
+  "apiTerms": "https://github.com/Poly-Haven/Public-API/blob/master/ToS.md",
+  "downloadedAt": "2026-11-03",
+  "resolution": "1K preferred (2K fallback)",
+  "roles": {
+    "wood": "wooden_garage_door",
+    "bark": "bark_brown_01",
+    "stone": "stone_wall",
+    "brick": "dark_brick_wall",
+    "plaster": "plastered_wall_05",
+    "roof": "roof_tiles",
+    "metal": "rusty_metal",
+    "concrete": "concrete_block_wall_02",
+    "fabric": "poly_wool_herringbone",
+    "leather": "fabric_leather_02",
+    "foliage": "forest_leaves_03",
+    "tile": "ceramic_roof_01",
+    "sand": "sand_03",
+    "dirt": "brown_mud_03",
+    "grass": "grass_ground",
+    "snow": "snow_01",
+    "asphalt": "asphalt_03",
+    "moss": "mossy_sandstone",
+    "marble": "marble_01",
+    "slate": "slate_floor_03",
+    "ice": "rock_surface",
+    "lava": "rock_face_03",
+    "armor": "rusty_metal_05",
+    "cloth": "poly_wool_herringbone",
+    "darkwood": "wooden_garage_door"
+  },
+  "assets": [
+    {
+      "id": "forrest_ground_01",
+      "name": "Forest Ground 01",
+      "category": "Ground & Terrain/Forest Floor/Leaf Litter",
+      "tags": [
+        "grass",
+        "twigs",
+        "forest",
+        "leaves",
+        "sticks",
+        "foliage",
+        "dead grass",
+        "plant litter",
+        "underbrush",
+        "underbrush",
+        "organic",
+        "dry grass",
+        "dry leaves"
+      ],
+      "url": "https://polyhaven.com/a/forrest_ground_01",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/forrest_ground_01/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 833711,
+          "md5": "236e7d928f5e357a194fd92de189cbe4",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/forrest_ground_01/normal.png",
+          "ext": "png",
+          "bytes": 6787606,
+          "md5": "68875a9e81c29ba8f70e5dccdd66c476",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/forrest_ground_01/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 257165,
+          "md5": "72dacf5b829cafc025f08ca64e92e5eb",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "grass_ground",
+      "name": "Grass Ground",
+      "category": "Ground & Terrain/Grass & Vegetation/Dry & Sparse Grass",
+      "tags": [
+        "grass",
+        "dry grass",
+        "dirt",
+        "root",
+        "dead grass",
+        "turf",
+        "dry"
+      ],
+      "url": "https://polyhaven.com/a/grass_ground",
+      "license": "CC0 1.0",
+      "roles": [
+        "grass"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/grass_ground/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 876584,
+          "md5": "299047258586c762735b7284d3c662c3",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/grass_ground/normal.png",
+          "ext": "png",
+          "bytes": 6072059,
+          "md5": "2e799a8262487811e672cb8a847bd64c",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/grass_ground/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 328190,
+          "md5": "2e6afca246cf6b80bdb53f46fe7e5ce5",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "brown_mud_leaves_01",
+      "name": "Brown Mud Leaves 01",
+      "category": "Ground & Terrain/Forest Floor/Leaf Litter",
+      "tags": [
+        "grass",
+        "mud",
+        "moss",
+        "stones",
+        "orange",
+        "forest"
+      ],
+      "url": "https://polyhaven.com/a/brown_mud_leaves_01",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/brown_mud_leaves_01/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 1206953,
+          "md5": "5340848384f9bb19bfa6e7ac459683d7",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/brown_mud_leaves_01/normal.png",
+          "ext": "png",
+          "bytes": 6109028,
+          "md5": "bfa4b76dc2218b8b953d3eb2055fafad",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/brown_mud_leaves_01/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 644332,
+          "md5": "3896f151d1b1de421a61c3c5d9a742b0",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "dense_sand",
+      "name": "Dense Sand",
+      "category": "Ground & Terrain/Sand/Compacted & Trampled Sand",
+      "tags": [
+        "rough",
+        "sand",
+        "sandy",
+        "sandpit",
+        "granular",
+        "coarse",
+        "gritty",
+        "compact",
+        "footprints",
+        "tan"
+      ],
+      "url": "https://polyhaven.com/a/dense_sand",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/dense_sand/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 681515,
+          "md5": "1c3d2c1f41b24ea9133973f2dedd5fea",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/dense_sand/normal.png",
+          "ext": "png",
+          "bytes": 5666796,
+          "md5": "e0af975d4683f3293d3a3ea9e582fa2f",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/dense_sand/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 476589,
+          "md5": "5e14009b9afd9d15ab08404d28175e47",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "rocky_terrain_02",
+      "name": "Rocky Terrain 02",
+      "category": "Ground & Terrain/Rocky Ground/Rocky Landscape",
+      "tags": [
+        "rocky",
+        "terrain",
+        "uneven terrain",
+        "grass",
+        "drone",
+        "landscape",
+        "nature",
+        "nature",
+        "boulders",
+        "wilderness",
+        "scenic",
+        "mountain",
+        "landform",
+        "natural landscape"
+      ],
+      "url": "https://polyhaven.com/a/rocky_terrain_02",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/rocky_terrain_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 843188,
+          "md5": "cf604d3868398a6a996cb5ba330dd3ab",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/rocky_terrain_02/normal.png",
+          "ext": "png",
+          "bytes": 6484633,
+          "md5": "09fc8228d1a4ab3afb2e610a1851907a",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/rocky_terrain_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 437094,
+          "md5": "f940e341352cca8bdd2dc4d0c30f3da1",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "snow_02",
+      "name": "Snow 02",
+      "category": "Ground & Terrain/Snow/Fresh Snow",
+      "tags": [
+        "snow",
+        "uneven",
+        "smooth",
+        "powdery",
+        "frosty",
+        "snowfield",
+        "soft",
+        "wintery"
+      ],
+      "url": "https://polyhaven.com/a/snow_02",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/snow_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 325497,
+          "md5": "fc54766c6b36ff298699115a619d440b",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/snow_02/normal.png",
+          "ext": "png",
+          "bytes": 2118417,
+          "md5": "57d7f4e2501db746c862c6efee9fb38f",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/snow_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 146089,
+          "md5": "1dbae0269e53dbf80d4fd1c4335f25a2",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "concrete_floor_01",
+      "name": "Concrete Floor 01",
+      "category": "Concrete/Cast Walls & Floors/Exposed Aggregate",
+      "tags": [
+        "rough",
+        "park",
+        "concrete",
+        "cement",
+        "rough  ",
+        "stone embedded",
+        "gravel embedded",
+        "weathered",
+        "granular"
+      ],
+      "url": "https://polyhaven.com/a/concrete_floor_01",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/concrete_floor_01/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 755740,
+          "md5": "187065cfc20a35eb421eac6d4f38c58f",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/concrete_floor_01/normal.png",
+          "ext": "png",
+          "bytes": 2014994,
+          "md5": "f884232031ac4c33bb4159ae00e54341",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/concrete_floor_01/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 354529,
+          "md5": "3d374d86d7a43b93eed95d0d8957759c",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "rock_face_03",
+      "name": "Rock Face 03",
+      "category": "Stone/Rock & Cliffs/Rough Rock Faces",
+      "tags": [
+        "rough",
+        "rock",
+        "cliff",
+        "uneven",
+        "weathered",
+        "wall",
+        "cracked",
+        "stone",
+        "rock face",
+        "rugged",
+        "chipped",
+        "eroded",
+        "cracks",
+        "rocks"
+      ],
+      "url": "https://polyhaven.com/a/rock_face_03",
+      "license": "CC0 1.0",
+      "roles": [
+        "lava"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/rock_face_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 927082,
+          "md5": "e4c34abb1aad5befe12754fad507147a",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/rock_face_03/normal.png",
+          "ext": "png",
+          "bytes": 5841646,
+          "md5": "17a4feb957478ce571e1146c1e278e31",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/rock_face_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 638904,
+          "md5": "bbb2c7dafde3f81808fa7404d4527a56",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "cobblestone_floor_04",
+      "name": "Cobblestone Floor 04",
+      "category": "Stone/Cobblestone & Paving/Rough & Irregular Setts",
+      "tags": [
+        "cobblestone",
+        "moss",
+        "damp",
+        "wet"
+      ],
+      "url": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/cobblestone_floor_04/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 575440,
+          "md5": "b57737026948ed8b4fce9b0cb3c91e81",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/cobblestone_floor_04/normal.png",
+          "ext": "png",
+          "bytes": 6073334,
+          "md5": "64fee09bc07a110b4d07b9189c042acf",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/cobblestone_floor_04/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 416114,
+          "md5": "a3a7d7660d212d8d59058451116eae44",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "rough_wood",
+      "name": "Rough Wood",
+      "category": "Wood/Boards & Planks/Weathered Planks",
+      "tags": [
+        "rough",
+        "weathered",
+        "old",
+        "uneven",
+        "aged",
+        "cracked",
+        "natural grain",
+        "natural wood",
+        "natural",
+        "timber"
+      ],
+      "url": "https://polyhaven.com/a/rough_wood",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/rough_wood/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 567074,
+          "md5": "92d4b3dd46bab95248f5a7680b7882e7",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/rough_wood/normal.png",
+          "ext": "png",
+          "bytes": 1910586,
+          "md5": "81f9ca07bf2aceab03888336e279e529",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/rough_wood/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 195056,
+          "md5": "ef62954e4ea0e9cd78757ce79e6eeb58",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "bark_brown_02",
+      "name": "Bark Brown 02",
+      "category": "Wood/Bark/Furrowed Bark",
+      "tags": [
+        "bark",
+        "tree",
+        "forest",
+        "knots",
+        "wooden knots",
+        "tree trunk"
+      ],
+      "url": "https://polyhaven.com/a/bark_brown_02",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/bark_brown_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 659592,
+          "md5": "6669cca520594bdca19f94084984ab72",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/bark_brown_02/normal.png",
+          "ext": "png",
+          "bytes": 2436328,
+          "md5": "00616c5620413e714ea8a35848c6b2fc",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/bark_brown_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 337946,
+          "md5": "bbcde696e5b9418cdcb2abe638965417",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "metal_plate",
+      "name": "Metal Plate",
+      "category": "Metal/Plate & Grating/Diamond & Checker Plate",
+      "tags": [
+        "bare",
+        "painted",
+        "rusty",
+        "pattern",
+        "iron",
+        "factory",
+        "industrial",
+        "steel"
+      ],
+      "url": "https://polyhaven.com/a/metal_plate",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/metal_plate/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 692234,
+          "md5": "bd9daf4c04046ca392a38b8df955ed26",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/metal_plate/normal.png",
+          "ext": "png",
+          "bytes": 5359071,
+          "md5": "970b1bfeb59ec31a165341e05757dfc3",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/metal_plate/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 775206,
+          "md5": "6e1c8672d804b90546a23db621515b16",
+          "resolution": "1k"
+        },
+        "metalness": {
+          "path": "assets/textures/polyhaven/metal_plate/metalness.png",
+          "ext": "png",
+          "bytes": 1952911,
+          "md5": "1f3433cbac41eb3d2ce7bbe46521d35f",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "plastered_wall_05",
+      "name": "Plastered Wall 05",
+      "category": "Concrete/Plaster & Stucco/Bare Plaster",
+      "tags": [
+        "rough",
+        "scratched",
+        "gray",
+        "plaster",
+        "plastered",
+        "concrete",
+        "plasterconcrete",
+        "industrial",
+        "weathered",
+        "scuffed",
+        "wall",
+        "plastering",
+        "coarse",
+        "bumpy"
+      ],
+      "url": "https://polyhaven.com/a/plastered_wall_05",
+      "license": "CC0 1.0",
+      "roles": [
+        "plaster"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/plastered_wall_05/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 557082,
+          "md5": "b3802ea845531b87adaa61ae23a0ed27",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/plastered_wall_05/normal.png",
+          "ext": "png",
+          "bytes": 5793953,
+          "md5": "7d268dde2974e7bc301ca9b96e187a9e",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/plastered_wall_05/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 149189,
+          "md5": "af53d26402047d4235ac9adeaed0dc8b",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "red_bricks_04",
+      "name": "Red Bricks 04",
+      "category": "Brick & Block/Clay Brick/Running-Bond",
+      "tags": [
+        "textured",
+        "bricks",
+        "baked",
+        "rough",
+        "uneven",
+        "urban",
+        "clean",
+        "red"
+      ],
+      "url": "https://polyhaven.com/a/red_bricks_04",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/red_bricks_04/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 283965,
+          "md5": "c372b17ae66518decc602b7f5c98da5f",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/red_bricks_04/normal.png",
+          "ext": "png",
+          "bytes": 6494066,
+          "md5": "45723f68c2fccf2a1631c0af8703e855",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/red_bricks_04/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 234867,
+          "md5": "89de3afd3e3a15e35681813fe8b03928",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "leaves_forest_ground",
+      "name": "Leaves Forest Ground",
+      "category": "Ground & Terrain/Forest Floor/Leaf Litter",
+      "tags": [
+        "dirt",
+        "forest",
+        "leaves",
+        "twigs",
+        "yellow",
+        "green",
+        "sticks",
+        "autumn",
+        "nature",
+        "brown"
+      ],
+      "url": "https://polyhaven.com/a/leaves_forest_ground",
+      "license": "CC0 1.0",
+      "roles": [
+        "foliage"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/leaves_forest_ground/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 1135712,
+          "md5": "6e9cd579b50046182663e3ab33681fc8",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/leaves_forest_ground/normal.png",
+          "ext": "png",
+          "bytes": 5991126,
+          "md5": "e2c501693a32b997ae1512829f6cf483",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/leaves_forest_ground/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 514888,
+          "md5": "26fb788bdf3f082313a09e80305af458",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "forest_leaves_03",
+      "name": "Forest Leaves 03",
+      "category": "Ground & Terrain/Forest Floor/Leaf Litter",
+      "tags": [
+        "leaves",
+        "autumn",
+        "dry",
+        "nature",
+        "forest",
+        "ground",
+        "cover",
+        "dirt",
+        "debris",
+        "brown",
+        "yellow",
+        "green"
+      ],
+      "url": "https://polyhaven.com/a/forest_leaves_03",
+      "license": "CC0 1.0",
+      "roles": [
+        "foliage"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/forest_leaves_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 1000751,
+          "md5": "d407c7adebb2d943107eb91a30a9f909",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/forest_leaves_03/normal.png",
+          "ext": "png",
+          "bytes": 6006847,
+          "md5": "5f19949a917a46eb5dddb21300e22da7",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/forest_leaves_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 806440,
+          "md5": "6296a37e68d141db6d956fc8705b8e77",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "leafy_grass",
+      "name": "Leafy Grass",
+      "category": "Ground & Terrain/Grass & Vegetation/Lush & Green Grass",
+      "tags": [
+        "grass",
+        "green",
+        "nature",
+        "ground",
+        "foliage",
+        "leaves",
+        "plants",
+        "outdoors",
+        "twigs",
+        "sticks",
+        "trampled"
+      ],
+      "url": "https://polyhaven.com/a/leafy_grass",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/leafy_grass/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 1195394,
+          "md5": "0dbc071e91d6905edfcfbe8eb785a1ab",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/leafy_grass/normal.png",
+          "ext": "png",
+          "bytes": 6111876,
+          "md5": "a98f306f4dafb1e956d562b78503e174",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/leafy_grass/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 511385,
+          "md5": "05f6bb1383e12b327727d313c5899cf2",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "fabric_leather_02",
+      "name": "Fabric Leather 02",
+      "category": "Textiles & Leather/Leather/Upholstery Leather",
+      "tags": [
+        "leather",
+        "couch",
+        "seat",
+        "upholstery",
+        "stitched",
+        "vintage",
+        "wrinkled",
+        "aged",
+        "creased",
+        "chair"
+      ],
+      "url": "https://polyhaven.com/a/fabric_leather_02",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/fabric_leather_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 663390,
+          "md5": "35256026fcf2734d558ee2aa8f939c10",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/fabric_leather_02/normal.png",
+          "ext": "png",
+          "bytes": 6278235,
+          "md5": "620c88cf6ab4c17203c8e2cfc8246c31",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/fabric_leather_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 636469,
+          "md5": "a1582ea1adc9bd4fa1608f8374ab90b8",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "white_bricks",
+      "name": "White Bricks",
+      "category": "Brick & Block/Clay Brick/Running-Bond",
+      "tags": [
+        "rough",
+        "old",
+        "uneven",
+        "damaged",
+        "worn",
+        "painted",
+        "peeling"
+      ],
+      "url": "https://polyhaven.com/a/white_bricks",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/white_bricks/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 888460,
+          "md5": "91e7d4f4f1a62e8a5d53aae6e09197b1",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/white_bricks/normal.png",
+          "ext": "png",
+          "bytes": 1807374,
+          "md5": "f31049104e0008066ef8197e2b5ce5a3",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/white_bricks/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 668350,
+          "md5": "7509d555a6977251af13570853159b5b",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "clay_roof_tiles_03",
+      "name": "Clay Roof Tiles 03",
+      "category": "Ceramic/Terracotta",
+      "tags": [
+        "weathered",
+        "uneven",
+        "clay",
+        "clay tiles",
+        "roof",
+        "roofing",
+        "tile roofing",
+        "overlapping tiles",
+        "traditional",
+        "traditional roofing "
+      ],
+      "url": "https://polyhaven.com/a/clay_roof_tiles_03",
+      "license": "CC0 1.0",
+      "roles": [],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/clay_roof_tiles_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 970368,
+          "md5": "3600516ecf26b60a8d46dabe2007a7ba",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/clay_roof_tiles_03/normal.png",
+          "ext": "png",
+          "bytes": 5693084,
+          "md5": "1d5c7d78f81f59aabaf8cdab53c17b7d",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/clay_roof_tiles_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 440788,
+          "md5": "5cdfb71209d75ba0642b9ac03256b335",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "wooden_garage_door",
+      "name": "Wooden Garage Door",
+      "category": "Wood/Boards & Planks/Weathered Planks",
+      "tags": [
+        "worn",
+        "wood",
+        "wooden",
+        "outdoor",
+        "door",
+        "weathered",
+        "wood grain",
+        "stained",
+        "scratched",
+        "weatherbeaten",
+        "discolored"
+      ],
+      "url": "https://polyhaven.com/a/wooden_garage_door",
+      "license": "CC0 1.0",
+      "roles": [
+        "wood",
+        "darkwood"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/wooden_garage_door/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 880352,
+          "md5": "64682a3d56d94d5f6162ed7ac07be820",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/wooden_garage_door/normal.png",
+          "ext": "png",
+          "bytes": 5355605,
+          "md5": "191212acd5c7e194df143136fe1edb77",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/wooden_garage_door/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 375981,
+          "md5": "a5a008f6d4f445a8870bd084b64e7f22",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "weathered_planks",
+      "name": "Weathered Planks",
+      "category": "Wood/Boards & Planks/Weathered Planks",
+      "tags": [
+        "wood",
+        "wooden",
+        "bridge",
+        "planks",
+        "old",
+        "weathered",
+        "worn",
+        "damaged",
+        "discolored",
+        "chipped",
+        "stained",
+        "wall",
+        "brown",
+        "cracked",
+        "cabin"
+      ],
+      "url": "https://polyhaven.com/a/weathered_planks",
+      "license": "CC0 1.0",
+      "roles": [
+        "wood"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/weathered_planks/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 599581,
+          "md5": "5d7c9e7088bfa54490ba03ba15b660d8",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/weathered_planks/normal.png",
+          "ext": "png",
+          "bytes": 5414916,
+          "md5": "60576e594edad5cd2712f9817788d237",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/weathered_planks/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 218802,
+          "md5": "4ca50b076e1fc58f6862a5b039a7d5c9",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "bark_brown_01",
+      "name": "Bark Brown 01",
+      "category": "Wood/Bark/Furrowed Bark",
+      "tags": [
+        "bark",
+        "tree",
+        "forest",
+        "knots",
+        "bark grooves",
+        "tree bark",
+        "tree trunk"
+      ],
+      "url": "https://polyhaven.com/a/bark_brown_01",
+      "license": "CC0 1.0",
+      "roles": [
+        "bark"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/bark_brown_01/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 729893,
+          "md5": "b6d5dcde10b7cd1b36d70cd33a34724a",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/bark_brown_01/normal.png",
+          "ext": "png",
+          "bytes": 2313976,
+          "md5": "531b131bcb9f178357fa948bc06fae71",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/bark_brown_01/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 201307,
+          "md5": "b7a1aa42ecf0b30aba7f587769d13910",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "metasequoia_bark",
+      "name": "Metasequoia Bark",
+      "category": "Wood/Bark/Furrowed Bark",
+      "tags": [
+        "bark",
+        "tree bark",
+        "natural",
+        "bark texture",
+        "forestry",
+        "tree",
+        "tree trunk",
+        "tree texture",
+        "nature",
+        "organic",
+        "metasequoia"
+      ],
+      "url": "https://polyhaven.com/a/metasequoia_bark",
+      "license": "CC0 1.0",
+      "roles": [
+        "bark"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/metasequoia_bark/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 869551,
+          "md5": "1998b04f629be6dc663e9ef151fbb2bc",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/metasequoia_bark/normal.png",
+          "ext": "png",
+          "bytes": 5756466,
+          "md5": "d6f00fb1dcaee0d5436d0737a6f7e5c8",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/metasequoia_bark/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 218750,
+          "md5": "aeb11a67fe23fa9bac8460dd202e58d7",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "stone_wall",
+      "name": "Stone Wall",
+      "category": "Stone/Walls & Rubble/Rubble & Random Stone",
+      "tags": [
+        "rough",
+        "uneven",
+        "weathered",
+        "cracked",
+        "stones",
+        "worn",
+        "chipped",
+        "dry",
+        "rocks",
+        "rock",
+        "dirty"
+      ],
+      "url": "https://polyhaven.com/a/stone_wall",
+      "license": "CC0 1.0",
+      "roles": [
+        "stone"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/stone_wall/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 836975,
+          "md5": "451e4c5e2309af341fcdc1f1d637b1d6",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/stone_wall/normal.png",
+          "ext": "png",
+          "bytes": 5802456,
+          "md5": "574a859d4a02b16c7aa6601717c36e39",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/stone_wall/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 301003,
+          "md5": "ddc708ee3b0730ec9c5e79c52990aff1",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "stone_wall_05",
+      "name": "Stone Wall 05",
+      "category": "Brick & Block/Stone Block & Paver/Ashlar & Coursed Stone",
+      "tags": [
+        "rough",
+        "stone",
+        "stonework",
+        "wall",
+        "ancient walls",
+        "worn",
+        "timeworn",
+        "weatherbeaten",
+        "stone tile",
+        "stone block"
+      ],
+      "url": "https://polyhaven.com/a/stone_wall_05",
+      "license": "CC0 1.0",
+      "roles": [
+        "stone",
+        "moss"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/stone_wall_05/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 837539,
+          "md5": "2328a634870368815953c5c4332e8d3b",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/stone_wall_05/normal.png",
+          "ext": "png",
+          "bytes": 5923808,
+          "md5": "9382ed6b0c8af7b819241f5bbe081a68",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/stone_wall_05/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 231944,
+          "md5": "3348d06a0f3bfd1a363c15403ae176be",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "dark_brick_wall",
+      "name": "Dark Brick Wall",
+      "category": "Brick & Block/Clay Brick/Running-Bond",
+      "tags": [
+        "rough",
+        "uneven",
+        "wall",
+        "dry",
+        "bricks",
+        "brick",
+        "dark"
+      ],
+      "url": "https://polyhaven.com/a/dark_brick_wall",
+      "license": "CC0 1.0",
+      "roles": [
+        "brick"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/dark_brick_wall/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 917619,
+          "md5": "b1e82a72dddf31ae97c3b0b8fab0e690",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/dark_brick_wall/normal.png",
+          "ext": "png",
+          "bytes": 5929429,
+          "md5": "1c76d0e2ae8c6d288d12ae407219742d",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/dark_brick_wall/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 342901,
+          "md5": "8c08e7ffd512440ee076c1f7fd506561",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "brick_wall_02",
+      "name": "Brick Wall 02",
+      "category": "Brick & Block/Clay Brick/Running-Bond",
+      "tags": [
+        "weathered",
+        "cracked",
+        "concrete",
+        "scratched",
+        "brick",
+        "bricks",
+        "wall",
+        "exterior",
+        "red brick"
+      ],
+      "url": "https://polyhaven.com/a/brick_wall_02",
+      "license": "CC0 1.0",
+      "roles": [
+        "brick"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/brick_wall_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 1032279,
+          "md5": "d4c28c3edba875937e01d635a470b5c1",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/brick_wall_02/normal.png",
+          "ext": "png",
+          "bytes": 5792106,
+          "md5": "1002150f44064dd5f0c0848fc554ad08",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/brick_wall_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 391526,
+          "md5": "d1a41d2cf18ac9c8562ebac2706dee77",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "plastered_wall_02",
+      "name": "Plastered Wall 02",
+      "category": "Concrete/Plaster & Stucco/Bare Plaster",
+      "tags": [
+        "rough",
+        "weathered",
+        "wall",
+        "discolored",
+        "flat",
+        "plastered",
+        "plaster",
+        "urban",
+        "exterior",
+        "concrete"
+      ],
+      "url": "https://polyhaven.com/a/plastered_wall_02",
+      "license": "CC0 1.0",
+      "roles": [
+        "plaster"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/plastered_wall_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 436395,
+          "md5": "3ca0d02e87ad5c6eb21efa4b05b7748e",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/plastered_wall_02/normal.png",
+          "ext": "png",
+          "bytes": 5648686,
+          "md5": "b9fd8b540a1a765d61324b019d856fca",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/plastered_wall_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 173930,
+          "md5": "2d4a4a40491eb5a115c086bb65aba32c",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "roof_tiles",
+      "name": "Roof Tiles",
+      "category": "Ceramic/Terracotta",
+      "tags": [
+        "roofing material",
+        "roof tiles",
+        "durable roofing",
+        "ceramic tiles",
+        "tiled roofing",
+        "traditional roof tiles",
+        "clay roof tiles",
+        "roofing",
+        "tile roofing",
+        "terracotta",
+        "interlocking tiles",
+        "overlapping tiles",
+        "weather-beaten",
+        "housing material",
+        "outdoor roof material"
+      ],
+      "url": "https://polyhaven.com/a/roof_tiles",
+      "license": "CC0 1.0",
+      "roles": [
+        "roof"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/roof_tiles/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 1105673,
+          "md5": "525e8cac13027e36f47844f3240fdde8",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/roof_tiles/normal.png",
+          "ext": "png",
+          "bytes": 5477255,
+          "md5": "8d0bf4bda3c914375a4cc54d6022f12d",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/roof_tiles/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 919232,
+          "md5": "e51bb9f619ec07ea6a38b2daab56cbb8",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "roof_07",
+      "name": "Roof 07",
+      "category": "Ceramic/Terracotta",
+      "tags": [
+        "ceramic",
+        "tiles",
+        "old",
+        "worn",
+        "damaged",
+        "discolored",
+        "roofing material",
+        "roof",
+        "roofing",
+        "tile roofing",
+        "clay tiles",
+        "weathered",
+        "mossy",
+        "rustic",
+        "overlapping tiles"
+      ],
+      "url": "https://polyhaven.com/a/roof_07",
+      "license": "CC0 1.0",
+      "roles": [
+        "roof"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/roof_07/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 584122,
+          "md5": "5cca627f07a68f51d66e2d68fa8dea98",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/roof_07/normal.png",
+          "ext": "png",
+          "bytes": 4842125,
+          "md5": "b888a775fcbd4d9050fd4e97b0792b06",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/roof_07/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 526327,
+          "md5": "2bd7ad21f2ddd70010a317b4c9645787",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "rusty_metal",
+      "name": "Rusty Metal",
+      "category": "Metal/Cladding & Shutters/Shutters & Doors",
+      "tags": [
+        "rust",
+        "old",
+        "rusty",
+        "shutter",
+        "metal shutter",
+        "corrosion",
+        "weathered",
+        "dented",
+        "metal"
+      ],
+      "url": "https://polyhaven.com/a/rusty_metal",
+      "license": "CC0 1.0",
+      "roles": [
+        "metal",
+        "armor"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/rusty_metal/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 577389,
+          "md5": "ba829f953270d3ad87d8e86d840f71d6",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/rusty_metal/normal.png",
+          "ext": "png",
+          "bytes": 1478263,
+          "md5": "6671379dccc22b1e143562072f7d41c0",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/rusty_metal/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 214991,
+          "md5": "ec93adbfb6e4d8562a0272be937719dc",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "rusty_metal_03",
+      "name": "Rusty Metal 03",
+      "category": "Metal/Sheet & Corrugated/Flat Sheet",
+      "tags": [
+        "rough",
+        "weathered",
+        "worn",
+        "old",
+        "metal",
+        "rusted",
+        "rusty",
+        "rust",
+        "metal sheet",
+        "corroded",
+        "corroded metal sheet",
+        "oxidized",
+        "corroded surface",
+        "oxidized metal"
+      ],
+      "url": "https://polyhaven.com/a/rusty_metal_03",
+      "license": "CC0 1.0",
+      "roles": [
+        "metal"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/rusty_metal_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 781056,
+          "md5": "32165054d3f6a81d81e3d7aec59181da",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/rusty_metal_03/normal.png",
+          "ext": "png",
+          "bytes": 5218291,
+          "md5": "f5faeeef65ade1470d464fde4fa2cb83",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/rusty_metal_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 406559,
+          "md5": "d14ac18d2658f5e5cd68f68cbfa183f1",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "concrete_block_wall_02",
+      "name": "Concrete Block Wall 02",
+      "category": "Brick & Block/Concrete Block & Paver/Concrete Block (CMU)",
+      "tags": [
+        "masonry",
+        "concrete",
+        "rough",
+        "coarse",
+        "exterior",
+        "blocks",
+        "outdoor",
+        "stonework",
+        "ancient walls"
+      ],
+      "url": "https://polyhaven.com/a/concrete_block_wall_02",
+      "license": "CC0 1.0",
+      "roles": [
+        "concrete"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/concrete_block_wall_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 778873,
+          "md5": "d4fc45b40986d820d4d8de1b3f30da15",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/concrete_block_wall_02/normal.png",
+          "ext": "png",
+          "bytes": 5821351,
+          "md5": "ea5beb857fb53cb5253aaf346f41870a",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/concrete_block_wall_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 397042,
+          "md5": "b21699f141c35ff88466c26d6aa4f200",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "concrete_wall_008",
+      "name": "Concrete Wall 008",
+      "category": "Concrete/Plaster & Stucco/Bare Plaster",
+      "tags": [
+        "weathered",
+        "chipped",
+        "wall",
+        "damaged",
+        "cracked",
+        "stained",
+        "dry",
+        "plaster",
+        "concrete",
+        "scratched",
+        "cement"
+      ],
+      "url": "https://polyhaven.com/a/concrete_wall_008",
+      "license": "CC0 1.0",
+      "roles": [
+        "concrete"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/concrete_wall_008/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 623051,
+          "md5": "6a0f87fbfea261d797661c47e05b25ad",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/concrete_wall_008/normal.png",
+          "ext": "png",
+          "bytes": 3548968,
+          "md5": "514111a547adc8b3870732f864fc46b4",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/concrete_wall_008/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 322313,
+          "md5": "1f6d5b02c58aff38a69f07a62a4cc231",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "poly_wool_herringbone",
+      "name": "Poly Wool Herringbone",
+      "category": "Textiles & Leather/Woven/Plain Weave Cotton",
+      "tags": [
+        "grey",
+        "rough",
+        "textile ",
+        "poly wool",
+        "fabric blend",
+        "polyester",
+        "wool",
+        "woven"
+      ],
+      "url": "https://polyhaven.com/a/poly_wool_herringbone",
+      "license": "CC0 1.0",
+      "roles": [
+        "fabric",
+        "cloth"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/poly_wool_herringbone/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 942966,
+          "md5": "5c0981092ba0129d5951720ea23d50c2",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/poly_wool_herringbone/normal.png",
+          "ext": "png",
+          "bytes": 5768966,
+          "md5": "78757b88a83c1f5b7818790d3a2b009a",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/poly_wool_herringbone/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 857426,
+          "md5": "9f85f667517ee9c7f3cc85214058a7d8",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "ceramic_roof_01",
+      "name": "Ceramic Roof 01",
+      "category": "Ceramic/Terracotta",
+      "tags": [
+        "ceramic",
+        "tiles",
+        "roof",
+        "old",
+        "city",
+        "moss"
+      ],
+      "url": "https://polyhaven.com/a/ceramic_roof_01",
+      "license": "CC0 1.0",
+      "roles": [
+        "tile"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/ceramic_roof_01/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 547031,
+          "md5": "5c8b9deb160ae011b496f7d0b8470cbb",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/ceramic_roof_01/normal.png",
+          "ext": "png",
+          "bytes": 5997209,
+          "md5": "10bdb07067f0db248b0e69025c1eede4",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/ceramic_roof_01/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 281981,
+          "md5": "b113af25b5481ff4cb55e52dce5cac01",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "terracotta_floor_tiles",
+      "name": "Terracotta Floor Tiles",
+      "category": "Ceramic/Terracotta",
+      "tags": [
+        "terracotta",
+        "tiles",
+        "ceramic",
+        "square",
+        "consistent",
+        "grout lines",
+        "indoor flooring",
+        "chipped",
+        "ceramic tiles",
+        "uneven",
+        "weathered",
+        "grout"
+      ],
+      "url": "https://polyhaven.com/a/terracotta_floor_tiles",
+      "license": "CC0 1.0",
+      "roles": [
+        "tile"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/terracotta_floor_tiles/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 649304,
+          "md5": "06cc0f29e2a61115580fe147140c0201",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/terracotta_floor_tiles/normal.png",
+          "ext": "png",
+          "bytes": 5228039,
+          "md5": "568fe7a7879742c6f627331fa4aa75de",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/terracotta_floor_tiles/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 626503,
+          "md5": "029c0915fc7cc0e59a426cdbaeac81b3",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "sand_03",
+      "name": "Sand 03",
+      "category": "Ground & Terrain/Sand/Beach & Coastal Sand",
+      "tags": [
+        "sand",
+        "sandy",
+        "beach",
+        "seaside",
+        "gritty",
+        "shore",
+        "costal",
+        "sandy beach",
+        "coastline",
+        "granular",
+        "coast"
+      ],
+      "url": "https://polyhaven.com/a/sand_03",
+      "license": "CC0 1.0",
+      "roles": [
+        "sand"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/sand_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 703132,
+          "md5": "84bde2b8bea6351805f67a15682b36b2",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/sand_03/normal.png",
+          "ext": "png",
+          "bytes": 5571260,
+          "md5": "30f0f06ea1c2d1522b49ecd6cd0ae0c2",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/sand_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 291218,
+          "md5": "b09beddb9981ec5fb402c12f04751c15",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "playground_sand",
+      "name": "Playground Sand",
+      "category": "Ground & Terrain/Sand/Compacted & Trampled Sand",
+      "tags": [
+        "brown",
+        "sand",
+        "floor",
+        "rough",
+        "ground",
+        "playground",
+        "dirty",
+        "wet",
+        "footprints"
+      ],
+      "url": "https://polyhaven.com/a/playground_sand",
+      "license": "CC0 1.0",
+      "roles": [
+        "sand"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/playground_sand/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 899067,
+          "md5": "5acafe6d05eebb3882be3a3590b41461",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/playground_sand/normal.png",
+          "ext": "png",
+          "bytes": 5987283,
+          "md5": "a813bdd7aed0836677839fafb2709bac",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/playground_sand/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 303518,
+          "md5": "9f0f2c53ecd52f10fbe1f8070d144825",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "brown_mud_03",
+      "name": "Brown Mud 03",
+      "category": "Ground & Terrain/Soil & Mud/Wet Mud",
+      "tags": [
+        "mud",
+        "dirt",
+        "stones",
+        "dry",
+        "ground",
+        "soil",
+        "wet soil",
+        "footprints",
+        "earth",
+        "muddy surface",
+        "wet patches",
+        "mud clumps",
+        "loose earth"
+      ],
+      "url": "https://polyhaven.com/a/brown_mud_03",
+      "license": "CC0 1.0",
+      "roles": [
+        "dirt"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/brown_mud_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 526262,
+          "md5": "b99d14c26debf660457b9497f2facec6",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/brown_mud_03/normal.png",
+          "ext": "png",
+          "bytes": 2364901,
+          "md5": "601906db68fed2c1cad72bc11be4a927",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/brown_mud_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 287221,
+          "md5": "856d543a9dc18df23cf1239a54025411",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "brown_mud_02",
+      "name": "Brown Mud 02",
+      "category": "Ground & Terrain/Soil & Mud/Wet Mud",
+      "tags": [
+        "mud",
+        "dirt",
+        "stones",
+        "dry",
+        "ground",
+        "footprints",
+        "soil",
+        "compact soil",
+        "wet soil",
+        "plant debris",
+        "roots",
+        "sticks",
+        "earth"
+      ],
+      "url": "https://polyhaven.com/a/brown_mud_02",
+      "license": "CC0 1.0",
+      "roles": [
+        "dirt"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/brown_mud_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 527741,
+          "md5": "c3842f023e11a08c8cf521c947ce08c8",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/brown_mud_02/normal.png",
+          "ext": "png",
+          "bytes": 2490837,
+          "md5": "1647fc3058cbf5f3424e2ddc29faf0c4",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/brown_mud_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 422119,
+          "md5": "a9d397c45a366da1c62d78ca72340ab0",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "grass_path_3",
+      "name": "Grass Path 3",
+      "category": "Ground & Terrain/Rocky Ground/Rocky Paths & Trails",
+      "tags": [
+        "grass",
+        "pathway",
+        "path",
+        "ground",
+        "stones",
+        "sidewalk",
+        "rural",
+        "farm"
+      ],
+      "url": "https://polyhaven.com/a/grass_path_3",
+      "license": "CC0 1.0",
+      "roles": [
+        "grass"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/grass_path_3/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 646551,
+          "md5": "c4a7eb198fdc7773e56abd8b640a98c8",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/grass_path_3/normal.png",
+          "ext": "png",
+          "bytes": 1922140,
+          "md5": "c53d548082b44f4fd4808a517cd83587",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/grass_path_3/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 589060,
+          "md5": "0dccd70ba83c5d13df7c90e55745ec33",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "snow_01",
+      "name": "Snow 01",
+      "category": "Ground & Terrain/Snow/Trampled Snow",
+      "tags": [
+        "snow",
+        "rough",
+        "uneven",
+        "footprints",
+        "powdery",
+        "trail",
+        "snowfield"
+      ],
+      "url": "https://polyhaven.com/a/snow_01",
+      "license": "CC0 1.0",
+      "roles": [
+        "snow"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/snow_01/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 356249,
+          "md5": "1e1ad483b74fddd3be67cfb638d42460",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/snow_01/normal.png",
+          "ext": "png",
+          "bytes": 2414859,
+          "md5": "c556c13cacc70545a395e9daeaa67ef9",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/snow_01/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 195503,
+          "md5": "d2b2033f9f4c0eb299cf4e75c2c0289a",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "snow_03",
+      "name": "Snow 03",
+      "category": "Ground & Terrain/Snow/Dirty & Muddy Snow",
+      "tags": [
+        "snow",
+        "uneven",
+        "rough",
+        "trampled",
+        "mud"
+      ],
+      "url": "https://polyhaven.com/a/snow_03",
+      "license": "CC0 1.0",
+      "roles": [
+        "snow"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/snow_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 574004,
+          "md5": "81c88f59622c1b0bbc80da483a69d0d5",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/snow_03/normal.png",
+          "ext": "png",
+          "bytes": 2482890,
+          "md5": "b576c86a8de7176dc3efd2961672f5ba",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/snow_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 229529,
+          "md5": "770eb0ed38b8cf0836770d62cd51adaa",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "asphalt_03",
+      "name": "Asphalt 03",
+      "category": "Asphalt & Bitumen/Asphalt/Worn Road Surface",
+      "tags": [
+        "rough",
+        "worn",
+        "dirty",
+        "floor",
+        "road",
+        "asphalt",
+        "city",
+        "urban"
+      ],
+      "url": "https://polyhaven.com/a/asphalt_03",
+      "license": "CC0 1.0",
+      "roles": [
+        "asphalt"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/asphalt_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 788840,
+          "md5": "1dba74b167b3d8460717776b22ca42c5",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/asphalt_03/normal.png",
+          "ext": "png",
+          "bytes": 5748053,
+          "md5": "110dfef5e7c3a0b684e7385363e596c6",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/asphalt_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 590105,
+          "md5": "475b1ae5bce5abb88a73b14abc5eab5d",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "asphalt_02",
+      "name": "Asphalt 02",
+      "category": "Asphalt & Bitumen/Asphalt/Cracked Asphalt",
+      "tags": [
+        "asphalt",
+        "cracked",
+        "flat",
+        "road",
+        "asphalt road",
+        "tarmac road",
+        "gritty",
+        "weathered",
+        "grey",
+        "cracking",
+        "tar",
+        "cracks"
+      ],
+      "url": "https://polyhaven.com/a/asphalt_02",
+      "license": "CC0 1.0",
+      "roles": [
+        "asphalt"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/asphalt_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 731707,
+          "md5": "fa19772d4817754c3efab708c651f5a8",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/asphalt_02/normal.png",
+          "ext": "png",
+          "bytes": 2323825,
+          "md5": "910d4b3882858368622eaa1b973bb290",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/asphalt_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 544032,
+          "md5": "ec80a2929797c1b3ffc121c4f665585a",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "mossy_sandstone",
+      "name": "Mossy Sandstone",
+      "category": "Brick & Block/Stone Block & Paver/Sandstone Brick & Block",
+      "tags": [
+        "rough",
+        "weathered",
+        "uneven",
+        "old",
+        "worn",
+        "wall",
+        "mosscovered",
+        "mossy",
+        "mossy ",
+        "outdoor",
+        "rock",
+        "timeworn",
+        "weatherbeaten",
+        "fortress walls",
+        "moss",
+        "rocks"
+      ],
+      "url": "https://polyhaven.com/a/mossy_sandstone",
+      "license": "CC0 1.0",
+      "roles": [
+        "moss"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/mossy_sandstone/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 764526,
+          "md5": "c5fecb142f49694839236182d2449deb",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/mossy_sandstone/normal.png",
+          "ext": "png",
+          "bytes": 5758688,
+          "md5": "5a522db1384a63bd19409605f45691fb",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/mossy_sandstone/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 412423,
+          "md5": "791f76663a4e483b4e8605f75e9436d8",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "marble_01",
+      "name": "Marble 01",
+      "category": "Stone/Slabs & Tiles/Marble",
+      "tags": [
+        "marble",
+        "smooth",
+        "even",
+        "tiles"
+      ],
+      "url": "https://polyhaven.com/a/marble_01",
+      "license": "CC0 1.0",
+      "roles": [
+        "marble"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/marble_01/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 305029,
+          "md5": "04325ced5018eb8a2e598a4ef69cb176",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/marble_01/normal.png",
+          "ext": "png",
+          "bytes": 638341,
+          "md5": "795c424f8a8e24be7229d08c6d66fe21",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/marble_01/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 91848,
+          "md5": "59cef1be1b7376c9d0dcc7a64adf7882",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "floor_tiles_02",
+      "name": "Floor Tiles 02",
+      "category": "Stone/Slabs & Tiles/Marble",
+      "tags": [
+        "marble",
+        "floor",
+        "square tiles",
+        "smooth surface",
+        "stone",
+        "wall",
+        "dirty",
+        "uneven",
+        "marble blocks"
+      ],
+      "url": "https://polyhaven.com/a/floor_tiles_02",
+      "license": "CC0 1.0",
+      "roles": [
+        "marble"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/floor_tiles_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 354550,
+          "md5": "32de1779b8ddba55ad62df8d014264cd",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/floor_tiles_02/normal.png",
+          "ext": "png",
+          "bytes": 607355,
+          "md5": "b1a8b8b4ef5f6bbf5035928d05b60eda",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/floor_tiles_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 304724,
+          "md5": "e32ffaaa6a49f4403af466c33f606fa2",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "slate_floor_03",
+      "name": "Slate Floor 03",
+      "category": "Stone/Slabs & Tiles/Slate",
+      "tags": [
+        "slates",
+        "slate",
+        "floor",
+        "rustic architecture",
+        "vintage",
+        "stone floor",
+        "rustic",
+        "mosaic",
+        "stone",
+        "stone tile"
+      ],
+      "url": "https://polyhaven.com/a/slate_floor_03",
+      "license": "CC0 1.0",
+      "roles": [
+        "slate"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/slate_floor_03/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 677347,
+          "md5": "c918b0472995e9d836adbeb5d768338c",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/slate_floor_03/normal.png",
+          "ext": "png",
+          "bytes": 5562845,
+          "md5": "f9904276120a60b6d174c7f8768dd9fb",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/slate_floor_03/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 448944,
+          "md5": "b980a8aa54fc68d4b5f81a2c518f90f5",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "slate_floor",
+      "name": "Slate Floor",
+      "category": "Stone/Slabs & Tiles/Slate",
+      "tags": [
+        "slates",
+        "slate",
+        "shiny",
+        "coated",
+        "polished",
+        "reflective",
+        "stone",
+        "flooring",
+        "interior design",
+        "stone tile"
+      ],
+      "url": "https://polyhaven.com/a/slate_floor",
+      "license": "CC0 1.0",
+      "roles": [
+        "slate"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/slate_floor/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 707276,
+          "md5": "33760bd0e0668f1ff92086a6cd9c38af",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/slate_floor/normal.png",
+          "ext": "png",
+          "bytes": 5495224,
+          "md5": "7c65bd27433aaff9c676ed79b1a9ab8f",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/slate_floor/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 802557,
+          "md5": "829bae26caaeb4a7a8bee3905cff5270",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "rock_surface",
+      "name": "Rock Surface",
+      "category": "Stone/Rock & Cliffs/Boulder Surfaces",
+      "tags": [
+        "rough",
+        "weathered",
+        "discolored",
+        "dirty",
+        "stone",
+        "rock",
+        "boulder",
+        "coarse"
+      ],
+      "url": "https://polyhaven.com/a/rock_surface",
+      "license": "CC0 1.0",
+      "roles": [
+        "ice"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/rock_surface/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 886291,
+          "md5": "a7285f02b40e8ed6f15f8e97e357031d",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/rock_surface/normal.png",
+          "ext": "png",
+          "bytes": 5865641,
+          "md5": "13b443535b42f9b6809ecf211bfe4bf0",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/rock_surface/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 642680,
+          "md5": "ee0bbfad5c8acedbe1d68e4ae5686f6e",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "rocks_ground_04",
+      "name": "Rocks Ground 04",
+      "category": "Ground & Terrain/Rocky Ground",
+      "tags": [
+        "rocks",
+        "rough",
+        "smooth",
+        "stones",
+        "gravel",
+        "gravelly",
+        "rock",
+        "rocky",
+        "dirt",
+        "cracks",
+        "crevice"
+      ],
+      "url": "https://polyhaven.com/a/rocks_ground_04",
+      "license": "CC0 1.0",
+      "roles": [
+        "ice"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/rocks_ground_04/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 588987,
+          "md5": "54cde4912f2ce068aea22f9cae51d787",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/rocks_ground_04/normal.png",
+          "ext": "png",
+          "bytes": 2226617,
+          "md5": "4137c73c1304ead0fa472fa65b08151c",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/rocks_ground_04/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 471169,
+          "md5": "c1cd7552be2356a9b99957dd3af7ff06",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "dark_rock_02",
+      "name": "Dark Rock 02",
+      "category": "Stone/Rock & Cliffs/Stratified & Layered Rock",
+      "tags": [
+        "rough",
+        "rock face",
+        "rock",
+        "weathered",
+        "fractured",
+        "stratified",
+        "craggy",
+        "striated",
+        "fissured",
+        "geological",
+        "veined",
+        "weathered rock",
+        "rock formation",
+        "striations",
+        "exposed rock"
+      ],
+      "url": "https://polyhaven.com/a/dark_rock_02",
+      "license": "CC0 1.0",
+      "roles": [
+        "lava"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/dark_rock_02/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 592452,
+          "md5": "92e53acc3f9878b525d0234d8c51fadf",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/dark_rock_02/normal.png",
+          "ext": "png",
+          "bytes": 6496124,
+          "md5": "9b5b9431815ea11f92d1f51bec68b340",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/dark_rock_02/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 503425,
+          "md5": "8751b2c4ca67b2d8defa15f5ab9ce396",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "rusty_metal_05",
+      "name": "Rusty Metal 05",
+      "category": "Metal/Sheet & Corrugated/Flat Sheet",
+      "tags": [
+        "rough",
+        "rusted",
+        "metal sheet",
+        "metal",
+        "sheet metal",
+        "corroded",
+        "corroded metal sheet",
+        "corroded surface",
+        "rust",
+        "oxidized metal",
+        "steel sheeting",
+        "rusty metal"
+      ],
+      "url": "https://polyhaven.com/a/rusty_metal_05",
+      "license": "CC0 1.0",
+      "roles": [
+        "armor"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/rusty_metal_05/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 815155,
+          "md5": "7662ff71242d7e11ff9aa647598d7e99",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/rusty_metal_05/normal.png",
+          "ext": "png",
+          "bytes": 5204628,
+          "md5": "946c270ef3c8b4883fbdb4cdc8faf8fd",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/rusty_metal_05/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 430648,
+          "md5": "0c03068b64bcae6f9272b6c1175f7d29",
+          "resolution": "1k"
+        }
+      }
+    },
+    {
+      "id": "dark_wooden_planks",
+      "name": "Dark Wooden Planks",
+      "category": "Wood/Boards & Planks/Weathered Planks",
+      "tags": [
+        "rough",
+        "old",
+        "weathered",
+        "cracked",
+        "damaged",
+        "brown",
+        "wood",
+        "wooden",
+        "floor",
+        "planks",
+        "scratched",
+        "worn",
+        "chipped"
+      ],
+      "url": "https://polyhaven.com/a/dark_wooden_planks",
+      "license": "CC0 1.0",
+      "roles": [
+        "darkwood"
+      ],
+      "maps": {
+        "diffuse": {
+          "path": "assets/textures/polyhaven/dark_wooden_planks/diffuse.jpg",
+          "ext": "jpg",
+          "bytes": 701221,
+          "md5": "7ec8fe3e0b84289a4add3b10a54090bb",
+          "resolution": "1k"
+        },
+        "normal": {
+          "path": "assets/textures/polyhaven/dark_wooden_planks/normal.png",
+          "ext": "png",
+          "bytes": 5832926,
+          "md5": "0bd4333ee358538a25639c379a148cec",
+          "resolution": "1k"
+        },
+        "roughness": {
+          "path": "assets/textures/polyhaven/dark_wooden_planks/roughness.jpg",
+          "ext": "jpg",
+          "bytes": 673968,
+          "md5": "6eaec29bb24d157dde74d38bc5a63018",
+          "resolution": "1k"
+        }
+      }
+    }
+  ],
+  "extensions": {
+    "forrest_ground_01": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "grass_ground": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "brown_mud_leaves_01": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "dense_sand": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "rocky_terrain_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "snow_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "concrete_floor_01": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "rock_face_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "cobblestone_floor_04": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "rough_wood": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "bark_brown_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "metal_plate": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg",
+      "metalness": "png"
+    },
+    "plastered_wall_05": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "red_bricks_04": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "leaves_forest_ground": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "forest_leaves_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "leafy_grass": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "fabric_leather_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "white_bricks": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "clay_roof_tiles_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "wooden_garage_door": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "weathered_planks": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "bark_brown_01": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "metasequoia_bark": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "stone_wall": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "stone_wall_05": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "dark_brick_wall": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "brick_wall_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "plastered_wall_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "roof_tiles": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "roof_07": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "rusty_metal": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "rusty_metal_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "concrete_block_wall_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "concrete_wall_008": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "poly_wool_herringbone": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "ceramic_roof_01": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "terracotta_floor_tiles": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "sand_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "playground_sand": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "brown_mud_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "brown_mud_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "grass_path_3": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "snow_01": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "snow_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "asphalt_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "asphalt_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "mossy_sandstone": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "marble_01": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "floor_tiles_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "slate_floor_03": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "slate_floor": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "rock_surface": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "rocks_ground_04": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "dark_rock_02": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "rusty_metal_05": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    },
+    "dark_wooden_planks": {
+      "diffuse": "jpg",
+      "normal": "png",
+      "roughness": "jpg"
+    }
+  }
+}

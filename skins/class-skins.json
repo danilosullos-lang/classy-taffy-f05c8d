@@ -1,0 +1,69 @@
+{
+  "version": 9,
+  "purpose": "Four compact KayKit humanoid skins shared across the playable specializations. The dwarf artisan profession currently reuses the CC0 Barbarian rig because this repository does not yet contain a dedicated dwarf body; class identity is carried by its hammer/axe rig, profession skills and progression.",
+  "license": "CC0-1.0 KayKit Adventurers models and KayKit Character Animations 1.1.",
+  "models": {
+    "warrior": {
+      "classIds": [
+        "guerreiro",
+        "crafter"
+      ],
+      "name": "Barbarian",
+      "url": "/skins/classes/Barbarian.glb"
+    },
+    "tank": {
+      "classIds": [
+        "cavaleiro",
+        "paladino",
+        "templario"
+      ],
+      "name": "Knight",
+      "url": "/skins/classes/Knight.glb"
+    },
+    "mage": {
+      "classIds": [
+        "mago",
+        "arquimago",
+        "sacerdote",
+        "sumo"
+      ],
+      "name": "Mage",
+      "url": "/skins/classes/Mage.glb"
+    },
+    "rogue": {
+      "classIds": [
+        "ladino",
+        "assassino"
+      ],
+      "name": "Rogue_Hooded",
+      "url": "/skins/classes/Rogue_Hooded.glb"
+    },
+    "archer": {
+      "classIds": [
+        "arqueiro",
+        "ranger"
+      ],
+      "name": "Rogue_Hooded with bow",
+      "url": "/skins/classes/Rogue_Hooded.glb"
+    }
+  },
+  "sources": [
+    "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+    "https://kaylousberg.itch.io/kaykit-character-animations",
+    "https://github.com/GeorgeQLe/assets-kaykit-3d-characters"
+  ],
+  "animationSets": [
+    "general",
+    "movement-basic",
+    "movement-advanced",
+    "combat-melee",
+    "combat-ranged",
+    "simulation",
+    "special",
+    "tools"
+  ],
+  "rig": "Rig_Medium",
+  "animationClipCount": 139,
+  "importScript": "scripts/sync-kaykit-assets.sh",
+  "validator": "scripts/validate-kaykit-assets.py"
+}

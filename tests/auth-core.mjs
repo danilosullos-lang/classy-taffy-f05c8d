@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { hashPassword, verifyPassword, issueToken, verifyToken } from '../api/_lib/auth.js';
+process.env.JWT_SECRET='aetheria-test-secret-that-is-at-least-32-bytes-long';
+const encoded=await hashPassword('senha-forte-de-teste');
+assert.equal(await verifyPassword('senha-forte-de-teste',encoded),true);
+assert.equal(await verifyPassword('senha-errada',encoded),false);
+await assert.rejects(()=>hashPassword('curta'),/password_must_be_10_to_128_characters/);
+const token=issueToken('00000000-0000-4000-8000-000000000001');
+assert.equal(verifyToken(token).userId,'00000000-0000-4000-8000-000000000001');
+assert.equal(verifyToken(token+'.tampered'),null);
+assert.equal(verifyToken('not-a-token'),null);
+console.log('Aetheria authentication core: all tests passed.');

@@ -1,0 +1,14 @@
+{
+  "name": "aetheria-rpg",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test:engine": "node tests/engine-foundation.cjs"
+  }
+}
