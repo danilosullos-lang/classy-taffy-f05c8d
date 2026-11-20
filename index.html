@@ -7695,7 +7695,7 @@ function weaponSkill(P){const w=best().find(i=>i.s===0),a=w&&w.act;if(!a){say('E
   rip.userData.t=1;say(a.ic+' '+a.n+'!')}
 setInterval(()=>{if(!st)return;const wk=best().find(i=>i.s===0),a=wk&&wk.act;$('w').style.display=a?'':'none';if(a){$('w').textContent=a.ic;CD.w=a.cd;$('w').title=a.n;$('w').style.opacity=cd.w>0?.35:1}
   if(st.run&&!st.pause){const rg=abSum('regen');if(rg)st.hp=Math.min(hpMax(),st.hp+hpMax()*rg/100*.4);if(abSum('barrier')&&Date.now()>(st.bAt||0)){st.bAt=Date.now()+20000;st.barrier=hpMax()*abSum('barrier')/100}if(st.haste>0)st.haste-=.4}},400);
-sv.pk=sv.pk||{k:0,d:0,rk:0,karma:0};sv.pk.karma=Math.max(0,Math.min(999,+sv.pk.karma||0));
+sv.pk=sv.pk||{k:0,d:0,rk:0,karma:0};sv.pk.karma=Math.max(0,Math.min(999,+sv.pk.karma||0));sv.pk.receipts=Array.isArray(sv.pk.receipts)?sv.pk.receipts.filter(x=>typeof x==='string'&&x.length<=256).slice(-256):[];
 const PK={out:{},in:{},lk:{}};
 function myFlag(){const n=Date.now();if((sv.pk&&sv.pk.karma>0)||n<(sv.redUntil||0))return 1;for(const id in PK.out)if(n-PK.out[id]<60000)return 2;for(const id in PK.in)if(n-PK.in[id]<60000)return 2;return 0}
 function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t>8000||!room)return;
@@ -7718,9 +7718,14 @@ function killRank(){const col=f=>f===1?'#ff4b4b':f===2?'#b980ff':'#fff';
 const rw6=setInterval(()=>{if(room){clearInterval(rw6);try{room.on('pvpkill',m=>{const d=m.data||{};if(m.isMe||d.to!==myId())return;
   const now=Date.now(),hitAt=PV.hit[m.peer],protocol=window.AetheriaPvpProtocol;
   if(!Number.isFinite(hitAt)||now-hitAt< -1000||now-hitAt>15000||!protocol)return;
+  const receiptKey=protocol.deathReceiptKey(m.peer,d.event);
+  if(!receiptKey||sv.pk.receipts.includes(receiptKey))return;
   const state=PV.killRx[m.peer]||(PV.killRx[m.peer]={});
   const checked=protocol.validateDeathPacket(d.event,{senderId:m.peer,recipientId:myId(),nowMs:now},state,{cooldownMs:250});
   if(!checked.ok)return;
+  const receipt=protocol.rememberDeathReceipt(sv.pk.receipts,m.peer,d.event);
+  if(!receipt.ok)return;
+  sv.pk.receipts=receipt.receipts;
   delete PV.hit[m.peer];
   const vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1)),victimFlag=Number.isFinite(+d.flag)?Math.max(0,Math.min(2,+d.flag)):(prov?2:vr?1:0);
   const seenLootIds=new Set();let got=0;
