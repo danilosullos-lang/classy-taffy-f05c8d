@@ -7672,6 +7672,15 @@ const abLines=i=>(i.ab||[]).map(x=>{const d=ABD[x.t];return d?'<div style="color
 function cleanItem(it){if(!it||!RAR[it.r]||!SL[it.s]||!it.st||typeof it.st!=='object')return null;const st_={};Object.keys(SB).forEach(k=>{if(it.st[k])st_[k]=Math.max(0,Math.min(5000,Math.round(+it.st[k]||0)))});
   const o={u:uid++,s:+it.s,r:+it.r,st:st_,up:Math.max(0,Math.min(10,+it.up|0)),n:String(it.n||'Item').slice(0,40)};
   o.ab=(Array.isArray(it.ab)?it.ab:[]).slice(0,4).filter(x=>x&&ABD[x.t]).map(x=>({t:x.t,v:Math.max(0,Math.min(500,Math.round((+x.v||0)*10)/10))}));
+  if(o.s===0&&it.weaponFamily!==undefined&&it.weaponFamily!==null){
+    const family=String(it.weaponFamily),models=RPG_WEAPON_MODELS[family];
+    const grade=RPG_WEAPON_GRADES.findIndex(g=>g.id===String(it.weaponGrade));
+    const supported=Object.values(RPG_WEAPON_FAMILIES).some(list=>Array.isArray(list)&&list.includes(family));
+    if(!supported||!models||grade!==o.r||!models[grade])return null;
+    o.weaponFamily=family;o.weaponModel=models[grade];o.weaponGrade=RPG_WEAPON_GRADES[grade].id;
+    o.weaponMinLevel=RPG_WEAPON_GRADES[grade].level;
+    o.weaponAllowed=Object.keys(RPG_WEAPON_FAMILIES).filter(job=>RPG_WEAPON_FAMILIES[job].includes(family));
+  }
   if(it.act&&KIND[it.act.k]){const a=it.act;o.act={k:a.k,ic:KIND[a.k][0],n:String(a.n||'').slice(0,40),m:Math.max(.5,Math.min(12,+a.m||1)),r:Math.max(5,Math.min(30,+a.r|0)),cd:Math.max(5,Math.min(40,+a.cd|0)),mods:(Array.isArray(a.mods)?a.mods:[]).filter(x=>['burn','freeze','drain','holy','shock'].includes(x)).slice(0,2)}}
   o.p=ip(o);return o}
 function dmgEn(e,d,quiet){if(e.dead)return;if(!quiet){const ex=abSum('execute');if(ex&&e.hp<e.mx*.25)d*=1+ex/100}
@@ -7695,7 +7704,7 @@ function weaponSkill(P){const w=best().find(i=>i.s===0),a=w&&w.act;if(!a){say('E
   rip.userData.t=1;say(a.ic+' '+a.n+'!')}
 setInterval(()=>{if(!st)return;const wk=best().find(i=>i.s===0),a=wk&&wk.act;$('w').style.display=a?'':'none';if(a){$('w').textContent=a.ic;CD.w=a.cd;$('w').title=a.n;$('w').style.opacity=cd.w>0?.35:1}
   if(st.run&&!st.pause){const rg=abSum('regen');if(rg)st.hp=Math.min(hpMax(),st.hp+hpMax()*rg/100*.4);if(abSum('barrier')&&Date.now()>(st.bAt||0)){st.bAt=Date.now()+20000;st.barrier=hpMax()*abSum('barrier')/100}if(st.haste>0)st.haste-=.4}},400);
-sv.pk=sv.pk||{k:0,d:0,rk:0,karma:0};sv.pk.karma=Math.max(0,Math.min(999,+sv.pk.karma||0));sv.pk.receipts=Array.isArray(sv.pk.receipts)?sv.pk.receipts.filter(x=>typeof x==='string'&&x.length<=256).slice(-256):[];
+sv.pk=sv.pk||{k:0,d:0,rk:0,karma:0};sv.pk.karma=Math.max(0,Math.min(999,+sv.pk.karma||0));sv.pk.receipts=Array.isArray(sv.pk.receipts)?sv.pk.receipts.filter(x=>typeof x==='string'&&x.length<=256).slice(-256):[];sv.pk.lootReceipts=Array.isArray(sv.pk.lootReceipts)?sv.pk.lootReceipts.filter(x=>typeof x==='string'&&x.length<=256).slice(-2048):[];
 const PK={out:{},in:{},lk:{}};
 function myFlag(){const n=Date.now();if((sv.pk&&sv.pk.karma>0)||n<(sv.redUntil||0))return 1;for(const id in PK.out)if(n-PK.out[id]<60000)return 2;for(const id in PK.in)if(n-PK.in[id]<60000)return 2;return 0}
 function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t>8000||!room)return;
@@ -7730,9 +7739,12 @@ const rw6=setInterval(()=>{if(room){clearInterval(rw6);try{room.on('pvpkill',m=>
   const vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1)),victimFlag=Number.isFinite(+d.flag)?Math.max(0,Math.min(2,+d.flag)):(prov?2:vr?1:0);
   const seenLootIds=new Set();let got=0;
   (Array.isArray(d.items)?d.items.slice(0,3):[]).forEach(x=>{
-    if(!x||x.u===undefined||x.u===null)return;
-    const itemId=String(x.u);if(!itemId||seenLootIds.has(itemId))return;seenLootIds.add(itemId);
+    const itemKey=protocol.lootReceiptKey(m.peer,x&&x.u);
+    if(!itemKey||seenLootIds.has(itemKey)||sv.pk.lootReceipts.includes(itemKey))return;
     const it=cleanItem(x);if(!it)return;
+    const lootReceipt=protocol.rememberLootReceipt(sv.pk.lootReceipts,m.peer,x.u);
+    if(!lootReceipt.ok)return;
+    sv.pk.lootReceipts=lootReceipt.receipts;seenLootIds.add(itemKey);
     if(inv.length>=sv.cap){sv.gold+=price(it);return}inv.push(it);got++;
   });
   if(!PK.lk[m.peer]||now-PK.lk[m.peer]>120000){PK.lk[m.peer]=now;sv.pk.k++}
