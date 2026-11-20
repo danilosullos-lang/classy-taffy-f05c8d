@@ -10,6 +10,7 @@
   const MAX_PACKET_DAMAGE=1000000;
   const MAX_SESSION_LENGTH=64;
   const MAX_TRACKED_SESSIONS=64;
+  const MAX_DEATH_RECEIPTS=256;
   const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 
   function cooldownActive(state,now,cooldownMs){
@@ -145,5 +146,31 @@
     return {ok:true,seq,sessionId:sid,reason:null};
   }
 
-  root.AetheriaPvpProtocol=Object.freeze({VERSION,createHitPacket,validateHit,createDeathPacket,validateDeathPacket});
+  function deathReceiptKey(peerId,event){
+    const peer=String(peerId||'');
+    if(!peer||peer.length>128||!event||event.v!==VERSION)return null;
+    const sid=event.sid;
+    const seq=Number(event.seq);
+    if(typeof sid!=='string'||!sid||sid.length>MAX_SESSION_LENGTH||
+       !Number.isSafeInteger(seq)||seq<1)return null;
+    return JSON.stringify([peer,sid,seq]);
+  }
+
+  function rememberDeathReceipt(receipts,peerId,event,limit=MAX_DEATH_RECEIPTS){
+    const key=deathReceiptKey(peerId,event);
+    if(!key)return {ok:false,reason:'invalid_event',receipts:[]};
+    const cap=Number.isSafeInteger(limit)?clamp(limit,1,MAX_DEATH_RECEIPTS):MAX_DEATH_RECEIPTS;
+    const next=(Array.isArray(receipts)?receipts:[])
+      .filter(value=>typeof value==='string'&&value.length<=256)
+      .slice(-cap);
+    if(next.includes(key))return {ok:false,reason:'duplicate',key,receipts:next};
+    next.push(key);
+    if(next.length>cap)next.splice(0,next.length-cap);
+    return {ok:true,key,receipts:next};
+  }
+
+  root.AetheriaPvpProtocol=Object.freeze({
+    VERSION,MAX_DEATH_RECEIPTS,createHitPacket,validateHit,createDeathPacket,
+    validateDeathPacket,deathReceiptKey,rememberDeathReceipt
+  });
 })(typeof window!=='undefined'?window:globalThis);
