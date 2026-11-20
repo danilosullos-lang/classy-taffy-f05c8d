@@ -235,6 +235,38 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       throw new Error('Persisted PvP death receipt audit failed in Chromium: '+JSON.stringify(pvpDeathReceiptAudit));
     }
 
+    const pvpLootReceiptAudit=await page.evaluate(()=>{
+      const protocol=window.AetheriaPvpProtocol;
+      const first=protocol.rememberLootReceipt([],'browser-peer',77);
+      const persisted=JSON.parse(JSON.stringify(first.receipts));
+      const repeated=protocol.rememberLootReceipt(persisted,'browser-peer','77');
+      const differentItem=protocol.rememberLootReceipt(persisted,'browser-peer',78);
+      return {loaded:!!protocol,accepted:first.ok,repeated:repeated.reason,differentItem:differentItem.ok,
+        key:first.key,count:repeated.receipts.length};
+    });
+    if(!pvpLootReceiptAudit.loaded||!pvpLootReceiptAudit.accepted||
+       pvpLootReceiptAudit.repeated!=='duplicate'||!pvpLootReceiptAudit.differentItem||
+       pvpLootReceiptAudit.count!==1){
+      throw new Error('Persistent PvP item receipt audit failed in Chromium: '+JSON.stringify(pvpLootReceiptAudit));
+    }
+
+    const weaponTransferAudit=await page.evaluate(()=>{
+      const beforeUid=uid;
+      const source={u:900,s:0,r:1,st:{atk:24},n:'Arco Longo [D]',weaponFamily:'bow',
+        weaponModel:'untrusted-model',weaponGrade:'D',weaponMinLevel:999,weaponAllowed:['mago']};
+      const item=cleanItem(source);
+      const invalid=cleanItem({...source,weaponGrade:'S'});
+      uid=beforeUid;
+      return {family:item&&item.weaponFamily,model:item&&item.weaponModel,grade:item&&item.weaponGrade,
+        minLevel:item&&item.weaponMinLevel,allowed:item&&item.weaponAllowed,invalidRejected:invalid===null};
+    });
+    if(weaponTransferAudit.family!=='bow'||weaponTransferAudit.model!=='bow_A_withString'||
+       weaponTransferAudit.grade!=='D'||weaponTransferAudit.minLevel!==20||
+       !weaponTransferAudit.allowed.includes('arqueiro')||weaponTransferAudit.allowed.includes('mago')||
+       !weaponTransferAudit.invalidRejected){
+      throw new Error('PvP weapon transfer metadata audit failed: '+JSON.stringify(weaponTransferAudit));
+    }
+
     const pvpLootAudit=await page.evaluate(()=>{
       const loot=window.AetheriaPvpLoot;
       const inventory=[
