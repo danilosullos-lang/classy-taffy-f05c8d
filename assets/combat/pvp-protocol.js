@@ -11,6 +11,7 @@
   const MAX_SESSION_LENGTH=64;
   const MAX_TRACKED_SESSIONS=64;
   const MAX_DEATH_RECEIPTS=256;
+  const MAX_LOOT_RECEIPTS=2048;
   const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 
   function cooldownActive(state,now,cooldownMs){
@@ -169,8 +170,29 @@
     return {ok:true,key,receipts:next};
   }
 
+  function lootReceiptKey(peerId,itemId){
+    const peer=String(peerId||'');
+    const sourceId=String(itemId===undefined||itemId===null?'':itemId);
+    if(!peer||peer.length>128||!/^[1-9][0-9]{0,15}$/.test(sourceId)||
+       !Number.isSafeInteger(Number(sourceId)))return null;
+    return JSON.stringify([peer,sourceId]);
+  }
+
+  function rememberLootReceipt(receipts,peerId,itemId,limit=MAX_LOOT_RECEIPTS){
+    const key=lootReceiptKey(peerId,itemId);
+    if(!key)return {ok:false,reason:'invalid_item_id',receipts:[]};
+    const cap=Number.isSafeInteger(limit)?clamp(limit,1,MAX_LOOT_RECEIPTS):MAX_LOOT_RECEIPTS;
+    const next=(Array.isArray(receipts)?receipts:[])
+      .filter(value=>typeof value==='string'&&value.length<=256)
+      .slice(-cap);
+    if(next.includes(key))return {ok:false,reason:'duplicate',key,receipts:next};
+    next.push(key);
+    if(next.length>cap)next.splice(0,next.length-cap);
+    return {ok:true,key,receipts:next};
+  }
+
   root.AetheriaPvpProtocol=Object.freeze({
-    VERSION,MAX_DEATH_RECEIPTS,createHitPacket,validateHit,createDeathPacket,
-    validateDeathPacket,deathReceiptKey,rememberDeathReceipt
+    VERSION,MAX_DEATH_RECEIPTS,MAX_LOOT_RECEIPTS,createHitPacket,validateHit,createDeathPacket,
+    validateDeathPacket,deathReceiptKey,rememberDeathReceipt,lootReceiptKey,rememberLootReceipt
   });
 })(typeof window!=='undefined'?window:globalThis);
