@@ -40,6 +40,7 @@ assert.equal(P.createDeathPacket({to:'peer-b',sessionId:'death-session-a',seq:0}
 assert.equal(P.createDeathPacket({to:'peer-b',sessionId:'',seq:1}),null);
 
 assert.equal(P.MAX_DEATH_RECEIPTS,256);
+assert.equal(P.MAX_LOOT_RECEIPTS,2048);
 const firstReceipt=P.rememberDeathReceipt([], 'peer-a', death);
 assert.equal(firstReceipt.ok,true);
 assert.equal(firstReceipt.key,P.deathReceiptKey('peer-a',death));
@@ -65,12 +66,40 @@ for(let i=0;i<P.MAX_DEATH_RECEIPTS+5;i++){
 assert.equal(bounded.length,P.MAX_DEATH_RECEIPTS);
 assert.equal(bounded.includes(oldestKey),false,'receipt history must remain bounded and evict the oldest entry');
 
+const firstLootReceipt=P.rememberLootReceipt([], 'peer-a', 77);
+assert.equal(firstLootReceipt.ok,true);
+const persistedLootReceipts=JSON.parse(JSON.stringify(firstLootReceipt.receipts));
+const repeatedItem=P.rememberLootReceipt(persistedLootReceipts,'peer-a','77');
+assert.equal(repeatedItem.ok,false,'the same source item must not be transferred again under a new death event');
+assert.equal(repeatedItem.reason,'duplicate');
+assert.equal(P.rememberLootReceipt(persistedLootReceipts,'peer-a',78).ok,true);
+assert.equal(P.rememberLootReceipt(persistedLootReceipts,'peer-c',77).ok,true);
+assert.equal(P.lootReceiptKey('peer-a','invalid'),null);
+assert.equal(P.lootReceiptKey('','77'),null);
+
+let boundedLoot=[];
+let oldestLootKey=null;
+for(let i=1;i<=P.MAX_LOOT_RECEIPTS+3;i++){
+  if(i===1)oldestLootKey=P.lootReceiptKey('peer-a',i);
+  const result=P.rememberLootReceipt(boundedLoot,'peer-a',i);
+  assert.equal(result.ok,true);
+  boundedLoot=result.receipts;
+}
+assert.equal(boundedLoot.length,P.MAX_LOOT_RECEIPTS);
+assert.equal(boundedLoot.includes(oldestLootKey),false,'loot receipt history must remain bounded');
+
 const index=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
 assert.match(index,/protocol\.deathReceiptKey\(m\.peer,d\.event\)/,
   'the browser receiver must check the persisted receipt before applying PvP loot');
 assert.match(index,/protocol\.rememberDeathReceipt\(sv\.pk\.receipts,m\.peer,d\.event\)/,
   'the browser receiver must persist a receipt for each accepted PvP death');
 assert.match(index,/sv\.pk\.receipts=receipt\.receipts/,
-  'receipt history must be part of the existing save payload');
+  'death receipt history must be part of the existing save payload');
+assert.match(index,/protocol\.lootReceiptKey\(m\.peer,x&&x\.u\)/,
+  'the browser receiver must identify each source item independently of the death event');
+assert.match(index,/protocol\.rememberLootReceipt\(sv\.pk\.lootReceipts,m\.peer,x\.u\)/,
+  'the browser receiver must persist a receipt for each transferred source item');
+assert.match(index,/sv\.pk\.lootReceipts=lootReceipt\.receipts/,
+  'item receipt history must be part of the existing save payload');
 
 console.log('Aetheria PvP death protocol: recipient, sequence, replay, cross-session cooldown, persisted idempotency receipts and bounded history passed.');
