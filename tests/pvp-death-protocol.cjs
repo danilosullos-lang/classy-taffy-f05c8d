@@ -128,19 +128,19 @@ assert.equal(P.validateLootAck(partialAck,{senderId:'peer-a',recipientId:'peer-b
 
 
 const indexSource=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
-assert.match(indexSource,/sv\\.pk\\.pendingTransfers/,
+assert.ok(indexSource.includes('sv.pk.pendingTransfers'),
   'outgoing PvP items must remain in persisted escrow until acknowledged');
-assert.match(indexSource,/room\\.on\\('pvpack'/,
+assert.ok(indexSource.includes("room.on('pvpack'"),
   'the sender must listen for recipient loot acknowledgements');
-assert.match(indexSource,/protocol\\.validateLootAck/,
+assert.ok(indexSource.includes('protocol.validateLootAck'),
   'loot acknowledgements must be validated against the expected peer and pending event');
-assert.match(indexSource,/protocol\\.createLootAckPacket/,
+assert.ok(indexSource.includes('protocol.createLootAckPacket'),
   'the receiver must send structured acknowledgements');
-assert.match(indexSource,/pvpTransferRetry/,
+assert.ok(indexSource.includes('pvpTransferRetry'),
   'pending transfers must be retried after connection recovery');
-assert.match(indexSource,/PV\\.durableTransferReceipts/,
+assert.ok(indexSource.includes('PV.durableTransferReceipts'),
   'the receiver must only acknowledge transfer outcomes after durable local save');
-assert.match(indexSource,/const saved=save\\(true\\)/,
+assert.ok(indexSource.includes('const saved=save(true)'),
   'the sender must persist escrow before emitting the PvP death event');
 
 console.log('Aetheria PvP death protocol: recipient, sequence, replay, cross-session cooldown, persisted idempotency receipts and bounded history passed.');
