@@ -154,7 +154,8 @@
     const seq=Number(event.seq);
     if(typeof sid!=='string'||!sid||sid.length>MAX_SESSION_LENGTH||
        !Number.isSafeInteger(seq)||seq<1)return null;
-    return JSON.stringify([peer,sid,seq]);
+    // The event identity survives a sender page reload, when Trystero assigns a new transient peer id.
+    return JSON.stringify([String(event.to),sid,seq]);
   }
 
   function rememberDeathReceipt(receipts,peerId,event,limit=MAX_DEATH_RECEIPTS){
