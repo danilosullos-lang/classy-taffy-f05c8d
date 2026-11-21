@@ -103,28 +103,28 @@ assert.match(index,/sv\.pk\.lootReceipts=lootReceipt\.receipts/,
   'item receipt history must be part of the existing save payload');
 
 
-const pendingTransfer={peer:'peer-a',event:death,items:[{u:77},{u:78}]};
-const ack=P.createLootAckPacket({to:'peer-b',event:death,accepted:[77],rejected:['78']});
-assert.deepEqual(ack,{v:1,to:'peer-b',sid:'death-session-a',seq:1,accepted:['77'],rejected:['78']});
-const checkedAck=P.validateLootAck(ack,{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer);
+const pendingTransfer={peer:'peer-b',event:death,items:[{u:77},{u:78}]};
+const ack=P.createLootAckPacket({to:'peer-a',event:death,accepted:[77],rejected:['78']});
+assert.deepEqual(ack,{v:1,to:'peer-a',sid:'death-session-a',seq:1,accepted:['77'],rejected:['78']});
+const checkedAck=P.validateLootAck(ack,{senderId:'peer-b',recipientId:'peer-a'},pendingTransfer);
 assert.equal(checkedAck.ok,true);
 assert.deepEqual(checkedAck.accepted,['77']);
 assert.deepEqual(checkedAck.rejected,['78']);
 assert.equal(checkedAck.complete,true);
-assert.equal(P.validateLootAck(ack,{senderId:'peer-c',recipientId:'peer-b'},pendingTransfer).reason,'wrong_peer');
-assert.equal(P.validateLootAck({...ack,to:'peer-c'},{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer).reason,'wrong_peer');
-assert.equal(P.validateLootAck({...ack,seq:2},{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer).reason,'wrong_event');
-assert.equal(P.validateLootAck({...ack,seq:'1'},{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer).reason,'wrong_event',
+assert.equal(P.validateLootAck(ack,{senderId:'peer-c',recipientId:'peer-a'},pendingTransfer).reason,'wrong_peer');
+assert.equal(P.validateLootAck({...ack,to:'peer-c'},{senderId:'peer-b',recipientId:'peer-a'},pendingTransfer).reason,'wrong_peer');
+assert.equal(P.validateLootAck({...ack,seq:2},{senderId:'peer-b',recipientId:'peer-a'},pendingTransfer).reason,'wrong_event');
+assert.equal(P.validateLootAck({...ack,seq:'1'},{senderId:'peer-b',recipientId:'peer-a'},pendingTransfer).reason,'wrong_event',
   'acknowledgement sequence must be an integer, not a coercible string');
-assert.equal(P.validateLootAck({...ack,accepted:['99']},{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer).reason,'unknown_item');
-assert.equal(P.createLootAckPacket({to:'peer-b',event:death,accepted:['77','77'],rejected:[]}),null);
-assert.equal(P.createLootAckPacket({to:'peer-b',event:death,accepted:['77'],rejected:['77']}),null);
-assert.equal(P.createLootAckPacket({to:'peer-b',event:death,accepted:['NaN'],rejected:[]}),null);
-const partialAck=P.createLootAckPacket({to:'peer-b',event:death,accepted:['77'],rejected:[]});
-const partialChecked=P.validateLootAck(partialAck,{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer);
+assert.equal(P.validateLootAck({...ack,accepted:['99']},{senderId:'peer-b',recipientId:'peer-a'},pendingTransfer).reason,'unknown_item');
+assert.equal(P.createLootAckPacket({to:'peer-a',event:death,accepted:['77','77'],rejected:[]}),null);
+assert.equal(P.createLootAckPacket({to:'peer-a',event:death,accepted:['77'],rejected:['77']}),null);
+assert.equal(P.createLootAckPacket({to:'peer-a',event:death,accepted:['NaN'],rejected:[]}),null);
+const partialAck=P.createLootAckPacket({to:'peer-a',event:death,accepted:['77'],rejected:[]});
+const partialChecked=P.validateLootAck(partialAck,{senderId:'peer-b',recipientId:'peer-a'},pendingTransfer);
 assert.equal(partialChecked.ok,true);
 assert.equal(partialChecked.complete,false,'partial acknowledgements must leave unconfirmed items in escrow');
-assert.equal(P.validateLootAck(partialAck,{senderId:'peer-a',recipientId:'peer-b'},{
+assert.equal(P.validateLootAck(partialAck,{senderId:'peer-b',recipientId:'peer-a'},{
   ...pendingTransfer,event:{...death,seq:3}
 }).reason,'wrong_event');
 
