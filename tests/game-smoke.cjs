@@ -250,6 +250,25 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       throw new Error('Persistent PvP item receipt audit failed in Chromium: '+JSON.stringify(pvpLootReceiptAudit));
     }
 
+    const pvpLootAckAudit=await page.evaluate(()=>{
+      const protocol=window.AetheriaPvpProtocol;
+      const event=protocol.createDeathPacket({to:'browser-receiver',sessionId:'browser-ack-session',seq:9});
+      const pending={peer:'browser-receiver',event,items:[{u:901},{u:902}]};
+      const ack=protocol.createLootAckPacket({to:'browser-sender',event,accepted:[901],rejected:[902]});
+      const valid=protocol.validateLootAck(ack,{senderId:'browser-receiver',recipientId:'browser-sender'},pending);
+      const wrongPeer=protocol.validateLootAck(ack,{senderId:'other-peer',recipientId:'browser-sender'},pending);
+      const partial=protocol.createLootAckPacket({to:'browser-sender',event,accepted:[901],rejected:[]});
+      const partialResult=protocol.validateLootAck(partial,{senderId:'browser-receiver',recipientId:'browser-sender'},pending);
+      return {loaded:!!protocol,accepted:valid.accepted,rejected:valid.rejected,valid:valid.ok,
+        wrongPeer:wrongPeer.reason,partialComplete:partialResult.complete};
+    });
+    if(!pvpLootAckAudit.loaded||!pvpLootAckAudit.valid||
+       JSON.stringify(pvpLootAckAudit.accepted)!==JSON.stringify(['901'])||
+       JSON.stringify(pvpLootAckAudit.rejected)!==JSON.stringify(['902'])||
+       pvpLootAckAudit.wrongPeer!=='wrong_peer'||pvpLootAckAudit.partialComplete!==false){
+      throw new Error('PvP loot acknowledgement browser audit failed: '+JSON.stringify(pvpLootAckAudit));
+    }
+
     const weaponTransferAudit=await page.evaluate(()=>{
       const beforeUid=uid;
       const source={u:900,s:0,r:1,st:{atk:24},n:'Arco Longo [D]',weaponFamily:'bow',
