@@ -191,8 +191,53 @@
     return {ok:true,key,receipts:next};
   }
 
+
+  function normalizeLootAckIds(values){
+    if(!Array.isArray(values)||values.length>3)return null;
+    const out=[];
+    for(const value of values){
+      const id=String(value===undefined||value===null?'':value);
+      if(!/^[1-9][0-9]{0,15}$/.test(id)||!Number.isSafeInteger(Number(id))||out.includes(id))return null;
+      out.push(id);
+    }
+    return out;
+  }
+
+  function createLootAckPacket(input){
+    input=input||{};
+    const to=String(input.to||'').trim(),event=input.event||{};
+    const seq=Number(event.seq),sid=event.sid;
+    const accepted=normalizeLootAckIds(input.accepted||[]);
+    const rejected=normalizeLootAckIds(input.rejected||[]);
+    if(!to||to.length>128||event.v!==VERSION||typeof sid!=='string'||!sid||
+       sid.length>MAX_SESSION_LENGTH||!Number.isSafeInteger(seq)||seq<1||
+       !accepted||!rejected||accepted.some(id=>rejected.includes(id)))return null;
+    return {v:VERSION,to,sid,seq,accepted,rejected};
+  }
+
+  function validateLootAck(packet,context,pending){
+    packet=packet||{};context=context||{};pending=pending||{};
+    const reject=reason=>({ok:false,reason,accepted:[],rejected:[]});
+    if(!packet||typeof packet!=='object'||packet.v!==VERSION)return reject('unsupported_version');
+    const sender=String(context.senderId||''),recipient=String(context.recipientId||'');
+    const expected=String(pending.peer||'');
+    if(!sender||!recipient||sender===recipient||!expected||sender!==expected||
+       String(packet.to||'')!==recipient)return reject('wrong_peer');
+    const event=pending.event||{};
+    if(packet.sid!==event.sid||Number(packet.seq)!==Number(event.seq)||
+       event.to!==sender)return reject('wrong_event');
+    const accepted=normalizeLootAckIds(packet.accepted||[]);
+    const rejected=normalizeLootAckIds(packet.rejected||[]);
+    if(!accepted||!rejected||accepted.some(id=>rejected.includes(id)))return reject('invalid_items');
+    const items=Array.isArray(pending.items)?pending.items:[];
+    const allowed=new Set(items.map(item=>String(item&&item.u!==undefined?item.u:'')));
+    if(accepted.concat(rejected).some(id=>!allowed.has(id)))return reject('unknown_item');
+    return {ok:true,accepted,rejected,complete:accepted.length+rejected.length===allowed.size,reason:null};
+  }
+
   root.AetheriaPvpProtocol=Object.freeze({
     VERSION,MAX_DEATH_RECEIPTS,MAX_LOOT_RECEIPTS,createHitPacket,validateHit,createDeathPacket,
-    validateDeathPacket,deathReceiptKey,rememberDeathReceipt,lootReceiptKey,rememberLootReceipt
+    validateDeathPacket,deathReceiptKey,rememberDeathReceipt,lootReceiptKey,rememberLootReceipt,
+    createLootAckPacket,validateLootAck
   });
 })(typeof window!=='undefined'?window:globalThis);
