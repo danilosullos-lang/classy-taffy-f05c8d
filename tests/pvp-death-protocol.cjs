@@ -114,6 +114,8 @@ assert.equal(checkedAck.complete,true);
 assert.equal(P.validateLootAck(ack,{senderId:'peer-c',recipientId:'peer-b'},pendingTransfer).reason,'wrong_peer');
 assert.equal(P.validateLootAck({...ack,to:'peer-c'},{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer).reason,'wrong_peer');
 assert.equal(P.validateLootAck({...ack,seq:2},{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer).reason,'wrong_event');
+assert.equal(P.validateLootAck({...ack,seq:'1'},{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer).reason,'wrong_event',
+  'acknowledgement sequence must be an integer, not a coercible string');
 assert.equal(P.validateLootAck({...ack,accepted:['99']},{senderId:'peer-a',recipientId:'peer-b'},pendingTransfer).reason,'unknown_item');
 assert.equal(P.createLootAckPacket({to:'peer-b',event:death,accepted:['77','77'],rejected:[]}),null);
 assert.equal(P.createLootAckPacket({to:'peer-b',event:death,accepted:['77'],rejected:['77']}),null);
