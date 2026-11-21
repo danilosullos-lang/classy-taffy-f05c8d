@@ -222,10 +222,11 @@
     const sender=String(context.senderId||''),recipient=String(context.recipientId||'');
     const expected=String(pending.peer||'');
     if(!sender||!recipient||sender===recipient||!expected||sender!==expected||
-       String(packet.to||'')!==recipient)return reject('wrong_peer');
+       packet.to!==recipient)return reject('wrong_peer');
     const event=pending.event||{};
-    if(packet.sid!==event.sid||Number(packet.seq)!==Number(event.seq)||
-       event.to!==sender)return reject('wrong_event');
+    if(event.v!==VERSION||typeof event.sid!=='string'||!Number.isSafeInteger(event.seq)||event.seq<1||
+       typeof packet.sid!=='string'||!Number.isSafeInteger(packet.seq)||packet.seq<1||
+       packet.sid!==event.sid||packet.seq!==event.seq||event.to!==sender)return reject('wrong_event');
     const accepted=normalizeLootAckIds(packet.accepted||[]);
     const rejected=normalizeLootAckIds(packet.rejected||[]);
     if(!accepted||!rejected||accepted.some(id=>rejected.includes(id)))return reject('invalid_items');
