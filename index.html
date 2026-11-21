@@ -7748,7 +7748,7 @@ function pvpSendLootAck(peer,event,accepted,rejected){
   if(ack)room.emit('pvpack',ack).catch(()=>{});
 }
 function pvpTransferRetry(){
-  if(!room||!sv.pk||!Array.isArray(sv.pk.pendingTransfers)||!sv.pk.pendingTransfers.length)return;
+  if(!sv.pk||!Array.isArray(sv.pk.pendingTransfers)||!sv.pk.pendingTransfers.length)return;
   const now=Date.now(),beforeInv=inv.slice(),beforePending=JSON.stringify(sv.pk.pendingTransfers);
   let changed=false;
   sv.pk.pendingTransfers.forEach(p=>{
@@ -7758,7 +7758,7 @@ function pvpTransferRetry(){
       if(!inv.some(x=>String(x&&x.u)===id))inv.push(item);
       p.returnItems.shift();changed=true;
     }
-    if(!p.items.length||!room.peers().some(peer=>peer.peer===p.peer))return;
+    if(!p.items.length||!room||!room.peers().some(peer=>peer.peer===p.peer))return;
     const key=pvpTransferKey(p),last=PV.pendingSentAt[key]||0;
     if(now-last<4000)return;
     PV.pendingSentAt[key]=now;
