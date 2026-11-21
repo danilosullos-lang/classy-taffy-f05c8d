@@ -7704,7 +7704,15 @@ function weaponSkill(P){const w=best().find(i=>i.s===0),a=w&&w.act;if(!a){say('E
   rip.userData.t=1;say(a.ic+' '+a.n+'!')}
 setInterval(()=>{if(!st)return;const wk=best().find(i=>i.s===0),a=wk&&wk.act;$('w').style.display=a?'':'none';if(a){$('w').textContent=a.ic;CD.w=a.cd;$('w').title=a.n;$('w').style.opacity=cd.w>0?.35:1}
   if(st.run&&!st.pause){const rg=abSum('regen');if(rg)st.hp=Math.min(hpMax(),st.hp+hpMax()*rg/100*.4);if(abSum('barrier')&&Date.now()>(st.bAt||0)){st.bAt=Date.now()+20000;st.barrier=hpMax()*abSum('barrier')/100}if(st.haste>0)st.haste-=.4}},400);
-sv.pk=sv.pk||{k:0,d:0,rk:0,karma:0};sv.pk.karma=Math.max(0,Math.min(999,+sv.pk.karma||0));sv.pk.receipts=Array.isArray(sv.pk.receipts)?sv.pk.receipts.filter(x=>typeof x==='string'&&x.length<=256).slice(-256):[];sv.pk.lootReceipts=Array.isArray(sv.pk.lootReceipts)?sv.pk.lootReceipts.filter(x=>typeof x==='string'&&x.length<=256).slice(-2048):[];
+sv.pk=sv.pk||{k:0,d:0,rk:0,karma:0};
+sv.pk.karma=Math.max(0,Math.min(999,+sv.pk.karma||0));
+sv.pk.receipts=Array.isArray(sv.pk.receipts)?sv.pk.receipts.filter(x=>typeof x==='string'&&x.length<=256).slice(-256):[];
+sv.pk.lootReceipts=Array.isArray(sv.pk.lootReceipts)?sv.pk.lootReceipts.filter(x=>typeof x==='string'&&x.length<=256).slice(-2048):[];
+const pvpUidOk=x=>/^[1-9][0-9]{0,15}$/.test(String(x&&x.u))&&Number.isSafeInteger(Number(x.u));
+sv.pk.pendingTransfers=Array.isArray(sv.pk.pendingTransfers)?sv.pk.pendingTransfers.filter(t=>t&&typeof t.peer==='string'&&t.peer.length>0&&t.peer.length<=128&&t.event&&t.event.v===1&&t.event.to===t.peer&&typeof t.event.sid==='string'&&t.event.sid.length>0&&t.event.sid.length<=64&&Number.isSafeInteger(Number(t.event.seq))&&Number(t.event.seq)>0&&Array.isArray(t.items)&&t.items.length<=3&&t.items.every(pvpUidOk)&&(!t.returnItems||Array.isArray(t.returnItems)&&t.returnItems.length<=3&&t.returnItems.every(pvpUidOk))).map(t=>({...t,items:t.items.slice(),returnItems:Array.isArray(t.returnItems)?t.returnItems.slice():[]})).slice(-16):[];
+sv.pk.transferReceipts=Array.isArray(sv.pk.transferReceipts)?sv.pk.transferReceipts.filter(t=>t&&typeof t.key==='string'&&t.key.length<=256&&Array.isArray(t.accepted)&&Array.isArray(t.rejected)&&t.accepted.length<=3&&t.rejected.length<=3&&t.accepted.concat(t.rejected).every(x=>/^[1-9][0-9]{0,15}$/.test(String(x)))).map(t=>({key:t.key,accepted:t.accepted.map(String),rejected:t.rejected.map(String)})).slice(-256):[];
+PV.durableTransferReceipts=new Set(sv.pk.transferReceipts.map(t=>t.key));
+PV.pendingSentAt=Object.create(null);
 const PK={out:{},in:{},lk:{}};
 function myFlag(){const n=Date.now();if((sv.pk&&sv.pk.karma>0)||n<(sv.redUntil||0))return 1;for(const id in PK.out)if(n-PK.out[id]<60000)return 2;for(const id in PK.in)if(n-PK.in[id]<60000)return 2;return 0}
 function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t>8000||!room)return;
@@ -7712,45 +7720,142 @@ function pvpDeath(){const k=PV.last;PV.last=null;sv.pk.d++;if(!k||Date.now()-k.t
   const event=protocol&&protocol.createDeathPacket({to:k.id,sessionId:PV.session,seq:PV.deathSeq+1});
   if(!event)return;
   PV.deathSeq=event.seq;
-  if(!(PV.cd[k.id]&&now-PV.cd[k.id]<120000)){
+  const beforeInv=inv.slice(),beforeEq={...(sv.eq||{})},beforePending=JSON.stringify(sv.pk.pendingTransfers);
+  if(!(PV.cd[k.id]&&now-PV.cd[k.id]<120000)&&sv.pk.pendingTransfers.length<16){
     const loot=window.AetheriaPvpLoot.preparePvpDrop(inv,sv.eq||{},{red,random:Math.random});
-    if(loot.ok){
+    if(loot.ok&&loot.items.length){
       items=loot.items;inv=loot.inventory;sv.eq=loot.equipment;
+      sv.pk.pendingTransfers.push({peer:k.id,event,items:JSON.parse(JSON.stringify(items)),returnItems:[],red,flag:victimFlag,vn:myName,createdAt:now});
       if(loot.removedEquipmentSlots.includes('0')&&frog&&frog.userData)frog.userData._weaponSignature='';
     }
   }
-  PV.cd[k.id]=now;save();
+  PV.cd[k.id]=now;
+  const saved=save(true);
+  if(!saved&&items.length){
+    inv=beforeInv;sv.eq=beforeEq;sv.pk.pendingTransfers=JSON.parse(beforePending);items=[];
+    if(frog&&frog.userData)frog.userData._weaponSignature='';
+  }
+  const pending=sv.pk.pendingTransfers.find(t=>t.peer===k.id&&t.event.sid===event.sid&&t.event.seq===event.seq);
+  if(pending)PV.pendingSentAt[[pending.peer,pending.event.sid,pending.event.seq].join('|')]=now;
   room.emit('pvpkill',{to:k.id,event,items,red,flag:victimFlag,vn:myName,karma:sv.pk.karma||0}).catch(()=>{})}
 function killRank(){const col=f=>f===1?'#ff4b4b':f===2?'#b980ff':'#fff';
   const rows=[{n:myName+' (você)',k:sv.pk.k,f:myFlag()}].concat(PEERS.filter(p=>!p.isMe&&p.presence&&p.presence.name).map(p=>({n:esc(String(p.presence.name).slice(0,16)),k:pn(p.presence.k),f:pn(p.presence.fl)}))).sort((a,b)=>b.k-a.k).slice(0,10);
   return '<h3 style="margin:12px 0 4px">⚔️ Ranking de Kills</h3><div style="font-size:12px;opacity:.8">Você: '+sv.pk.k+' kills · '+sv.pk.d+' mortes · ☠️ Karma '+(sv.pk.karma||0)+' · 🔴 '+sv.pk.rk+' PKs</div>'+rows.map((r,i)=>'<div class="it"><span style="color:'+col(r.f)+'">'+(i+1)+'. '+r.n+(r.f===1?' 🔴':r.f===2?' 🟣':'')+'</span><b>'+r.k+' kills</b></div>').join('')}
-const rw6=setInterval(()=>{if(room){clearInterval(rw6);try{room.on('pvpkill',m=>{const d=m.data||{};if(m.isMe||d.to!==myId())return;
-  const now=Date.now(),hitAt=PV.hit[m.peer],protocol=window.AetheriaPvpProtocol;
-  if(!Number.isFinite(hitAt)||now-hitAt< -1000||now-hitAt>15000||!protocol)return;
-  const receiptKey=protocol.deathReceiptKey(m.peer,d.event);
-  if(!receiptKey||sv.pk.receipts.includes(receiptKey))return;
-  const state=PV.killRx[m.peer]||(PV.killRx[m.peer]={});
-  const checked=protocol.validateDeathPacket(d.event,{senderId:m.peer,recipientId:myId(),nowMs:now},state,{cooldownMs:250});
-  if(!checked.ok)return;
-  const receipt=protocol.rememberDeathReceipt(sv.pk.receipts,m.peer,d.event);
-  if(!receipt.ok)return;
-  sv.pk.receipts=receipt.receipts;
-  delete PV.hit[m.peer];
-  const vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1)),victimFlag=Number.isFinite(+d.flag)?Math.max(0,Math.min(2,+d.flag)):(prov?2:vr?1:0);
-  const seenLootIds=new Set();let got=0;
-  (Array.isArray(d.items)?d.items.slice(0,3):[]).forEach(x=>{
-    const itemKey=protocol.lootReceiptKey(m.peer,x&&x.u);
-    if(!itemKey||seenLootIds.has(itemKey)||sv.pk.lootReceipts.includes(itemKey))return;
-    const it=cleanItem(x);if(!it)return;
-    const lootReceipt=protocol.rememberLootReceipt(sv.pk.lootReceipts,m.peer,x.u);
-    if(!lootReceipt.ok)return;
-    sv.pk.lootReceipts=lootReceipt.receipts;seenLootIds.add(itemKey);
-    if(inv.length>=sv.cap){sv.gold+=price(it);return}inv.push(it);got++;
+function pvpTransferKey(p){return [p.peer,p.event.sid,p.event.seq].join('|')}
+function pvpSendLootAck(peer,event,accepted,rejected){
+  const protocol=window.AetheriaPvpProtocol;if(!protocol||!room)return;
+  const ack=protocol.createLootAckPacket({to:peer,event,accepted,rejected});
+  if(ack)room.emit('pvpack',ack).catch(()=>{});
+}
+function pvpTransferRetry(){
+  if(!room||!sv.pk||!Array.isArray(sv.pk.pendingTransfers)||!sv.pk.pendingTransfers.length)return;
+  const now=Date.now(),beforeInv=inv.slice(),beforePending=JSON.stringify(sv.pk.pendingTransfers);
+  let changed=false;
+  sv.pk.pendingTransfers.forEach(p=>{
+    if(!Array.isArray(p.returnItems))p.returnItems=[];
+    while(p.returnItems.length&&inv.length<sv.cap){
+      const item=p.returnItems[0],id=String(item&&item.u);
+      if(!inv.some(x=>String(x&&x.u)===id))inv.push(item);
+      p.returnItems.shift();changed=true;
+    }
+    if(!p.items.length||!room.peers().some(peer=>peer.peer===p.peer))return;
+    const key=pvpTransferKey(p),last=PV.pendingSentAt[key]||0;
+    if(now-last<4000)return;
+    PV.pendingSentAt[key]=now;
+    room.emit('pvpkill',{to:p.peer,event:p.event,items:p.items,red:!!p.red,flag:p.flag,vn:p.vn,karma:sv.pk.karma||0}).catch(()=>{});
   });
-  if(!PK.lk[m.peer]||now-PK.lk[m.peer]>120000){PK.lk[m.peer]=now;sv.pk.k++}
-  if(victimFlag===0){sv.pk.karma=Math.min(999,(+sv.pk.karma||0)+1);sv.pk.rk++;say('🔴 PK! Karma +1')}else say(victimFlag===1?'☠️ PK abatido!':'🟣 PvP justo!');
-  const e=$('pop');e.innerHTML='🏴‍☠️ '+(got?got+' ITEM(S) ROUBADO(S)!':'KILL!')+'<br><small>'+esc(vn)+'</small>';e.style.fontSize='22px';e.style.display='block';popT=3;gain(100);save();
-  const t=myName+' derrotou '+vn;addChat('⚔️ PvP',t,'g',0,true);room.emit('chat',{n:'⚔️ PvP',t,ch:'g',lv:0}).catch(()=>{})})}catch(e){}}},500);
+  sv.pk.pendingTransfers=sv.pk.pendingTransfers.filter(p=>p.items.length||p.returnItems.length);
+  if(changed&&!save(true)){
+    inv=beforeInv;sv.pk.pendingTransfers=JSON.parse(beforePending);
+  }
+}
+setInterval(pvpTransferRetry,1500);
+const rw6=setInterval(()=>{if(room){clearInterval(rw6);try{
+  room.on('pvpack',m=>{
+    const d=m.data||{};if(m.isMe||d.to!==myId())return;
+    const index=sv.pk.pendingTransfers.findIndex(p=>p.peer===m.peer&&p.event.sid===d.sid&&p.event.seq===Number(d.seq));
+    if(index<0)return;
+    const pending=sv.pk.pendingTransfers[index],protocol=window.AetheriaPvpProtocol;
+    if(!protocol)return;
+    const checked=protocol.validateLootAck(d,{senderId:m.peer,recipientId:myId()},pending);
+    if(!checked.ok)return;
+    const beforeInv=inv.slice(),beforePending=JSON.stringify(sv.pk.pendingTransfers);
+    const accepted=new Set(checked.accepted),rejected=new Set(checked.rejected),remaining=[];
+    pending.items.forEach(item=>{
+      const id=String(item.u);
+      if(accepted.has(id))return;
+      if(rejected.has(id)){pending.returnItems.push(item);return}
+      remaining.push(item);
+    });
+    pending.items=remaining;
+    while(pending.returnItems.length&&inv.length<sv.cap){
+      const item=pending.returnItems[0],id=String(item&&item.u);
+      if(!inv.some(x=>String(x&&x.u)===id))inv.push(item);
+      pending.returnItems.shift();
+    }
+    if(!pending.items.length&&!pending.returnItems.length)sv.pk.pendingTransfers.splice(index,1);
+    if(!save(true)){
+      inv=beforeInv;sv.pk.pendingTransfers=JSON.parse(beforePending);return;
+    }
+    delete PV.pendingSentAt[pvpTransferKey(pending)];
+    if(checked.complete)say(checked.rejected.length?'⚠️ Alguns itens PvP foram devolvidos à sua bolsa.':'✅ Transferência PvP confirmada.');
+  });
+  room.on('pvpkill',m=>{
+    const d=m.data||{};if(m.isMe||d.to!==myId())return;
+    const now=Date.now(),hitAt=PV.hit[m.peer],protocol=window.AetheriaPvpProtocol;
+    if(!protocol)return;
+    const receiptKey=protocol.deathReceiptKey(m.peer,d.event);
+    if(!receiptKey)return;
+    if(sv.pk.receipts.includes(receiptKey)){
+      const stored=sv.pk.transferReceipts.find(t=>t.key===receiptKey);
+      if(stored){
+        if(!PV.durableTransferReceipts.has(receiptKey)&&save())PV.durableTransferReceipts.add(receiptKey);
+        if(PV.durableTransferReceipts.has(receiptKey)){
+          const ids=new Set((Array.isArray(d.items)?d.items.slice(0,3):[]).map(x=>String(x&&x.u)));
+          pvpSendLootAck(m.peer,d.event,stored.accepted.filter(id=>ids.has(id)),stored.rejected.filter(id=>ids.has(id)));
+        }
+      }
+      return;
+    }
+    if(!Number.isFinite(hitAt)||now-hitAt< -1000||now-hitAt>15000)return;
+    const state=PV.killRx[m.peer]||(PV.killRx[m.peer]={});
+    const checked=protocol.validateDeathPacket(d.event,{senderId:m.peer,recipientId:myId(),nowMs:now},state,{cooldownMs:250});
+    if(!checked.ok)return;
+    const receipt=protocol.rememberDeathReceipt(sv.pk.receipts,m.peer,d.event);
+    if(!receipt.ok)return;
+    sv.pk.receipts=receipt.receipts;
+    delete PV.hit[m.peer];
+    const vn=String(d.vn||'?').slice(0,16),prov=!!(PK.in[m.peer]&&now-PK.in[m.peer]<60000),vp=room.peers().find(p=>p.peer===m.peer),vr=!!(d.red||(vp&&vp.presence&&vp.presence.fl===1)),victimFlag=Number.isFinite(+d.flag)?Math.max(0,Math.min(2,+d.flag)):(prov?2:vr?1:0);
+    const seenLootIds=new Set(),accepted=[],rejected=[];let got=0;
+    (Array.isArray(d.items)?d.items.slice(0,3):[]).forEach(x=>{
+      const itemKey=protocol.lootReceiptKey(m.peer,x&&x.u),id=String(x&&x.u);
+      if(!itemKey||seenLootIds.has(itemKey))return;
+      seenLootIds.add(itemKey);
+      if(sv.pk.lootReceipts.includes(itemKey)){accepted.push(id);return}
+      const it=cleanItem(x);
+      if(!it){rejected.push(id);return}
+      const lootReceipt=protocol.rememberLootReceipt(sv.pk.lootReceipts,m.peer,x.u);
+      if(!lootReceipt.ok){if(lootReceipt.reason==='duplicate')accepted.push(id);else rejected.push(id);return}
+      sv.pk.lootReceipts=lootReceipt.receipts;accepted.push(id);
+      if(inv.length>=sv.cap){sv.gold+=price(it);return}
+      inv.push(it);got++;
+    });
+    if(Array.isArray(d.items)&&d.items.length){
+      sv.pk.transferReceipts=sv.pk.transferReceipts.filter(t=>t.key!==receiptKey);
+      sv.pk.transferReceipts.push({key:receiptKey,accepted,rejected});
+      sv.pk.transferReceipts=sv.pk.transferReceipts.slice(-256);
+    }
+    if(!PK.lk[m.peer]||now-PK.lk[m.peer]>120000){PK.lk[m.peer]=now;sv.pk.k++}
+    if(victimFlag===0){sv.pk.karma=Math.min(999,(+sv.pk.karma||0)+1);sv.pk.rk++;say('🔴 PK! Karma +1')}else say(victimFlag===1?'☠️ PK abatido!':'🟣 PvP justo!');
+    const e=$('pop');e.innerHTML='🏴‍☠️ '+(got?got+' ITEM(S) ROUBADO(S)!':'KILL!')+'<br><small>'+esc(vn)+'</small>';e.style.fontSize='22px';e.style.display='block';popT=3;gain(100);
+    const persisted=save();
+    if(persisted&&Array.isArray(d.items)&&d.items.length){
+      PV.durableTransferReceipts.add(receiptKey);
+      pvpSendLootAck(m.peer,d.event,accepted,rejected);
+    }
+    const t=myName+' derrotou '+vn;addChat('⚔️ PvP',t,'g',0,true);room.emit('chat',{n:'⚔️ PvP',t,ch:'g',lv:0}).catch(()=>{});
+  });
+}catch(e){}}},500);
 
 /* ===== Conquistas ===== */
 const VERSION='v52';
