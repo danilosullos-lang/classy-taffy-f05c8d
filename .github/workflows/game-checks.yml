@@ -1,4 +1,5 @@
 name: Aetheria RPG - game checks
+# Run the same integrity and browser checks on every restoration-branch push.
 
 concurrency:
   group: aetheria-game-checks-${{ github.ref }}
