@@ -228,10 +228,13 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const first=protocol.rememberDeathReceipt([],'browser-victim',event);
       const persisted=JSON.parse(JSON.stringify(first.receipts));
       const afterReload=protocol.rememberDeathReceipt(persisted,'browser-victim',event);
-      return {loaded:!!protocol,accepted:first.ok,duplicate:afterReload.reason,count:afterReload.receipts.length};
+      const newPeer=protocol.rememberDeathReceipt(persisted,'browser-victim-after-reload',event);
+      return {loaded:!!protocol,accepted:first.ok,duplicate:afterReload.reason,
+        duplicateAfterPeerReload:newPeer.reason,count:afterReload.receipts.length};
     });
     if(!pvpDeathReceiptAudit.loaded||!pvpDeathReceiptAudit.accepted||
-       pvpDeathReceiptAudit.duplicate!=='duplicate'||pvpDeathReceiptAudit.count!==1){
+       pvpDeathReceiptAudit.duplicate!=='duplicate'||
+       pvpDeathReceiptAudit.duplicateAfterPeerReload!=='duplicate'||pvpDeathReceiptAudit.count!==1){
       throw new Error('Persisted PvP death receipt audit failed in Chromium: '+JSON.stringify(pvpDeathReceiptAudit));
     }
 
