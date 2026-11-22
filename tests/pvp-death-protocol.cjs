@@ -49,8 +49,12 @@ const afterReload=P.rememberDeathReceipt(persistedReceipts,'peer-a',death);
 assert.equal(afterReload.ok,false,'a persisted death receipt must survive a simulated reload');
 assert.equal(afterReload.reason,'duplicate');
 assert.deepEqual(afterReload.receipts,persistedReceipts);
-assert.equal(P.rememberDeathReceipt(persistedReceipts,'peer-c',death).ok,true,
-  'the same event identifier from a different peer must not collide');
+const otherTransientPeer=P.rememberDeathReceipt(persistedReceipts,'peer-c',death);
+assert.equal(otherTransientPeer.ok,false,
+  'a sender reload changes its transient peer id but must not replay the same persisted event');
+assert.equal(otherTransientPeer.reason,'duplicate');
+assert.equal(P.deathReceiptKey('peer-a',death),P.deathReceiptKey('peer-c',death),
+  'death receipt identity must remain stable across transient peer-id changes');
 assert.equal(P.deathReceiptKey('',death),null);
 assert.equal(P.deathReceiptKey('peer-a',{...death,seq:0}),null);
 
