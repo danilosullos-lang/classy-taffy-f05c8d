@@ -118,6 +118,8 @@ jobs:
           node --check api/_lib/rls.js
           node --check api/characters.js
           node --check server.js
+          node --check tests/pvp-death-protocol.cjs
+          node --check tests/game-smoke.cjs
           node tests/engine-foundation.cjs
           node tests/account-client.cjs
           node tests/auth-core.mjs
