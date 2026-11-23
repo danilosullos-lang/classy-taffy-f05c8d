@@ -114,6 +114,8 @@ jobs:
           node --check assets/classes/dwarf-profession.js
           node --check assets/classes/skill-catalog.js
           node --check assets/social/party.js
+          node --check assets/social/peer-identity.js
+          node --check tests/peer-identity.cjs
           node --check assets/engine/nav-grid.js
           node --check assets/monsters/ai-state.js
           node --check api/_lib/rls.js
