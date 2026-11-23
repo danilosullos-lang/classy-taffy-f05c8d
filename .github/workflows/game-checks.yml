@@ -142,6 +142,8 @@ jobs:
         run: node tests/class-skill-catalog.cjs
       - name: Test P2P party invitations and membership
         run: node tests/party.cjs
+      - name: Test stable P2P identity and reconnect routing
+        run: node tests/peer-identity.cjs
       - name: Test navigation grid
         run: node tests/nav-grid.mjs
       - name: Test monster progression
