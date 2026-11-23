@@ -7588,7 +7588,8 @@ setInterval(()=>{if(!V.on||!room||!room.pc||!st)return;const pc=room.pc(),me=myI
 /* ===== PVP ===== */
 function pvpIdentityForPeer(peerId){
   const peers=room&&room.peers?room.peers():[];
-  return window.AetheriaPeerIdentity?.resolve(peers,peerId)||peerId;
+  const stable=window.AetheriaPeerIdentity?.resolve(peers,peerId);
+  return stable&&pvpOwnIdentity()?stable:peerId;
 }
 function pvpFindPeer(identity){
   const peers=room&&room.peers?room.peers():[];
