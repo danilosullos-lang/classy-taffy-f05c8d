@@ -1,6 +1,11 @@
 'use strict';
 const assert=require('node:assert/strict');
-const identity=require('../assets/social/peer-identity.js');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+vm.runInThisContext(fs.readFileSync(path.join(__dirname,'../assets/social/peer-identity.js'),'utf8'),
+  {filename:'assets/social/peer-identity.js'});
+const identity=globalThis.AetheriaPeerIdentity;
 
 assert.ok(identity);
 assert.equal(identity.KEY,'aetheria.p2p.client-id.v1');
