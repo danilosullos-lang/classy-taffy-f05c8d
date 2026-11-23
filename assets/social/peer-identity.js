@@ -1,4 +1,4 @@
-/* Stable, non-secret per-install identity for reconnecting the existing P2P room. */
+/* Stable, non-secret per-tab identity for reconnecting the existing P2P room after reload. */
 (function(root){
   'use strict';
   const KEY='aetheria.p2p.client-id.v1';
@@ -6,10 +6,10 @@
   function isValid(value){return typeof value==='string'&&UUID_V4.test(value);}
   function getOrCreate(options){
     options=options||{};
-    const storage=options.storage||root.localStorage;
-    const cryptoApi=options.crypto||root.crypto;
     const key=typeof options.key==='string'&&options.key?options.key:KEY;
     try{
+      const storage=options.storage||root.sessionStorage;
+      const cryptoApi=options.crypto||root.crypto;
       if(!storage||typeof storage.getItem!=='function'||typeof storage.setItem!=='function'||
          !cryptoApi||typeof cryptoApi.getRandomValues!=='function')return null;
       const existing=storage.getItem(key);
