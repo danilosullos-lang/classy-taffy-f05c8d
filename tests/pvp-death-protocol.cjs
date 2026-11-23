@@ -93,15 +93,15 @@ assert.equal(boundedLoot.length,P.MAX_LOOT_RECEIPTS);
 assert.equal(boundedLoot.includes(oldestLootKey),false,'loot receipt history must remain bounded');
 
 const index=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
-assert.match(index,/protocol\.deathReceiptKey\(m\.peer,d\.event\)/,
+assert.match(index,/protocol\.deathReceiptKey\(senderIdentity,d\.event\)/,
   'the browser receiver must check the persisted receipt before applying PvP loot');
-assert.match(index,/protocol\.rememberDeathReceipt\(sv\.pk\.receipts,m\.peer,d\.event\)/,
+assert.match(index,/protocol\.rememberDeathReceipt\(sv\.pk\.receipts,senderIdentity,d\.event\)/,
   'the browser receiver must persist a receipt for each accepted PvP death');
 assert.match(index,/sv\.pk\.receipts=receipt\.receipts/,
   'death receipt history must be part of the existing save payload');
-assert.match(index,/protocol\.lootReceiptKey\(m\.peer,x&&x\.u\)/,
+assert.match(index,/protocol\.lootReceiptKey\(senderIdentity,x&&x\.u\)/,
   'the browser receiver must identify each source item independently of the death event');
-assert.match(index,/protocol\.rememberLootReceipt\(sv\.pk\.lootReceipts,m\.peer,x\.u\)/,
+assert.match(index,/protocol\.rememberLootReceipt\(sv\.pk\.lootReceipts,senderIdentity,x\.u\)/,
   'the browser receiver must persist a receipt for each transferred source item');
 assert.match(index,/sv\.pk\.lootReceipts=lootReceipt\.receipts/,
   'item receipt history must be part of the existing save payload');
@@ -144,6 +144,16 @@ assert.ok(indexSource.includes('protocol.createLootAckPacket'),
   'the receiver must send structured acknowledgements');
 assert.ok(indexSource.includes('pvpTransferRetry'),
   'pending transfers must be retried after connection recovery');
+assert.ok(indexSource.includes('assets/social/peer-identity.js'),
+  'the existing Trystero room must load its stable tab identity module');
+assert.ok(indexSource.includes("clientId:room.clientId||''"),
+  'room presence must advertise the tab identity needed to route after peer-id changes');
+assert.ok(indexSource.includes('pvpFindPeer(p.peer)'),
+  'pending escrow must resolve a reconnecting recipient by stable identity');
+assert.ok(indexSource.includes('pvpSaveHitEvidence()')&&indexSource.includes('pvpLoadHitEvidence()'),
+  'recent outgoing-hit evidence must survive a same-tab reload for a bounded period');
+assert.ok(indexSource.includes('PV.killRx[senderIdentity]'),
+  'death-event replay state must be keyed by stable sender identity');
 assert.ok(indexSource.includes('PV.durableTransferReceipts'),
   'the receiver must only acknowledge transfer outcomes after durable local save');
 assert.ok(indexSource.includes('const saved=save(true)'),
