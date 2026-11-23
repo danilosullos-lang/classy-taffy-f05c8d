@@ -9,6 +9,11 @@ if (gameSource.includes('e.m.rotation.y=rpgMonsterFacingYaw(dd,dz)') ||
 if (!gameSource.includes('assets/ui/mobile-panels.css')) {
   throw new Error('Os estilos responsivos dos painéis móveis não estão carregados.');
 }
+if (!gameSource.includes('assets/social/peer-identity.js') || !gameSource.includes('pvpIdentityForPeer') ||
+    !gameSource.includes('pvpFindPeer(p.peer)') || !gameSource.includes('fromClientId') ||
+    !gameSource.includes('pvpSaveHitEvidence()')) {
+  throw new Error('A identidade P2P estável não está integrada ao fluxo de reconexão PvP.');
+}
 if (!gameSource.includes('assets/social/party.js') || !gameSource.includes('function partyPage(') ||
     !gameSource.includes('data-party-action')) {
   throw new Error('O painel de grupo e o protocolo P2P não estão integrados ao menu existente.');
@@ -39,8 +44,8 @@ if (!gameSource.includes('assets/combat/pvp-loot.js') ||
 if (gameSource.includes("room.on('pvploot'") ||
     !gameSource.includes('createDeathPacket') ||
     !gameSource.includes('validateDeathPacket(d.event') ||
-    !gameSource.includes("room.emit('pvpkill',{to:k.id,event,items,red") ||
-    !gameSource.includes('PV.killRx[m.peer]') ||
+    !gameSource.includes("room.emit('pvpkill',packet)") ||
+    !gameSource.includes('PV.killRx[senderIdentity]') ||
     !gameSource.includes('seenLootIds')) {
   throw new Error('PvP death rewards must use sequenced, replay-safe kill events and reject the obsolete pvploot listener.');
 }
@@ -116,10 +121,23 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       monsterAI: !!window.AetheriaMonsterAI,
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
       vfxAssets: !!window.__rpgVfxAssetsDebug,
-      party: !!window.AetheriaParty
+      party: !!window.AetheriaParty,
+      peerIdentity: !!window.AetheriaPeerIdentity
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.pvpLoot || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.pvpLoot || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party || !runtimeLibraries.peerIdentity) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
+    }
+    const peerIdentityRuntime=await page.evaluate(()=>{
+      const own=room&&room.clientId,self=room&&room.peers().find(peer=>peer.isMe);
+      const fake={peer:'transient-after-reload',isMe:false,presence:{clientId:own}};
+      const resolved=window.AetheriaPeerIdentity.resolve([fake],fake.peer);
+      const routed=window.AetheriaPeerIdentity.findPeer([fake],own);
+      return {valid:window.AetheriaPeerIdentity.isValid(own),localPresence:self?.presence?.clientId||null,
+        resolvesAfterReconnect:resolved===own,routesToCurrentPeer:routed?.peer==='transient-after-reload'};
+    });
+    if(!peerIdentityRuntime.valid||peerIdentityRuntime.localPresence!==peerIdentityRuntime.valid&&peerIdentityRuntime.localPresence===null||
+      !peerIdentityRuntime.resolvesAfterReconnect||!peerIdentityRuntime.routesToCurrentPeer){
+      throw new Error('Stable P2P identity/reconnect routing failed in Chromium: '+JSON.stringify(peerIdentityRuntime));
     }
     const castLifecycleAudit=await page.evaluate(()=>{
       const core=window.AetheriaCombatCore,state=core.createCombatState();
@@ -1327,6 +1345,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       keyboardInventoryAudit,
       chatPanelAudit,
       partyPanelAudit,
+      peerIdentityRuntime,
       runtimeErrors: pageErrors.length
     }, null, 2));
   } catch (error) {
