@@ -132,10 +132,10 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const fake={peer:'transient-after-reload',isMe:false,presence:{clientId:own}};
       const resolved=window.AetheriaPeerIdentity.resolve([fake],fake.peer);
       const routed=window.AetheriaPeerIdentity.findPeer([fake],own);
-      return {valid:window.AetheriaPeerIdentity.isValid(own),localPresence:self?.presence?.clientId||null,
+      return {id:own,valid:window.AetheriaPeerIdentity.isValid(own),localPresence:self?.presence?.clientId||null,
         resolvesAfterReconnect:resolved===own,routesToCurrentPeer:routed?.peer==='transient-after-reload'};
     });
-    if(!peerIdentityRuntime.valid||peerIdentityRuntime.localPresence!==peerIdentityRuntime.valid&&peerIdentityRuntime.localPresence===null||
+    if(!peerIdentityRuntime.valid||peerIdentityRuntime.localPresence!==peerIdentityRuntime.id||
       !peerIdentityRuntime.resolvesAfterReconnect||!peerIdentityRuntime.routesToCurrentPeer){
       throw new Error('Stable P2P identity/reconnect routing failed in Chromium: '+JSON.stringify(peerIdentityRuntime));
     }
