@@ -127,6 +127,10 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
     if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.pvpLoot || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party || !runtimeLibraries.peerIdentity) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
+    await page.waitForFunction(()=>{
+      const self=room&&room.peers().find(peer=>peer.isMe);
+      return !!(room&&room.clientId&&self&&self.presence&&self.presence.clientId===room.clientId);
+    },{timeout:10000});
     const peerIdentityRuntime=await page.evaluate(()=>{
       const own=room&&room.clientId,self=room&&room.peers().find(peer=>peer.isMe);
       const fake={peer:'transient-after-reload',isMe:false,presence:{clientId:own}};
