@@ -12,6 +12,7 @@
   const MAX_TRACKED_SESSIONS=64;
   const MAX_DEATH_RECEIPTS=256;
   const MAX_LOOT_RECEIPTS=2048;
+  const MAX_LOOT_ITEMS=3;
   const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 
   function cooldownActive(state,now,cooldownMs){
@@ -194,7 +195,7 @@
 
 
   function normalizeLootAckIds(values){
-    if(!Array.isArray(values)||values.length>3)return null;
+    if(!Array.isArray(values)||values.length>MAX_LOOT_ITEMS)return null;
     const out=[];
     for(const value of values){
       const id=String(value===undefined||value===null?'':value);
@@ -231,14 +232,22 @@
     const accepted=normalizeLootAckIds(packet.accepted||[]);
     const rejected=normalizeLootAckIds(packet.rejected||[]);
     if(!accepted||!rejected||accepted.some(id=>rejected.includes(id)))return reject('invalid_items');
-    const items=Array.isArray(pending.items)?pending.items:[];
-    const allowed=new Set(items.map(item=>String(item&&item.u!==undefined?item.u:'')));
+    const items=pending.items;
+    if(!Array.isArray(items)||items.length>MAX_LOOT_ITEMS)return reject('invalid_pending_items');
+    const itemIds=[];
+    for(const item of items){
+      const id=String(item&&item.u!==undefined&&item.u!==null?item.u:'');
+      if(!/^[1-9][0-9]{0,15}$/.test(id)||!Number.isSafeInteger(Number(id))||itemIds.includes(id))
+        return reject('invalid_pending_items');
+      itemIds.push(id);
+    }
+    const allowed=new Set(itemIds);
     if(accepted.concat(rejected).some(id=>!allowed.has(id)))return reject('unknown_item');
-    return {ok:true,accepted,rejected,complete:accepted.length+rejected.length===allowed.size,reason:null};
+    return {ok:true,accepted,rejected,complete:accepted.length+rejected.length===itemIds.length,reason:null};
   }
 
   root.AetheriaPvpProtocol=Object.freeze({
-    VERSION,MAX_DEATH_RECEIPTS,MAX_LOOT_RECEIPTS,createHitPacket,validateHit,createDeathPacket,
+    VERSION,MAX_DEATH_RECEIPTS,MAX_LOOT_RECEIPTS,MAX_LOOT_ITEMS,createHitPacket,validateHit,createDeathPacket,
     validateDeathPacket,deathReceiptKey,rememberDeathReceipt,lootReceiptKey,rememberLootReceipt,
     createLootAckPacket,validateLootAck
   });
