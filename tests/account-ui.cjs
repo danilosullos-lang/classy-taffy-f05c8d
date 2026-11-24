@@ -12,6 +12,8 @@ assert.match(source,/AetheriaCloudSyncQueue\.CloudSyncQueue/,'automatic sync mus
 assert.match(source,/assets\/engine\/cloud-sync-queue\.js/,'the queue module must be loaded by the existing account UI');
 assert.match(source,/aetheria\.cloud\.autosync\.v1/,'automatic sync preference must persist explicitly');
 assert.match(source,/aetheria\.cloud\.pending\.v1/,'pending sync state must survive reloads');
+assert.match(source,/Math\.imul/,'pending sync checkpoints must use a compact fingerprint instead of copying the full save');
+assert.match(source,/return false;\}\}/,'pending marker storage failures must stop automatic sync safely');
 assert.match(source,/cloud_sync_checkpoint_mismatch/,'a pending sync must reject changed cloud revisions');
 assert.match(source,/autoSync\.checked=false/,'automatic sync must be disabled after a blocked save');
 assert.match(source,/queue\.resume\(\{schedule:false\}\)/,'a matching baseline must resume without overwriting cloud data');
