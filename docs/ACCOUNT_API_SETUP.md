@@ -34,6 +34,8 @@ O servidor Node inicia em `http://localhost:3000`. O segredo JWT deve ter pelo m
 
 As senhas são armazenadas com hash scrypt. Os valores SQL são parametrizados. A API valida nome, raça, classe, nível, posição, vitais e tamanho do save. A classe `crafter` é exclusiva da raça `dwarf`.
 
+O endpoint `PUT /api/characters` usa compare-and-swap pela coluna `revision`: criações enviam `expectedRevision: 0` e não sobrescrevem um slot ocupado; atualizações enviam o `id` e a revisão retornada no último `GET`. A API só atualiza quando usuário, ID e revisão coincidem, incrementa a revisão e retorna HTTP `409 character_revision_conflict` se outro dispositivo salvou primeiro. Atualize a lista e confira o personagem antes de tentar novamente. Não é necessária migração adicional: a coluna `revision` já existe no schema atual.
+
 ## Uso no jogo
 
 Na tela inicial, abra **☁️ Conta / Nuvem**, registre-se ou entre e escolha **Salvar na nuvem**. **Restaurar selecionado** substitui o save local atual somente após confirmação. O save local continua disponível offline.
