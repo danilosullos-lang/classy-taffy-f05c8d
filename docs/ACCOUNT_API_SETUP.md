@@ -41,3 +41,13 @@ O endpoint `PUT /api/characters` usa compare-and-swap pela coluna `revision`: cr
 Na tela inicial, abra **☁️ Conta / Nuvem**, registre-se ou entre e escolha **Salvar na nuvem**. **Restaurar selecionado** substitui o save local atual somente após confirmação. O save local continua disponível offline.
 
 A API retorna HTTP 503 até que `DATABASE_URL`, `JWT_SECRET` e o schema/migration necessários estejam configurados. Nenhuma credencial ou segredo de banco fica versionado no projeto.
+
+## Sincronização automática opcional
+
+No painel Conta / Nuvem, primeiro faça um salvamento manual ou restaure a cópia escolhida. Isso estabelece a versão inicial e evita que um save local antigo seja enviado automaticamente sobre uma cópia diferente da nuvem. Depois, marque Sincronizar automaticamente as alterações locais na nuvem. A opção vem desligada por padrão e pode ser desativada a qualquer momento.
+
+O cliente espera 1,6 segundo após a última gravação local antes de enviar uma cópia, serializa os pedidos e repete falhas temporárias com backoff limitado. Respostas de conflito de revisão, autenticação inválida ou limite de tamanho pausam a sincronização automática; o save local não é removido nem substituído.
+
+Um marcador pequeno em localStorage registra slot, ID, revisão e impressão do save pendente. Após reload, o cliente compara o marcador com a revisão e os dados atuais da nuvem. Se o servidor já recebeu a cópia, o marcador é limpo; se a revisão continua igual, a mesma cópia local pode ser reenviada; se a nuvem mudou, a sincronização é pausada para revisão manual. O marcador não contém token nem senha.
+
+A fila automática é uma conveniência de cópia, não um mecanismo de merge de inventário. Se o mesmo personagem for alterado em dois dispositivos, o controle expectedRevision continua rejeitando a gravação concorrente com HTTP 409. Confira a versão desejada antes de salvar novamente.
