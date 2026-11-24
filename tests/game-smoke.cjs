@@ -1,6 +1,12 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const gameSource = fs.readFileSync('index.html', 'utf8');
+const accountUiSource = fs.readFileSync('assets/engine/account-ui.js', 'utf8');
+if (!gameSource.includes('assets/engine/account-client.js') || !gameSource.includes('assets/engine/account-ui.js') ||
+    !gameSource.includes('window.AetheriaGameBridge=') || !accountUiSource.includes('expectedRevision') ||
+    !accountUiSource.includes('character_revision_conflict')) {
+  throw new Error('A conta em nuvem precisa usar o save existente e impedir sobrescrita por revisão antiga.');
+}
 if (gameSource.includes('e.m.rotation.y=rpgMonsterFacingYaw(dd,dz)') ||
     !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)') ||
     !gameSource.includes('rpgMonsterFacingYaw(fldFacingD,fldFacingZ)')) {
@@ -122,15 +128,31 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       monsterProgression: !!(window.AetheriaMonsterProgression && window.AetheriaMonsterProgression.MAX_LEVEL===80),
       vfxAssets: !!window.__rpgVfxAssetsDebug,
       party: !!window.AetheriaParty,
-      peerIdentity: !!window.AetheriaPeerIdentity
+      peerIdentity: !!window.AetheriaPeerIdentity,
+      accountClient: !!window.AetheriaAccount,
+      accountCloud: !!window.AetheriaAccountCloudSync,
+      accountButton: Array.from(document.querySelectorAll('button')).some(button => button.textContent.includes('Conta / Nuvem'))
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.pvpLoot || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party || !runtimeLibraries.peerIdentity) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.pvpLoot || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party || !runtimeLibraries.peerIdentity || !runtimeLibraries.accountClient || !runtimeLibraries.accountCloud || !runtimeLibraries.accountButton) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     await page.waitForFunction(()=>{
       const self=room&&room.peers().find(peer=>peer.isMe);
       return !!(room&&room.clientId&&self&&self.presence&&self.presence.clientId===room.clientId);
     },{timeout:10000});
+    const accountPanelAudit=await page.evaluate(()=>{
+      const button=Array.from(document.querySelectorAll('button')).find(item=>item.textContent.includes('Conta / Nuvem'));
+      if(button)button.click();
+      const modal=document.getElementById('aetheria-account');
+      const visible=!!modal&&modal.style.display==='flex';
+      const fields=!!(modal&&modal.querySelector('input[type=email]')&&modal.querySelector('input[type=password]'));
+      const close=modal&&Array.from(modal.querySelectorAll('button')).find(item=>item.textContent==='Fechar');
+      if(close)close.click();
+      return {button:!!button,visible,fields};
+    });
+    if(!accountPanelAudit.button||!accountPanelAudit.visible||!accountPanelAudit.fields){
+      throw new Error('Cloud account panel is not reachable from the existing start screen: '+JSON.stringify(accountPanelAudit));
+    }
     const peerIdentityRuntime=await page.evaluate(()=>{
       const own=room&&room.clientId,self=room&&room.peers().find(peer=>peer.isMe);
       const fake={peer:'transient-after-reload',isMe:false,presence:{clientId:own}};
