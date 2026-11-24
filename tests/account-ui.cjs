@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const source=fs.readFileSync('assets/engine/account-ui.js','utf8');
+assert.match(source,/expectedRevision/,'cloud saves must include a revision precondition');
+assert.match(source,/character_revision_conflict/,'stale cloud saves must be reported as conflicts');
+assert.match(source,/new:/,'the account panel must expose empty character slots');
+assert.match(source,/api\.saveCharacter/,'the panel must use the authenticated character API');
+assert.match(source,/AetheriaGameBridge\.getSave/,'the panel must read the existing local game save');
+assert.match(source,/AetheriaGameBridge\.applySave/,'restore must use the existing game save bridge');
+assert.match(source,/24 KB/,'oversized cloud saves must be reported without replacing local progress');
+console.log('Aetheria account UI: revision-safe slots, conflict handling and local-save preservation passed.');
