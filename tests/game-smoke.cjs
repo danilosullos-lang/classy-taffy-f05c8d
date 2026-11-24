@@ -153,11 +153,12 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const autoSync=modal&&modal.querySelector('#aetheria-auto-sync-toggle');
       const autoSyncDefaultOff=!!autoSync&&!autoSync.checked;
       const autoSyncDisabled=!!autoSync&&autoSync.disabled;
+      const saveHooked=window.__aetheriaCloudSaveHooked===true&&typeof window.save==='function';
       const close=modal&&Array.from(modal.querySelectorAll('button')).find(item=>item.textContent==='Fechar');
       if(close)close.click();
-      return {button:!!button,visible,fields,autoSyncDefaultOff,autoSyncDisabled};
+      return {button:!!button,visible,fields,autoSyncDefaultOff,autoSyncDisabled,saveHooked};
     });
-    if(!accountPanelAudit.button||!accountPanelAudit.visible||!accountPanelAudit.fields||!accountPanelAudit.autoSyncDefaultOff||!accountPanelAudit.autoSyncDisabled){
+    if(!accountPanelAudit.button||!accountPanelAudit.visible||!accountPanelAudit.fields||!accountPanelAudit.autoSyncDefaultOff||!accountPanelAudit.autoSyncDisabled||!accountPanelAudit.saveHooked){
       throw new Error('Cloud account panel is not reachable from the existing start screen: '+JSON.stringify(accountPanelAudit));
     }
     const peerIdentityRuntime=await page.evaluate(()=>{
