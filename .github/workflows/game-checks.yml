@@ -125,6 +125,8 @@ jobs:
           node --check tests/game-smoke.cjs
           node tests/engine-foundation.cjs
           node tests/account-client.cjs
+          node --check tests/account-ui.cjs
+          node tests/account-ui.cjs
           node tests/auth-core.mjs
           node tests/rls-transaction.mjs
           node tests/character-validation.mjs
