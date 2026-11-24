@@ -37,4 +37,12 @@ for(const sql of [schema,migration]){
 const route=await readFile(path.join(here,'../api/characters.js'),'utf8');
 assert.equal((route.match(/withUserTransaction\(sql,\s*user\.id/g)||[]).length,2,
   'GET and PUT character queries must both use the RLS transaction wrapper');
+assert.match(route,/revision=\$\{character\.expectedRevision\}/,
+  'updates must compare the caller revision before incrementing');
+assert.match(route,/ON CONFLICT \(user_id,slot\) DO NOTHING/,
+  'new character creation must not overwrite an occupied slot');
+assert.match(route,/character_revision_conflict/,
+  'stale updates and occupied slots must return a conflict');
+assert.match(route,/WHERE id=\$\{character\.id\} AND user_id=\$\{user\.id\}/,
+  'existing character updates must be scoped by ID and authenticated user');
 console.log('Aetheria character RLS: transaction scoping, migration policy and API coverage passed.');
