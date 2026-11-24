@@ -131,6 +131,18 @@ assert.equal(partialChecked.complete,false,'partial acknowledgements must leave 
 assert.equal(P.validateLootAck(partialAck,{senderId:'peer-b',recipientId:'peer-a'},{
   ...pendingTransfer,event:{...death,seq:3}
 }).reason,'wrong_event');
+assert.equal(P.validateLootAck(ack,{senderId:'peer-b',recipientId:'peer-a'},{
+  ...pendingTransfer,items:[{u:77},{u:'77'}]
+}).reason,'invalid_pending_items',
+  'duplicate source UIDs in persisted escrow must be rejected before an ACK can settle both entries');
+assert.equal(P.validateLootAck(ack,{senderId:'peer-b',recipientId:'peer-a'},{
+  ...pendingTransfer,items:[{u:'not-a-uid'}]
+}).reason,'invalid_pending_items',
+  'malformed persisted item identifiers must not be accepted as a transfer');
+assert.equal(P.validateLootAck(ack,{senderId:'peer-b',recipientId:'peer-a'},{
+  ...pendingTransfer,items:[{u:77},{u:78},{u:79},{u:80}]
+}).reason,'invalid_pending_items',
+  'a persisted escrow entry must not exceed the three-item death-transfer limit');
 
 
 const indexSource=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
