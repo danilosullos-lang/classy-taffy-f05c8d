@@ -4,8 +4,10 @@ const gameSource = fs.readFileSync('index.html', 'utf8');
 const accountUiSource = fs.readFileSync('assets/engine/account-ui.js', 'utf8');
 if (!gameSource.includes('assets/engine/account-client.js') || !gameSource.includes('assets/engine/account-ui.js') ||
     !gameSource.includes('window.AetheriaGameBridge=') || !accountUiSource.includes('expectedRevision') ||
-    !accountUiSource.includes('character_revision_conflict')) {
-  throw new Error('A conta em nuvem precisa usar o save existente e impedir sobrescrita por revisão antiga.');
+    !accountUiSource.includes('character_revision_conflict') ||
+    !accountUiSource.includes('assets/engine/cloud-sync-queue.js') ||
+    !accountUiSource.includes('aetheria.cloud.pending.v1')) {
+  throw new Error('A conta em nuvem precisa preservar o save local, controlar revisões e recuperar a fila opcional.');
 }
 if (gameSource.includes('e.m.rotation.y=rpgMonsterFacingYaw(dd,dz)') ||
     !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)') ||
@@ -111,6 +113,7 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const loading = document.querySelector('#loading');
       return loading && loading.classList.contains('hide');
     }, { timeout: 60000 });
+    await page.waitForFunction(() => !!window.AetheriaCloudSyncQueue && !!window.AetheriaAccountCloudSync, { timeout: 10000 });
 
     const runtimeLibraries = await page.evaluate(() => ({
       three: !!window.THREE,
@@ -130,10 +133,11 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       party: !!window.AetheriaParty,
       peerIdentity: !!window.AetheriaPeerIdentity,
       accountClient: !!window.AetheriaAccount,
+      cloudSyncQueue: !!window.AetheriaCloudSyncQueue,
       accountCloud: !!window.AetheriaAccountCloudSync,
       accountButton: Array.from(document.querySelectorAll('button')).some(button => button.textContent.includes('Conta / Nuvem'))
     }));
-    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.pvpLoot || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party || !runtimeLibraries.peerIdentity || !runtimeLibraries.accountClient || !runtimeLibraries.accountCloud || !runtimeLibraries.accountButton) {
+    if (!runtimeLibraries.three || !runtimeLibraries.gltfLoader || !runtimeLibraries.skeletonUtils || !runtimeLibraries.postprocessing || !runtimeLibraries.combatCore || !runtimeLibraries.pvpProtocol || !runtimeLibraries.pvpLoot || !runtimeLibraries.deathLifecycle || !runtimeLibraries.dwarfProfession || !runtimeLibraries.skillCatalog || !runtimeLibraries.navGrid || !runtimeLibraries.monsterAI || !runtimeLibraries.monsterProgression || !runtimeLibraries.vfxAssets || !runtimeLibraries.party || !runtimeLibraries.peerIdentity || !runtimeLibraries.accountClient || !runtimeLibraries.cloudSyncQueue || !runtimeLibraries.accountCloud || !runtimeLibraries.accountButton) {
       throw new Error('As bibliotecas 3D locais não carregaram completamente: '+JSON.stringify(runtimeLibraries));
     }
     await page.waitForFunction(()=>{
@@ -146,11 +150,14 @@ if (!gameSource.includes("function rpgStarterRealmBuildCollisions") ||
       const modal=document.getElementById('aetheria-account');
       const visible=!!modal&&modal.style.display==='flex';
       const fields=!!(modal&&modal.querySelector('input[type=email]')&&modal.querySelector('input[type=password]'));
+      const autoSync=modal&&modal.querySelector('#aetheria-auto-sync-toggle');
+      const autoSyncDefaultOff=!!autoSync&&!autoSync.checked;
+      const autoSyncDisabled=!!autoSync&&autoSync.disabled;
       const close=modal&&Array.from(modal.querySelectorAll('button')).find(item=>item.textContent==='Fechar');
       if(close)close.click();
-      return {button:!!button,visible,fields};
+      return {button:!!button,visible,fields,autoSyncDefaultOff,autoSyncDisabled};
     });
-    if(!accountPanelAudit.button||!accountPanelAudit.visible||!accountPanelAudit.fields){
+    if(!accountPanelAudit.button||!accountPanelAudit.visible||!accountPanelAudit.fields||!accountPanelAudit.autoSyncDefaultOff||!accountPanelAudit.autoSyncDisabled){
       throw new Error('Cloud account panel is not reachable from the existing start screen: '+JSON.stringify(accountPanelAudit));
     }
     const peerIdentityRuntime=await page.evaluate(()=>{
