@@ -83,7 +83,7 @@ async function saveCloud(){
     if(result&&result.id)slots.value=result.id;
     status.textContent='Save sincronizado. Revisão '+result.revision+'.';
   }catch(error){
-    if(error.status===409){
+    if(error.status===409||error.message==='character_revision_conflict'){
       try{await list();}catch(_){}
       status.textContent='Conflito: o save mudou em outro dispositivo. A lista foi atualizada; confira o personagem antes de tentar novamente.';
     }else if(error.status===413){
