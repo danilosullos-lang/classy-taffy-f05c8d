@@ -28,9 +28,14 @@ const autoText=el('span',{text:'Sincronizar automaticamente as alterações loca
 function readAutoPreference(){try{return localStorage.getItem(AUTO_SYNC_KEY)==='1';}catch(_){return false;}}
 function writeAutoPreference(value){try{localStorage.setItem(AUTO_SYNC_KEY,value?'1':'0');}catch(_){}}
 function readPending(){try{const value=JSON.parse(localStorage.getItem(PENDING_SYNC_KEY)||'null');return value&&typeof value==='object'?value:null;}catch(_){return null;}}
-function writePending(value){try{localStorage.setItem(PENDING_SYNC_KEY,JSON.stringify(value));}catch(_){}}
+function writePending(value){try{localStorage.setItem(PENDING_SYNC_KEY,JSON.stringify(value));return true;}catch(_){return false;}}
 function clearPending(){try{localStorage.removeItem(PENDING_SYNC_KEY);}catch(_){}}
-function fingerprint(payload){return JSON.stringify({v:payload&&payload.v,sv:payload&&payload.sv,inv:payload&&payload.inv,uid:payload&&payload.uid});}
+function fingerprint(payload){
+  const source=JSON.stringify({v:payload&&payload.v,sv:payload&&payload.sv,inv:payload&&payload.inv,uid:payload&&payload.uid});
+  let a=2166136261,b=0x9e3779b9;
+  for(let i=0;i<source.length;i++){const code=source.charCodeAt(i);a=Math.imul(a^code,16777619);b=Math.imul(b^(code+i),2246822519);}
+  return source.length.toString(36)+':'+(a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0');
+}
 function localFingerprint(){return fingerprint(window.AetheriaGameBridge.getSave());}
 autoSync.checked=readAutoPreference();
 const button=(label,parent,fn)=>{
@@ -241,7 +246,10 @@ function scheduleCloudSync(){
   if(localFp===lastSyncedFingerprint||localFp===lastScheduledFingerprint)return false;
   const slot=Number(selected.dataset.slot),revision=Number(selected.dataset.revision);
   if(!Number.isInteger(slot)||!Number.isSafeInteger(revision))return false;
-  writePending({id:selected.value.startsWith('new:')?null:selected.value,slot,revision,fingerprint:localFp});
+  if(!writePending({id:selected.value.startsWith('new:')?null:selected.value,slot,revision,fingerprint:localFp})){
+    disableAutoSync('Não foi possível guardar o marcador de sincronização neste aparelho. O save local continua ativo; libere espaço e reative a opção.');
+    return false;
+  }
   lastScheduledFingerprint=localFp;
   return queue.schedule();
 }
