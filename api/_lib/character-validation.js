@@ -1,7 +1,7 @@
 const RACES = new Set(['human','elf','dark_elf','darkelf','orc','dwarf']);
 const CLASSES = new Set(['novice','fighter','guerreiro','warrior','mago','mage','mystic','arquimago','arqueiro','archer','ranger','ladino','rogue','assassino','assassin','dagger','tanque','tank','cavaleiro','knight','paladino','paladin','templario','templar','sacerdote','priest','healer','sumo','support','anão','anao','dwarf','dwarf_fighter','crafter']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const safeName = value => typeof value === 'string' && /^[\\p{L}\\p{N}_ -]{3,20}$/u.test(value.trim());
+const safeName = value => typeof value === 'string' && /^[\p{L}\p{N}_ -]{3,20}$/u.test(value.trim());
 const invalid = (message,status=400) => Object.assign(new Error(message),{status});
 
 export function validateCharacter(input) {
