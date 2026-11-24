@@ -8,4 +8,14 @@ assert.match(source,/api\.saveCharacter/,'the panel must use the authenticated c
 assert.match(source,/AetheriaGameBridge\.getSave/,'the panel must read the existing local game save');
 assert.match(source,/AetheriaGameBridge\.applySave/,'restore must use the existing game save bridge');
 assert.match(source,/24 KB/,'oversized cloud saves must be reported without replacing local progress');
-console.log('Aetheria account UI: revision-safe slots, conflict handling and local-save preservation passed.');
+assert.match(source,/AetheriaCloudSyncQueue\.CloudSyncQueue/,'automatic sync must use the tested serialized queue');
+assert.match(source,/assets\/engine\/cloud-sync-queue\.js/,'the queue module must be loaded by the existing account UI');
+assert.match(source,/aetheria\.cloud\.autosync\.v1/,'automatic sync preference must persist explicitly');
+assert.match(source,/aetheria\.cloud\.pending\.v1/,'pending sync state must survive reloads');
+assert.match(source,/cloud_sync_checkpoint_mismatch/,'a pending sync must reject changed cloud revisions');
+assert.match(source,/autoSync\.checked=false/,'automatic sync must be disabled after a blocked save');
+assert.match(source,/queue\.resume\(\{schedule:false\}\)/,'a matching baseline must resume without overwriting cloud data');
+assert.match(source,/queue\.pause\(\)/,'automatic sync must be cancellable and pause on logout');
+assert.match(source,/delay:1600/,'automatic sync must debounce frequent local saves');
+assert.match(source,/window\.save=function\(force,options\)/,'the existing local save must notify the optional cloud queue');
+console.log('Aetheria account UI: revision-safe slots, explicit baseline, durable pending checkpoint and optional cloud sync passed.');
