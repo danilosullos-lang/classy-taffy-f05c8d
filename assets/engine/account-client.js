@@ -15,7 +15,7 @@
     async register(email,password){const result=await this.request('/auth/register',{method:'POST',auth:false,body:{email,password}});this.token=result.token;return result.user;}
     async login(email,password){const result=await this.request('/auth/login',{method:'POST',auth:false,body:{email,password}});this.token=result.token;return result.user;}
     async listCharacters(){return (await this.request('/characters')).characters||[];}
-    async saveCharacter(character){return (await this.request('/characters',{method:'PUT',body:character})).character;}
+    async saveCharacter(character){if(!character||!Number.isSafeInteger(character.expectedRevision)||character.expectedRevision<0){const error=new Error('expected_revision_required');error.status=400;throw error;}return (await this.request('/characters',{method:'PUT',body:character})).character;}
     logout(){this.token='';}
     get authenticated(){return !!this.token;}
   }
