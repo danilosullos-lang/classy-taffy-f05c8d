@@ -110,6 +110,7 @@ jobs:
           node --check assets/combat/death-lifecycle.js
           node --check assets/engine/aetheria-engine.js
           node --check assets/engine/account-client.js
+          node --check assets/engine/cloud-sync-queue.js
           node --check assets/engine/account-ui.js
           node --check assets/classes/dwarf-profession.js
           node --check assets/classes/skill-catalog.js
@@ -126,7 +127,9 @@ jobs:
           node tests/engine-foundation.cjs
           node tests/account-client.cjs
           node --check tests/account-ui.cjs
+          node --check tests/cloud-sync-queue.cjs
           node tests/account-ui.cjs
+          node tests/cloud-sync-queue.cjs
           node tests/auth-core.mjs
           node tests/rls-transaction.mjs
           node tests/character-validation.mjs
