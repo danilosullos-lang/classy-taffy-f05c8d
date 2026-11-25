@@ -45,6 +45,13 @@
         return true;
       }catch(error){
         if(this.disposed)return false;
+        // A logout or explicit opt-out while the request was in flight must not
+        // turn its late network failure into a background retry after pause.
+        if(this.paused){
+          this.pending=false;
+          this._emit('paused',error);
+          return false;
+        }
         const status=Number(error&&error.status)||0;
         const retryable=!status||status===408||status===425||status===429||status>=500;
         if(retryable&&this.retries<this.maxRetries){
