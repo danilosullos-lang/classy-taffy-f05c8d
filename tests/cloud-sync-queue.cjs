@@ -57,5 +57,31 @@ class Clock{
     queue.resume({schedule:true});await clock.advance(10);assert.equal(runs,1,'explicit opt-in resumes with a fresh save');
     queue.dispose();
   }
-  console.log('Aetheria cloud sync queue: debounce, serialization, retry, conflict pause and opt-in resume passed.');
+  {
+    const clock=new Clock();let runs=0,rejectFirst,latePausedFailure=0;
+    const queue=new CloudSyncQueue({
+      run:()=>{runs++;if(runs===1)return new Promise((resolve,reject)=>{rejectFirst=reject;});return Promise.resolve();},
+      delay:10,retryBase:20,maxRetries:3,
+      onState:(state,error)=>{if(state==='paused'&&error&&error.status===503)latePausedFailure++;},
+      setTimer:clock.setTimer.bind(clock),clearTimer:clock.clearTimer.bind(clock)
+    });
+    queue.schedule();
+    await clock.advance(10);
+    assert.equal(runs,1,'first cloud request is in flight');
+    queue.pause();
+    rejectFirst(Object.assign(new Error('temporary after logout'),{status:503}));
+    for(let i=0;i<6;i++)await Promise.resolve();
+    assert.equal(queue.paused,true);
+    assert.equal(queue.pending,false,'a failed in-flight request must not recreate work after explicit pause');
+    assert.equal(clock.jobs.size,0,'late network failure must not arm a retry timer after logout/opt-out');
+    assert.equal(latePausedFailure,1,'late failure is reported as paused rather than retrying');
+    queue.resume({schedule:false});
+    await clock.advance(100);
+    assert.equal(runs,1,'resume without an explicit save must not replay a request canceled by pause');
+    queue.schedule();
+    await clock.advance(10);
+    assert.equal(runs,2,'a new explicit save can resume synchronization');
+    queue.dispose();
+  }
+  console.log('Aetheria cloud sync queue: debounce, serialization, retry, conflict pause, opt-in resume and in-flight pause recovery passed.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
