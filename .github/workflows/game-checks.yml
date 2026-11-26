@@ -19,6 +19,20 @@ permissions:
 jobs:
   integrity:
     runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: aetheria_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d aetheria_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,6 +42,17 @@ jobs:
           python-version: "3.12"
       - name: Check game integrity
         run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Validate PostgreSQL schema, RLS isolation and revision compare-and-swap
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/aetheria_test
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 \
+            -f database/schema.sql \
+            -f database/migrations/001_character_rls.sql \
+            -f database/migrations/001_character_rls.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/postgres-integration.sql
       - name: Validate safe reverse-engineering toolkit downloader
         run: python tools/lineage2-reference/download_tools.py --self-test
       - name: Download, verify and extract source-only Lineage II research kits
