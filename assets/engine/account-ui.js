@@ -3,8 +3,11 @@
 function boot(){
 if(!window.AetheriaAccount||!window.AetheriaGameBridge||!window.AetheriaCloudSyncQueue)return;
 const api=window.AetheriaAccount.create();
-const AUTO_SYNC_KEY='aetheria.cloud.autosync.v1';
-const PENDING_SYNC_KEY='aetheria.cloud.pending.v1';
+const AUTO_SYNC_PREFIX='aetheria.cloud.autosync.v2:';
+const PENDING_SYNC_PREFIX='aetheria.cloud.pending.v2:';
+// The old v1 keys were shared by every account in a browser profile. Keep them untouched,
+// but never import them into an account-scoped queue or checkpoint.
+function scopedStorageKey(prefix){const accountId=api.accountId;return accountId?prefix+accountId:'';}
 const el=(tag,attrs,parent)=>{
   const node=document.createElement(tag);
   Object.entries(attrs||{}).forEach(([key,value])=>key==='text'?node.textContent=value:node.setAttribute(key,value));
@@ -25,11 +28,11 @@ const slots=el('select',{'aria-label':'Personagem ou espaço de save'},cloud);
 const autoLabel=el('label',{id:'aetheria-auto-sync'},cloud);
 const autoSync=el('input',{type:'checkbox',id:'aetheria-auto-sync-toggle'},autoLabel);
 const autoText=el('span',{text:'Sincronizar automaticamente as alterações locais na nuvem'},autoLabel);
-function readAutoPreference(){try{return localStorage.getItem(AUTO_SYNC_KEY)==='1';}catch(_){return false;}}
-function writeAutoPreference(value){try{localStorage.setItem(AUTO_SYNC_KEY,value?'1':'0');}catch(_){}}
-function readPending(){try{const value=JSON.parse(localStorage.getItem(PENDING_SYNC_KEY)||'null');return value&&typeof value==='object'?value:null;}catch(_){return null;}}
-function writePending(value){try{localStorage.setItem(PENDING_SYNC_KEY,JSON.stringify(value));return true;}catch(_){return false;}}
-function clearPending(){try{localStorage.removeItem(PENDING_SYNC_KEY);}catch(_){}}
+function readAutoPreference(){const key=scopedStorageKey(AUTO_SYNC_PREFIX);if(!key)return false;try{return localStorage.getItem(key)==='1';}catch(_){return false;}}
+function writeAutoPreference(value){const key=scopedStorageKey(AUTO_SYNC_PREFIX);if(!key)return false;try{localStorage.setItem(key,value?'1':'0');return true;}catch(_){return false;}}
+function readPending(){const key=scopedStorageKey(PENDING_SYNC_PREFIX);if(!key)return null;try{const value=JSON.parse(localStorage.getItem(key)||'null');return value&&typeof value==='object'?value:null;}catch(_){return null;}}
+function writePending(value){const key=scopedStorageKey(PENDING_SYNC_PREFIX);if(!key)return false;try{localStorage.setItem(key,JSON.stringify(value));return true;}catch(_){return false;}}
+function clearPending(){const key=scopedStorageKey(PENDING_SYNC_PREFIX);if(!key)return false;try{localStorage.removeItem(key);return true;}catch(_){return false;}}
 function fingerprint(payload){
   const source=JSON.stringify({v:payload&&payload.v,sv:payload&&payload.sv,inv:payload&&payload.inv,uid:payload&&payload.uid});
   let a=2166136261,b=0x9e3779b9;
@@ -44,11 +47,13 @@ const button=(label,parent,fn)=>{
   return node;
 };
 function setAuthView(authenticated){
-  email.style.display=authenticated?'none':'block';
-  pass.style.display=authenticated?'none':'block';
+  const accountScoped=authenticated&&!!api.accountId;
+  email.style.display=accountScoped?'none':'block';
+  pass.style.display=accountScoped?'none':'block';
   cloud.style.display=authenticated?'block':'none';
-  autoSync.disabled=!authenticated;
-  autoText.textContent=authenticated?'Sincronizar automaticamente as alterações locais na nuvem':'Entre para habilitar a sincronização automática';
+  autoSync.disabled=!accountScoped;
+  autoSync.checked=accountScoped&&readAutoPreference();
+  autoText.textContent=!authenticated?'Entre para habilitar a sincronização automática':!api.accountId?'Entre novamente para associar a sessão à conta antes de sincronizar':'Sincronizar automaticamente as alterações locais na nuvem';
 }
 let baselineReady=false,baselineSlot='',lastSyncedFingerprint='',lastScheduledFingerprint='';
 function reconcileBaseline(){
@@ -86,9 +91,11 @@ function disableAutoSync(message){
   if(message)status.textContent=message;
 }
 async function list(){
+  const accountId=api.accountId;
   const previous=slots.value;
   try{
     const characters=await api.listCharacters();
+    if(accountId!==api.accountId)return [];
     slots.replaceChildren();
     const occupied=new Set();
     characters.forEach(character=>{
@@ -129,6 +136,7 @@ let cloudSaveInFlight=null;
 function saveCloudCore({automatic=false}={}){
   if(cloudSaveInFlight)return cloudSaveInFlight;
   const task=(async()=>{
+    const accountId=api.accountId;
     const selected=slots.selectedOptions&&slots.selectedOptions[0];
     if(!selected)throw new Error('Selecione um espaço de personagem.');
     const payload=window.AetheriaGameBridge.getSave();
@@ -168,6 +176,7 @@ function saveCloudCore({automatic=false}={}){
         }
         throw error;
       }
+      if(accountId!==api.accountId)throw Object.assign(new Error('cloud_account_changed_during_save'),{status:409});
       const saved=result||{};
       const revision=Number.isSafeInteger(saved.revision)?saved.revision:expectedRevision+1;
       if(saved.id){
@@ -197,7 +206,7 @@ function saveCloudCore({automatic=false}={}){
   return task.finally(()=>{if(cloudSaveInFlight===task)cloudSaveInFlight=null;});
 }
 function reportCloudError(error){
-  if(error.status===409||error.message==='character_revision_conflict'||error.message==='cloud_sync_checkpoint_mismatch'){
+  if(error.status===409||error.message==='character_revision_conflict'||error.message==='cloud_sync_checkpoint_mismatch'||error.message==='cloud_account_changed_during_save'){
     status.textContent='Conflito de revisão: a cópia da nuvem mudou. A lista foi atualizada; confira o personagem antes de tentar novamente.';
   }else if(error.status===413){
     status.textContent='Save local preservado. O conteúdo excede o limite atual de 24 KB da API.';
@@ -213,7 +222,7 @@ async function saveCloud(){
 }
 const queue=new window.AetheriaCloudSyncQueue.CloudSyncQueue({
   run:async()=>{
-    if(!api.authenticated)throw Object.assign(new Error('cloud_session_required'),{status:401});
+    if(!api.authenticated||!api.accountId)throw Object.assign(new Error('cloud_session_scope_required'),{status:401});
     if(!autoSync.checked)return null;
     return saveCloudCore({automatic:true});
   },
@@ -236,7 +245,7 @@ const queue=new window.AetheriaCloudSyncQueue.CloudSyncQueue({
   }
 });
 function scheduleCloudSync(){
-  if(!api.authenticated||!autoSync.checked)return false;
+  if(!api.authenticated||!api.accountId||!autoSync.checked)return false;
   const selected=slots.selectedOptions&&slots.selectedOptions[0];
   if(!selected||!baselineReady||baselineSlot!==selected.value){
     disableAutoSync('Selecione e sincronize manualmente o personagem antes de usar a sincronização automática.');
@@ -260,7 +269,7 @@ autoSync.addEventListener('change',()=>{
     status.textContent='Sincronização automática desativada. O save local continua ativo.';
     return;
   }
-  if(!api.authenticated){
+  if(!api.authenticated||!api.accountId){
     autoSync.checked=false;
     writeAutoPreference(false);
     status.textContent='Entre na conta antes de ativar a sincronização automática.';
@@ -283,12 +292,22 @@ slots.addEventListener('change',()=>{
   if(autoSync.checked&&baseline==='mismatch')disableAutoSync('O personagem selecionado difere da cópia local. Faça um salvamento manual ou restaure a nuvem antes de continuar.');
 });
 button('Entrar',card,async()=>{
+  const previousAccountId=api.accountId;
+  queue.pause();
   try{await api.login(email.value,pass.value);setAuthView(true);await list();}
-  catch(error){status.textContent='Erro ao entrar: '+error.message;}
+  catch(error){
+    if(api.authenticated&&api.accountId===previousAccountId){setAuthView(true);if(autoSync.checked&&readPending())queue.resume({schedule:true});else queue.resume({schedule:false});}
+    status.textContent='Erro ao entrar: '+error.message;
+  }
 });
 button('Criar conta',card,async()=>{
+  const previousAccountId=api.accountId;
+  queue.pause();
   try{await api.register(email.value,pass.value);setAuthView(true);await list();}
-  catch(error){status.textContent='Erro ao criar conta: '+error.message;}
+  catch(error){
+    if(api.authenticated&&api.accountId===previousAccountId){setAuthView(true);if(autoSync.checked&&readPending())queue.resume({schedule:true});else queue.resume({schedule:false});}
+    status.textContent='Erro ao criar conta: '+error.message;
+  }
 });
 button('Salvar na nuvem',cloud,saveCloud);
 button('Restaurar selecionado',cloud,()=>{
