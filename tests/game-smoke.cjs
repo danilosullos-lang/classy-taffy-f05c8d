@@ -8,7 +8,8 @@ if (!gameSource.includes('assets/engine/account-client.js') || !gameSource.inclu
     !accountUiSource.includes('assets/engine/cloud-sync-queue.js') ||
     !accountUiSource.includes('aetheria.cloud.pending.v2:') ||
     !accountUiSource.includes('aetheria.cloud.autosync.v2:') ||
-    !accountUiSource.includes('api.accountId')) {
+    !accountUiSource.includes('api.accountId') ||
+    !accountUiSource.includes('baselineAccountId')) {
   throw new Error('A conta em nuvem precisa preservar o save local, controlar revisões e isolar a fila opcional por conta.');
 }
 if (gameSource.includes('e.m.rotation.y=rpgMonsterFacingYaw(dd,dz)') ||
