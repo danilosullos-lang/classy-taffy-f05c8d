@@ -10,8 +10,7 @@ assert.match(source,/AetheriaGameBridge\.applySave/,'restore must use the existi
 assert.match(source,/24 KB/,'oversized cloud saves must be reported without replacing local progress');
 assert.match(source,/AetheriaCloudSyncQueue\.CloudSyncQueue/,'automatic sync must use the tested serialized queue');
 assert.match(source,/assets\/engine\/cloud-sync-queue\.js/,'the queue module must be loaded by the existing account UI');
-assert.match(source,/aetheria\.cloud\.autosync\.v1/,'automatic sync preference must persist explicitly');
-assert.match(source,/aetheria\.cloud\.pending\.v1/,'pending sync state must survive reloads');
+assert.doesNotMatch(source,/aetheria\.cloud\.(?:autosync|pending)\.v1/,'legacy profile-wide sync keys must not be reused across accounts');
 assert.match(source,/Math\.imul/,'pending sync checkpoints must use a compact fingerprint instead of copying the full save');
 assert.match(source,/return false;\}\}/,'pending marker storage failures must stop automatic sync safely');
 assert.match(source,/cloud_sync_checkpoint_mismatch/,'a pending sync must reject changed cloud revisions');
