@@ -6,8 +6,10 @@ if (!gameSource.includes('assets/engine/account-client.js') || !gameSource.inclu
     !gameSource.includes('window.AetheriaGameBridge=') || !accountUiSource.includes('expectedRevision') ||
     !accountUiSource.includes('character_revision_conflict') ||
     !accountUiSource.includes('assets/engine/cloud-sync-queue.js') ||
-    !accountUiSource.includes('aetheria.cloud.pending.v1')) {
-  throw new Error('A conta em nuvem precisa preservar o save local, controlar revisões e recuperar a fila opcional.');
+    !accountUiSource.includes('aetheria.cloud.pending.v2:') ||
+    !accountUiSource.includes('aetheria.cloud.autosync.v2:') ||
+    !accountUiSource.includes('api.accountId')) {
+  throw new Error('A conta em nuvem precisa preservar o save local, controlar revisões e isolar a fila opcional por conta.');
 }
 if (gameSource.includes('e.m.rotation.y=rpgMonsterFacingYaw(dd,dz)') ||
     !gameSource.includes('rpgMonsterFacingYaw(facingD,facingZ)') ||
