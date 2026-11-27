@@ -25,4 +25,7 @@ assert.match(source,/api\.accountId/,'cloud queue must require the server-return
 assert.match(source,/never import them into an account-scoped queue/,'legacy profile-wide checkpoints must not leak into another account');
 assert.match(source,/cloud_account_changed_during_save/,'a late save response must not mutate the newly selected account UI');
 assert.match(source,/if\(accountId!==api\.accountId\)return \[\]/,'late character-list responses from a previous account must be ignored');
-console.log('Aetheria account UI: revision-safe slots, account-isolated pending checkpoints, explicit baseline and optional cloud sync passed.');
+assert.match(source,/baselineAccountId/,'the cloud baseline must remember which account was reconciled');
+assert.match(source,/baselineAccountId!==accountId/,'automatic saves must reject a baseline from a different account');
+assert.match(source,/baselineAccountId!==api\.accountId/,'local save notifications must wait until the active account list is reconciled');
+console.log('Aetheria account UI: revision-safe slots, account-isolated checkpoints and account-bound baseline passed.');
