@@ -55,15 +55,16 @@ function setAuthView(authenticated){
   autoSync.checked=accountScoped&&readAutoPreference();
   autoText.textContent=!authenticated?'Entre para habilitar a sincronização automática':!api.accountId?'Entre novamente para associar a sessão à conta antes de sincronizar':'Sincronizar automaticamente as alterações locais na nuvem';
 }
-let baselineReady=false,baselineSlot='',lastSyncedFingerprint='',lastScheduledFingerprint='';
+let baselineReady=false,baselineSlot='',baselineAccountId='',lastSyncedFingerprint='',lastScheduledFingerprint='';
 function reconcileBaseline(){
   const selected=slots.selectedOptions&&slots.selectedOptions[0];
-  if(!selected){baselineReady=false;baselineSlot='';return 'mismatch';}
+  if(!selected){baselineReady=false;baselineSlot='';baselineAccountId='';return 'mismatch';}
   const local=localFingerprint();
   let cloudData={};try{cloudData=JSON.parse(selected.dataset.data||'{}')||{};}catch(_){}
   const cloudFp=cloudData&&cloudData.sv?fingerprint(cloudData):'';
   const pending=readPending();
   baselineSlot=selected.value;
+  baselineAccountId=api.accountId;
   if(cloudFp&&cloudFp===local){
     clearPending();
     lastSyncedFingerprint=local;
@@ -148,7 +149,7 @@ function saveCloudCore({automatic=false}={}){
       throw new Error('Espaço de save inválido.');
     if(automatic){
       const pending=readPending();
-      if(!baselineReady||baselineSlot!==selected.value||!pending||Number(pending.slot)!==slot||Number(pending.revision)!==expectedRevision||pending.fingerprint!==localFp||
+      if(!baselineReady||baselineAccountId!==accountId||baselineSlot!==selected.value||!pending||Number(pending.slot)!==slot||Number(pending.revision)!==expectedRevision||pending.fingerprint!==localFp||
         (pending.id&&String(pending.id)!==selected.value))
         throw Object.assign(new Error('cloud_sync_checkpoint_mismatch'),{status:409});
     }
@@ -246,6 +247,7 @@ const queue=new window.AetheriaCloudSyncQueue.CloudSyncQueue({
 });
 function scheduleCloudSync(){
   if(!api.authenticated||!api.accountId||!autoSync.checked)return false;
+  if(baselineAccountId!==api.accountId){status.textContent='A sincronização aguarda a confirmação da conta atual; o save local continua ativo.';return false;}
   const selected=slots.selectedOptions&&slots.selectedOptions[0];
   if(!selected||!baselineReady||baselineSlot!==selected.value){
     disableAutoSync('Selecione e sincronize manualmente o personagem antes de usar a sincronização automática.');
@@ -294,7 +296,7 @@ slots.addEventListener('change',()=>{
 button('Entrar',card,async()=>{
   const previousAccountId=api.accountId;
   queue.pause();
-  try{await api.login(email.value,pass.value);setAuthView(true);await list();}
+  try{await api.login(email.value,pass.value);baselineReady=false;baselineSlot='';baselineAccountId='';setAuthView(true);await list();}
   catch(error){
     if(api.authenticated&&api.accountId===previousAccountId){setAuthView(true);if(autoSync.checked&&readPending())queue.resume({schedule:true});else queue.resume({schedule:false});}
     status.textContent='Erro ao entrar: '+error.message;
@@ -303,7 +305,7 @@ button('Entrar',card,async()=>{
 button('Criar conta',card,async()=>{
   const previousAccountId=api.accountId;
   queue.pause();
-  try{await api.register(email.value,pass.value);setAuthView(true);await list();}
+  try{await api.register(email.value,pass.value);baselineReady=false;baselineSlot='';baselineAccountId='';setAuthView(true);await list();}
   catch(error){
     if(api.authenticated&&api.accountId===previousAccountId){setAuthView(true);if(autoSync.checked&&readPending())queue.resume({schedule:true});else queue.resume({schedule:false});}
     status.textContent='Erro ao criar conta: '+error.message;
@@ -321,6 +323,7 @@ button('Restaurar selecionado',cloud,()=>{
 button('Atualizar lista',cloud,()=>list().catch(()=>{}));
 button('Sair',cloud,()=>{
   queue.pause();
+  baselineReady=false;baselineSlot='';baselineAccountId='';
   api.logout();
   setAuthView(false);
   status.textContent='Sessão encerrada. Save local preservado.';
