@@ -20,4 +20,10 @@ assert.match(source,/queue\.resume\(\{schedule:false\}\)/,'a matching baseline m
 assert.match(source,/queue\.pause\(\)/,'automatic sync must be cancellable and pause on logout');
 assert.match(source,/delay:1600/,'automatic sync must debounce frequent local saves');
 assert.match(source,/window\.save=function\(force,options\)/,'the existing local save must notify the optional cloud queue');
-console.log('Aetheria account UI: revision-safe slots, explicit baseline, durable pending checkpoint and optional cloud sync passed.');
+assert.match(source,/aetheria\.cloud\.autosync\.v2:/,'automatic-sync preference must be scoped to the authenticated account');
+assert.match(source,/aetheria\.cloud\.pending\.v2:/,'pending checkpoints must be isolated per account');
+assert.match(source,/api\.accountId/,'cloud queue must require the server-returned account identity');
+assert.match(source,/never import them into an account-scoped queue/,'legacy profile-wide checkpoints must not leak into another account');
+assert.match(source,/cloud_account_changed_during_save/,'a late save response must not mutate the newly selected account UI');
+assert.match(source,/if\(accountId!==api\.accountId\)return \[\]/,'late character-list responses from a previous account must be ignored');
+console.log('Aetheria account UI: revision-safe slots, account-isolated pending checkpoints, explicit baseline and optional cloud sync passed.');
